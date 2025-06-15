@@ -1,0 +1,17 @@
+:root {
+    --color-primary: #007BFF;      /* Azul da logo */
+    --color-primary-dark: #0056b3; /* Versão escurecida p/ hover */
+    --color-secondary: #000000;    /* Preto para textos */
+    --color-light: #FFFFFF;        /* Branco */
+    --font-family-base: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+    --border-radius: 0.5rem;
+  }
+  
+  body {
+    font-family: var(--font-family-base);
+    color: var(--color-secondary);
+    background-color: var(--color-light);
+    margin: 0;
+    padding: 0;
+  }
+  

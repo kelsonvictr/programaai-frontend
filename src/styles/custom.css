@@ -1,0 +1,61 @@
+/* Exemplos de overrides para React-Bootstrap / Bootstrap */
+a.nav-link {
+    color: var(--color-light) !important;
+  }
+  
+  a.nav-link:hover {
+    color: var(--color-light);
+    opacity: 0.8;
+  }
+  
+/* Navbar com degradê de cinza-claro (#6c757d) para cinza-escuro (#343a40) */
+.navbar {
+    background: linear-gradient(90deg, #aaa9a9 0%, #343a40 100%) !important;
+  }
+  
+  /* Links em branco para contraste */
+  .navbar .nav-link {
+    color: #ffffff !important;
+  }
+  
+  .navbar .nav-link:hover,
+  .navbar .nav-link:focus {
+    color: #dddddd !important;
+  }
+  
+  /* Botões customizados */
+  .btn-primary {
+    background-color: var(--color-primary);
+    border-color: var(--color-primary);
+    border-radius: var(--border-radius);
+  }
+  
+  .btn-primary:hover,
+  .btn-primary:focus {
+    background-color: var(--color-primary-dark);
+    border-color: var(--color-primary-dark);
+  }
+  
+  /* Cards de curso */
+  .course-card {
+    transition: transform 0.2s ease-in-out;
+  }
+  
+  .course-card:hover {
+    transform: translateY(-5px);
+  }
+  
+  /* Footer */
+  footer {
+    background-color: black;
+    color: var(--color-light);
+    padding: 1.5rem 0;
+    text-align: center;
+  }
+  
+  /* Formulário de contato */
+  .contact-form .form-control:focus {
+    border-color: var(--color-primary);
+    box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+  }
+  
