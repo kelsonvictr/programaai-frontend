@@ -59,7 +59,6 @@ const Inscricao: React.FC = () => {
     if (!course) navigate("/cursos")
   }, [course, navigate])
 
-  // máscaras manuais (CPF, data, celular) omitidas aqui para brevidade...
   const maskCpf = (v: string) =>
     v.replace(/\D/g, "").slice(0, 11)
       .replace(/^(\d{3})(\d)/, "$1.$2")
@@ -83,12 +82,17 @@ const Inscricao: React.FC = () => {
   }
 
   const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
+    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>
   ) => {
-    const { name, type, value, checked } = e.target
+    const target = e.target as HTMLInputElement | HTMLSelectElement
+    const { name, type, value } = target
+
+    const checked =
+      type === "checkbox" ? (target as HTMLInputElement).checked : undefined
+
     setForm(f => ({
       ...f,
-      [name]: type === "checkbox" ? checked : value,
+      [name]: type === "checkbox" ? checked ?? false : value,
     }))
 
     if (name === "fonteAI") {
@@ -107,6 +111,7 @@ const Inscricao: React.FC = () => {
       if (!precisaDetalhar) setForm(f => ({ ...f, estudanteDetalhe: "" }))
     }
   }
+
   const handleCpfChange = (e: React.ChangeEvent<HTMLInputElement>) =>
     setForm(f => ({ ...f, cpf: maskCpf(e.target.value) }))
   const handleDateChange = (e: React.ChangeEvent<HTMLInputElement>) =>
@@ -416,3 +421,4 @@ const Inscricao: React.FC = () => {
 }
 
 export default Inscricao
+

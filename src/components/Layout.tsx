@@ -1,22 +1,17 @@
-import React, { ReactNode } from "react";
-import NavBar from "./NavBar";
-import Footer from "./Footer";
+import type { ReactNode } from 'react'
+import NavBar from './NavBar'
 
 interface LayoutProps {
-  children: ReactNode;
+  children: ReactNode
 }
 
-const Layout: React.FC<LayoutProps> = ({ children }) => {
+const Layout = ({ children }: LayoutProps) => {
   return (
     <>
       <NavBar />
-      <main style={{ minHeight: "calc(100vh - 160px)" }}>
-        {/* Ajuste de altura para empurrar o footer para baixo */}
-        {children}
-      </main>
-      <Footer />
+      <main>{children}</main>
     </>
-  );
-};
+  )
+}
 
-export default Layout;
+export default Layout

@@ -1,9 +1,7 @@
-// src/pages/CourseDetails.tsx
 import React from "react"
-import { useParams, useNavigate } from "react-router-dom"
+import { useParams, useNavigate, Link } from "react-router-dom"
 import { Container, Card, Button, Alert } from "react-bootstrap"
 import { courses } from "../mocks/courses"
-import { Link } from 'react-router-dom'
 
 const CourseDetails: React.FC = () => {
   const { id } = useParams<{ id: string }>()
@@ -33,9 +31,9 @@ const CourseDetails: React.FC = () => {
           <Card.Text>
             <strong>Preço:</strong> {course.price}
           </Card.Text>
-          <Button as={Link} to={`/inscricao/${id}`} variant="primary" size="sm">
+          <Link to={`/inscricao/${id}`} className="btn btn-primary btn-sm">
             Inscreva-se
-          </Button>{" "}
+          </Link>{" "}
           <Button variant="outline-secondary" onClick={() => navigate("/cursos")}>
             Voltar
           </Button>

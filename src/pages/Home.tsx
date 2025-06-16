@@ -1,4 +1,3 @@
-// src/pages/Home.tsx
 import React from "react"
 import { Container, Row, Col, Button, Card } from "react-bootstrap"
 import { Link } from "react-router-dom"
@@ -17,7 +16,6 @@ const Home: React.FC = () => {
 
       <Container className="py-5">
         <Row className="align-items-start">
-          {/* Hero */}
           <Col md={6} className="mb-4 mb-md-0 text-md-start text-center">
             <h1>Programação, IA e muito café.</h1>
 
@@ -44,17 +42,16 @@ const Home: React.FC = () => {
                 className="ms-2 text-decoration-none"
                 style={{ color: "var(--color-secondary)" }}
               >
-                Programa AI – Empresarial Eldorado, Sala 104<br/>
+                Programa AI – Empresarial Eldorado, Sala 104<br />
                 Av. Pres. Epitácio Pessoa – João Pessoa/PB
               </a>
             </p>
 
-            <Button as={Link} to="/cursos" variant="primary" size="lg">
+            <Link to="/cursos" className="btn btn-primary btn-lg">
               Conheça os Cursos
-            </Button>
+            </Link>
           </Col>
 
-          {/* Novidades */}
           <Col md={6}>
             <h3 className="mb-4">Novidades</h3>
             {novidades.map(curso => (
@@ -64,21 +61,18 @@ const Home: React.FC = () => {
                     <Card.Title className="h6 mb-1">{curso.title}</Card.Title>
                     <small className="text-muted">{curso.duration}</small>
                   </div>
-                  <Button
-                    as={Link}
+                  <Link
                     to={`/cursos/${curso.id}`}
-                    variant="outline-primary"
-                    size="sm"
+                    className="btn btn-outline-primary btn-sm"
                   >
                     Ver curso
-                  </Button>
+                  </Link>
                 </Card.Body>
               </Card>
             ))}
           </Col>
         </Row>
 
-        {/* Contato Card */}
         <Row className="mt-5">
           <Col>
             <Card className="shadow-sm">
@@ -86,7 +80,7 @@ const Home: React.FC = () => {
                 <Card.Title>Onde Estamos?</Card.Title>
                 <Card.Text className="mb-4">
                   <span role="img" aria-label="local">📍</span>{" "}
-                  Av. Pres. Epitácio Pessoa, 1133 – Estados, João Pessoa – PB<br/>
+                  Av. Pres. Epitácio Pessoa, 1133 – Estados, João Pessoa – PB<br />
                   (Empresarial Eldorado – Sala 104)
                 </Card.Text>
                 <Button
