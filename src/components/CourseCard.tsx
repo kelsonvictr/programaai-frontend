@@ -1,7 +1,7 @@
 import { Link } from 'react-router-dom'
 
 interface CourseCardProps {
-  id: string
+  id: number
   title: string
   description: string
 }
