@@ -7,29 +7,33 @@ on:
 
 jobs:
   deploy:
+    name: Build e Deploy no S3
     runs-on: ubuntu-latest
 
     steps:
-      - name: 🔄 Checkout do código
+      - name: Checkout do código
         uses: actions/checkout@v3
 
-      - name: ⚙️ Instalar Node.js
+      - name: Configurar Node.js
         uses: actions/setup-node@v3
         with:
           node-version: 18
 
-      - name: 📦 Instalar dependências
-        run: npm install
+      - name: Instalar dependências
+        run: npm ci
 
-      - name: 🛠️ Gerar build do projeto
+      - name: Gerar arquivo .env
+        run: echo "VITE_API_URL=${{ secrets.VITE_API_URL }}" > .env
+
+      - name: Build do projeto
         run: npm run build
 
-      - name: 🚀 Deploy para o S3
+      - name: Deploy no S3
         uses: jakejarvis/s3-sync-action@master
         with:
-          args: --delete
+          args: --acl public-read --delete
         env:
-          AWS_S3_BUCKET: ${{ secrets.S3_BUCKET_NAME }}
+          AWS_S3_BUCKET: ${{ secrets.AWS_S3_BUCKET }}
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           AWS_REGION: ${{ secrets.AWS_REGION }}

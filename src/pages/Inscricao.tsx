@@ -8,6 +8,7 @@ import {
   Alert,
 } from "react-bootstrap"
 import { courses } from "../mocks/courses"
+import axios from "axios"
 
 interface FormState {
   nome: string
@@ -147,12 +148,35 @@ const Inscricao: React.FC = () => {
     return errs.length === 0
   }
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     if (!validate()) return
-    console.log("Inscrição enviada:", form, course?.title)
-    setSubmitted(true)
-  }
+
+    try {
+        await axios.post(`${import.meta.env.VITE_API_URL}/inscricao`, {
+        nomeCompleto: form.nome,
+        email: form.email,
+        whatsapp: form.celular.replace(/\s|\(|\)|-/g, ""), // limpando o número
+        sexo: form.sexo,
+        dataNascimento: form.dataNascimento.split("/").reverse().join("-"), // DD/MM/AAAA → AAAA-MM-DD
+        formacaoTI: form.estudanteTI,
+        ondeEstuda: form.estudanteDetalhe,
+        comoSoube:
+            form.fonteAI === "Outros"
+            ? form.fonteCursoOutro
+            : form.fonteAI === "Recomendação de amigos"
+            ? `Indicação de ${form.amigoIndicacao}`
+            : form.fonteAI,
+        nomeAmigo: form.amigoIndicacao || "",
+        })
+
+        setSubmitted(true)
+    } catch (err) {
+            console.error("Erro ao enviar inscrição:", err)
+            setErrors(["Erro ao enviar sua inscrição. Tente novamente mais tarde."])
+    }
+ }
+
 
   if (!course) return null
 
