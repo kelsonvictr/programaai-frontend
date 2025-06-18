@@ -153,28 +153,33 @@ const Inscricao: React.FC = () => {
     if (!validate()) return
 
     try {
-        await axios.post(`${import.meta.env.VITE_API_URL}`, {
-        nomeCompleto: form.nome,
-        email: form.email,
-        whatsapp: form.celular.replace(/\s|\(|\)|-/g, ""), // limpando o número
-        sexo: form.sexo,
-        dataNascimento: form.dataNascimento.split("/").reverse().join("-"), // DD/MM/AAAA → AAAA-MM-DD
-        formacaoTI: form.estudanteTI,
-        ondeEstuda: form.estudanteDetalhe,
-        comoSoube:
+        const response = await axios.post(`${import.meta.env.VITE_API_URL}/inscricao`, {
+            nomeCompleto: form.nome,
+            email: form.email,
+            whatsapp: form.celular.replace(/\s|\(|\)|-/g, ""),
+            sexo: form.sexo,
+            dataNascimento: form.dataNascimento.split("/").reverse().join("-"),
+            formacaoTI: form.estudanteTI,
+            ondeEstuda: form.estudanteDetalhe,
+            comoSoube:
             form.fonteAI === "Outros"
-            ? form.fonteCursoOutro
-            : form.fonteAI === "Recomendação de amigos"
-            ? `Indicação de ${form.amigoIndicacao}`
-            : form.fonteAI,
-        nomeAmigo: form.amigoIndicacao || "",
+                ? form.fonteCursoOutro
+                : form.fonteAI === "Recomendação de amigos"
+                ? `Indicação de ${form.amigoIndicacao}`
+                : form.fonteAI,
+            nomeAmigo: form.amigoIndicacao || "",
         })
 
-        setSubmitted(true)
-    } catch (err) {
-            console.error("Erro ao enviar inscrição:", err)
+        if (response.status === 201 || response.status === 200) {
+            setSubmitted(true)
+            setErrors([])
+        } else {
             setErrors(["Erro ao enviar sua inscrição. Tente novamente mais tarde."])
-    }
+        }
+        } catch (err) {
+        console.error("Erro ao enviar inscrição:", err)
+        setErrors(["Erro ao enviar sua inscrição. Tente novamente mais tarde."])
+        }
  }
 
 
