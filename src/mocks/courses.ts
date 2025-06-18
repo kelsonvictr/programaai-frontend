@@ -28,7 +28,7 @@ export interface Course {
       duration: "20 horas",
       price: "R$199,99 (promoção de lançamento)",
       imageUrl: "https://via.placeholder.com/300x150?text=TypeScript",
-      bannerSite: "banner2.png"
+      bannerSite: "appsec.png"
     },
     {
       id: 3,
