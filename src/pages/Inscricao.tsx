@@ -9,6 +9,8 @@ import {
 } from "react-bootstrap"
 import { courses } from "../mocks/courses"
 import axios from "axios"
+import { Modal } from "react-bootstrap"
+
 
 interface FormState {
   nome: string
@@ -55,6 +57,7 @@ const Inscricao: React.FC = () => {
   const [showCursoOutro, setShowCursoOutro] = useState(false)
   const [showEstudanteDetalhe, setShowEstudanteDetalhe] = useState(false)
   const [submitted, setSubmitted] = useState(false)
+  const [showModal, setShowModal] = useState(false)
 
   useEffect(() => {
     if (!course) navigate("/cursos")
@@ -173,6 +176,7 @@ const Inscricao: React.FC = () => {
         if (response.status === 201 || response.status === 200) {
             setSubmitted(true)
             setErrors([])
+            setShowModal(true)
         } else {
             setErrors(["Erro ao enviar sua inscrição. Tente novamente mais tarde."])
         }
@@ -199,9 +203,24 @@ const Inscricao: React.FC = () => {
         * Todos os campos abaixo são obrigatórios
       </p>
 
-      {submitted && (
-        <Alert variant="success">Sua inscrição foi enviada com sucesso!</Alert>
-      )}
+      <Modal show={showModal} onHide={() => setShowModal(false)} centered>
+        <Modal.Header closeButton>
+            <Modal.Title>Inscrição enviada com sucesso!</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+            <p>
+            🎉 Recebemos sua inscrição! Em breve você receberá pelo seu <strong>WhatsApp</strong> e <strong>e-mail</strong> as instruções para pagamento.
+            </p>
+            <p className="mb-0 text-muted">
+            Sua vaga só será <strong>confirmada após a validação do pagamento</strong>. Fique atento!
+            </p>
+        </Modal.Body>
+        <Modal.Footer>
+            <Button variant="success" onClick={() => setShowModal(false)}>
+            Ok, entendi
+            </Button>
+        </Modal.Footer>
+        </Modal>
 
       {!submitted && (
         <Form noValidate onSubmit={handleSubmit}>

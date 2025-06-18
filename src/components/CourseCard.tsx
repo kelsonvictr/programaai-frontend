@@ -12,7 +12,7 @@ const CourseCard = ({ id, title, description }: CourseCardProps) => {
       <div className="card-body">
         <h5 className="card-title">{title}</h5>
         <p className="card-text">{description}</p>
-        <Link to={`/curso/${id}`} className="btn btn-primary">
+        <Link to={`/cursos/${id}`} className="btn btn-primary">
           Ver mais
         </Link>
       </div>
