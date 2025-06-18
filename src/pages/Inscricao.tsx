@@ -171,6 +171,7 @@ const Inscricao: React.FC = () => {
                 ? `Indicação de ${form.amigoIndicacao}`
                 : form.fonteAI,
             nomeAmigo: form.amigoIndicacao || "",
+            curso: course?.title || ""
         })
 
         if (response.status === 201 || response.status === 200) {
@@ -216,7 +217,10 @@ const Inscricao: React.FC = () => {
             </p>
         </Modal.Body>
         <Modal.Footer>
-            <Button variant="success" onClick={() => setShowModal(false)}>
+            <Button variant="success" onClick={() => {
+                                setShowModal(false)
+                                navigate("/")
+                                }}>
             Ok, entendi
             </Button>
         </Modal.Footer>
