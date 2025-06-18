@@ -153,7 +153,7 @@ const Inscricao: React.FC = () => {
     if (!validate()) return
 
     try {
-        await axios.post(`${import.meta.env.VITE_API_URL}/inscricao`, {
+        await axios.post(`${import.meta.env.VITE_API_URL}`, {
         nomeCompleto: form.nome,
         email: form.email,
         whatsapp: form.celular.replace(/\s|\(|\)|-/g, ""), // limpando o número
