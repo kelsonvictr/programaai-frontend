@@ -70,17 +70,17 @@ const Inscricao: React.FC = () => {
       .replace(/^(\d{2})(\d)/, "$1/$2")
       .replace(/^(\d{2}\/\d{2})(\d)/, "$1/$2")
   const maskCel = (v: string) => {
-    let raw = v.replace(/\D/g, "")
-    if (!raw.startsWith("55")) raw = "55" + raw
-    raw = raw.slice(0, 11)
-    return (
-      "+" +
-      raw.slice(0, 2) +
-      (raw.length > 2 ? " (" + raw.slice(2, 4) + ")" : "") +
-      (raw.length >= 4 ? " " + raw.slice(4, 9) : "") +
-      (raw.length >= 9 ? "-" + raw.slice(9) : "")
-    )
-  }
+  let raw = v.replace(/\D/g, "")
+  if (!raw.startsWith("55")) raw = "55" + raw
+  raw = raw.slice(0, 13)
+  return (
+    "+" +
+    raw.slice(0, 2) +
+    (raw.length > 2 ? " (" + raw.slice(2, 4) + ")" : "") +
+    (raw.length >= 4 ? " " + raw.slice(4, 9) : "") +
+    (raw.length >= 9 ? "-" + raw.slice(9, 13) : "")
+  )
+}
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>
