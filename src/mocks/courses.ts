@@ -38,7 +38,7 @@ export interface Course {
       duration: "20 horas",
       price: "R$199,99 (promoção de lançamento)",
       imageUrl: "https://via.placeholder.com/300x150?text=Machine+Learning",
-      bannerSite: "banner3.png"
+      bannerSite: "java-starter.png"
     },
     // ...mais cursos
   ]
