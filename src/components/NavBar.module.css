@@ -1,7 +1,7 @@
 /* src/components/NavBar.module.css */
 .navbar {
     /* nova paleta: degradê de azul para ciano */
-    background: linear-gradient(90deg, #007BFF 0%, #00C6FF 100%) !important;
+    background: linear-gradient(90deg, #95999e 0%, #f7f9f9 100%) !important;
     position: sticky;
     top: 0;
     z-index: 1000;
