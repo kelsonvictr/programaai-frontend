@@ -18,7 +18,7 @@ export interface Course {
       duration: "30 horas",
       price: "R$199,99 (promoção de lançamento)",
       imageUrl: "https://via.placeholder.com/300x150?text=ReactJS",
-      bannerSite: "banner1.png"
+      bannerSite: "react-native.png"
     },
     {
       id: 2,
@@ -39,6 +39,16 @@ export interface Course {
       price: "R$199,99 (promoção de lançamento)",
       imageUrl: "https://via.placeholder.com/300x150?text=Machine+Learning",
       bannerSite: "java-starter.png"
+    },
+    {
+      id: 4,
+      title: "Bootcamp Amazing Data Intelligence: do zero ao analytics engineering",
+      description:
+        "E SE A PRÓXIMA DECISÃO IMPORTANTE DA SUA EMPRESA ESTIVER ESCONDIDA NOS DADOS? Descubra como transformar dados brutos em insights estratégicos com engenharia analítica moderna.",
+      duration: "20 horas",
+      price: "R$199,99 (promoção de lançamento)",
+      imageUrl: "https://via.placeholder.com/300x150?text=Machine+Learning",
+      bannerSite: "amazing.png"
     },
     // ...mais cursos
   ]
