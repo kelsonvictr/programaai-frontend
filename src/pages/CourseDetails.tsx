@@ -1,6 +1,6 @@
 import React from "react"
 import { useParams, useNavigate, Link } from "react-router-dom"
-import { Container, Card, Button, Alert, Row, Col } from "react-bootstrap"
+import { Container, Card, Button, Alert} from "react-bootstrap"
 import { FaLinkedin } from "react-icons/fa"
 import { courses } from "../mocks/courses"
 import ParcelamentoModal from "../components/ParcelamentoModal"
