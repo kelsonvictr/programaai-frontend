@@ -27,12 +27,15 @@ const CourseCard = ({
 }: CourseCardProps) => {
   return (
     <Card className="mb-4 h-100 shadow-sm">
-      <Card.Img
-        variant="top"
-        src={imageUrl}
-        alt={`Imagem do curso ${title}`}
-        style={{ height: '180px', objectFit: 'cover' }}
-      />
+      <Link to={`/cursos/${id}`}>
+        <Card.Img
+          variant="top"
+          src={imageUrl}
+          alt={`Imagem do curso ${title}`}
+          style={{ height: '180px', objectFit: 'cover', cursor: 'pointer' }}
+        />
+      </Link>
+
       <Card.Body className="d-flex flex-column">
         <small className="text-uppercase text-primary fw-bold mb-2">
           {modalidade}

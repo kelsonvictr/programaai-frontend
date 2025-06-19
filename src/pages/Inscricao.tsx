@@ -11,6 +11,7 @@ import { courses } from "../mocks/courses"
 import axios from "axios"
 import { Modal } from "react-bootstrap"
 import { termosDoCurso } from "../mocks/terms"
+import ParcelamentoModal from "../components/ParcelamentoModal"
 
 
 
@@ -61,6 +62,8 @@ const Inscricao: React.FC = () => {
     const [submitted, setSubmitted] = useState(false)
     const [showModal, setShowModal] = useState(false)
     const [showTermos, setShowTermos] = useState(false)
+    const [showParcelamento, setShowParcelamento] = useState(false)
+
 
 
     useEffect(() => {
@@ -199,7 +202,18 @@ const Inscricao: React.FC = () => {
             <h2 className="mb-2 text-center">Inscrição: {course.title}</h2>
             <p className="text-center mb-2">
                 <strong>Valor do curso:</strong> {course.price}
-            </p>
+                {course.obsPrice && <span className="text-muted"> ({course.obsPrice})</span>}
+                </p>
+
+                <div className="text-center mb-3">
+                <Button
+                    variant="outline-primary"
+                    size="sm"
+                    onClick={() => setShowParcelamento(true)}
+                >
+                    Ver opções de parcelamento
+                </Button>
+                </div>
             <p className="text-center mb-4 text-muted">
                 Você receberá via WhatsApp e e-mail as instruções de pagamento.<br />
                 Sua vaga só será confirmada após confirmação do pagamento.
@@ -492,6 +506,12 @@ const Inscricao: React.FC = () => {
                     </Button>
                 </Modal.Footer>
             </Modal>
+            <ParcelamentoModal
+                show={showParcelamento}
+                onHide={() => setShowParcelamento(false)}
+                valor={parseFloat(course.price.replace("R$", "").replace(",", "."))}
+            />
+
         </Container>
 
 
