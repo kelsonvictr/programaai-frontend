@@ -54,7 +54,7 @@
   .navLink {
     position: relative;
     z-index: 1;
-    color: var(--color-light) !important;
+    color: #011329;
     margin-left: 1rem;
     font-weight: 500;
   }
