@@ -28,16 +28,7 @@ jobs:
       - name: Build do projeto
         run: npm run build
 
-      - name: Instalar unzip
-        run: sudo apt-get install -y unzip
-
-      - name: Instalar AWS CLI via script oficial
-        run: |
-          curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
-          unzip awscliv2.zip
-          sudo ./aws/install
-
-      - name: Deploy no S3
+      - name: Deploy no S3 com AWS CLI
         run: aws s3 sync dist s3://${{ secrets.AWS_S3_BUCKET }} --delete
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
