@@ -1,4 +1,4 @@
-name: Deploy para S3
+name: Deploy para S3 + Invalidação CloudFront
 
 on:
   push:
@@ -7,9 +7,7 @@ on:
 
 jobs:
   deploy:
-    name: Build e Deploy no S3
     runs-on: ubuntu-latest
-
     steps:
       - name: Checkout do código
         uses: actions/checkout@v3
@@ -28,8 +26,22 @@ jobs:
       - name: Build do projeto
         run: npm run build
 
-      - name: Deploy no S3 com AWS CLI
-        run: aws s3 sync dist s3://${{ secrets.AWS_S3_BUCKET }} --delete
+      - name: Deploy no S3
+        uses: jakejarvis/s3-sync-action@master
+        with:
+          args: --delete
+        env:
+          AWS_S3_BUCKET: ${{ secrets.AWS_S3_BUCKET }}
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          AWS_REGION: ${{ secrets.AWS_REGION }}
+          SOURCE_DIR: dist
+
+      - name: Invalidar cache do CloudFront
+        run: |
+          aws cloudfront create-invalidation \
+            --distribution-id ${{ secrets.CLOUDFRONT_DISTRIBUTION_ID }} \
+            --paths "/*"
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
