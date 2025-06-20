@@ -2,7 +2,7 @@
 import React from "react"
 import { Navbar, Nav, Container } from "react-bootstrap"
 import { Link } from "react-router-dom"
-import logo from "../assets/logo.png"
+import logo from "../assets/logo-dourada.png"
 import styles from "./NavBar.module.css"
 
 const NavBar: React.FC = () => (
