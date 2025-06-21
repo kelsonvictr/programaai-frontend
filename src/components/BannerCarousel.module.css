@@ -10,17 +10,19 @@
 }
 
 .image {
-  display: inline-block;
   width: 100%;
   height: auto;
-  max-height: 400px; /* 👈 limite de altura no desktop */
+  max-height: 450px; /* altura máxima no desktop */
   object-fit: contain;
   object-position: center;
+  padding: 0 1rem; /* opcional: margens laterais pequenas */
 }
 
-/* 👇 Responsivo para telas menores */
+/* Reduz altura no mobile para melhor experiência */
 @media (max-width: 768px) {
   .image {
     max-height: 250px;
+    padding: 0;
   }
 }
+
