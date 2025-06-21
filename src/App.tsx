@@ -6,6 +6,7 @@ import Home from "./pages/Home"
 import Courses from "./pages/Courses"
 import CourseDetails from "./pages/CourseDetails"
 import Inscricao from "./pages/Inscricao"
+import CookieBanner from "./components/CookieBanner"
 
 const App: React.FC = () => {
   return (
@@ -16,6 +17,7 @@ const App: React.FC = () => {
         <Route path="/cursos/:id" element={<CourseDetails />} />
         <Route path="/inscricao/:id" element={<Inscricao />} />
       </Routes>
+      <CookieBanner />
     </Layout>
   )
 }
