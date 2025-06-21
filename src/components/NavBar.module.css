@@ -77,3 +77,24 @@
 .navLink:hover::after {
   width: 100%;
 }
+
+/* Quando o menu está expandido no mobile */
+.navbar-collapse.show {
+  background-color: #0f1c2f; /* mantém o fundo escuro no mobile */
+  padding: 1rem;
+  border-top: 1px solid #333;
+}
+
+/* Links dentro do menu mobile */
+.navbar-collapse.show .navLink {
+  color: #d4af37 !important; /* dourado */
+  font-weight: 600;
+}
+
+.navbar-collapse.show .navLink:hover {
+  color: #fffacd !important; /* tom mais claro de dourado no hover */
+}
+
+.navbar-collapse {
+  transition: all 0.3s ease;
+}
