@@ -10,7 +10,7 @@ const BannerCarousel: React.FC = () => (
       <Carousel.Item key={c.id} className={styles.item}>
         <img
           className={styles.image}
-          src={`/${c.bannerSite}`}   // agora busca em /public/
+          src={`${c.bannerSite}`}
           alt={c.title}
         />
       </Carousel.Item>
