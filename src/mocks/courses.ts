@@ -4,7 +4,7 @@ export interface Course {
   title: string
   description: string
   duration: string
-  price: string,
+  price: string
   obsPrice?: string
   imageUrl: string
   bannerSite: string
@@ -17,24 +17,9 @@ export interface Course {
 }
 
 export const courses: Course[] = [
-  /*{
-    id: 1,
-    title: "Bootcamp: Programação do Zero",
-    description:
-      "Pensado para quem nunca programou, este curso intensivo de 20 horas vai te levar da lógica de programação até a criação de projetos web simples com JavaScript, HTML5 e CSS3. Aprenda a estruturar páginas responsivas, manipular o DOM e introduzir conceitos de versionamento com Git/GitHub. Perfeito para quem busca uma base sólida, sem “encheção de linguiça”, e já sair construindo suas primeiras aplicações do zero!",
-    duration: "30 horas",
-    price: "R$199,99 (promoção de lançamento)",
-    imageUrl: "https://via.placeholder.com/300x150?text=ReactJS",
-    bannerSite: "react-native.png",
-    professor: "Kelson Victor",
-    linkedin: "https://www.linkedin.com/in/",
-    datas: ["12/07/2025", "26/07/2025", "09/08/2025"],
-    horario: "08:00 - 12:00 e 13:00 - 15:00",
-    modalidade: "PRESENCIAL | REMOTO AO VIVO"
-  },*/
   {
     id: 2,
-    title: "Bootcamp: AppSec Moderno com IA",
+    title: "Bootcamp: AppSec Moderno com IA (Turma 01)",
     description: `Em um cenário onde ciberataques estão cada vez mais sofisticados, a segurança de aplicações não pode mais ser reativa — ela precisa ser inteligente. Neste bootcamp prático de 20 horas, você vai mergulhar no universo da segurança ofensiva e defensiva, utilizando Inteligência Artificial para identificar vulnerabilidades em tempo real.
 
 Você aprenderá a integrar Python, Kali Linux, Burp Suite, OWASP ZAP, ferramentas de DevSecOps e pipelines de CI/CD com abordagens modernas como Shift Left Security. O conteúdo inclui desde fundamentos do OWASP Top 10, exploração de falhas em ambientes controlados, até a construção de automações com IA para prevenir exploits em produção. Também abordamos boas práticas de arquitetura segura em ambientes em nuvem (AWS/GCP), uso de Keycloak para autenticação robusta, e como configurar camadas de proteção com Cloudflare, WAF e IAM.
@@ -46,7 +31,7 @@ Com a experiência do professor Digenaldo Neto — Engenheiro de Segurança na J
     imageUrl: "/coursecard-appsec.png",
     bannerSite: "/banner-site-appsec.png",
     professor: "Digenaldo Neto",
-    linkedin: "https://www.linkedin.com/in/",
+    linkedin: "https://www.linkedin.com/in/digenaldo/",
     datas: ["19/07/2025", "02/08/2025", "16/08/2025"],
     horario: "08:00 - 12:00 e 13:00 - 15:00",
     modalidade: "PRESENCIAL | REMOTO AO VIVO",
@@ -54,8 +39,8 @@ Com a experiência do professor Digenaldo Neto — Engenheiro de Segurança na J
   },
   {
     id: 3,
-    title: "Bootcamp: Java Starter",
-   description: `Você quer começar sua jornada com Java da forma certa, do básico à prática moderna de desenvolvimento backend? Este curso foi feito para quem nunca programou ou precisa reciclar sua base em Java, com aulas ao vivo e conteúdo direto ao ponto. São 20 horas de prática intensa, onde você vai:
+    title: "Bootcamp: Java Starter (Turma 01)",
+    description: `Você quer começar sua jornada com Java da forma certa, do básico à prática moderna de desenvolvimento backend? Este curso foi feito para quem nunca programou ou precisa reciclar sua base em Java, com aulas ao vivo e conteúdo direto ao ponto. São 20 horas de prática intensa, onde você vai:
 
 - Aprender desde variáveis, estruturas de decisão e repetição até orientação a objetos;
 - Criar projetos práticos com IntelliJ, Java moderno (versões atuais), Maven, Spring Boot e banco de dados PostgreSQL;
@@ -70,7 +55,7 @@ O professor Higor Souza tem sólida experiência como desenvolvedor backend em e
     imageUrl: "/coursecard-javastarter.png",
     bannerSite: "/banner-site-javastarter.png",
     professor: "Higor Souza",
-    linkedin: "https://www.linkedin.com/in/",
+    linkedin: "https://www.linkedin.com/in/higor-souza-andrade/",
     datas: ["26/07/2025", "09/08/2025", "23/08/2025"],
     horario: "08:00 - 12:00 e 13:00 - 15:00",
     modalidade: "PRESENCIAL | REMOTO AO VIVO",
@@ -78,7 +63,7 @@ O professor Higor Souza tem sólida experiência como desenvolvedor backend em e
   },
   {
     id: 4,
-    title: "Bootcamp Amazing Data Intelligence: do zero ao analytics engineering",
+    title: "Bootcamp Amazing Data Intelligence: do zero ao analytics engineering (Turma 01)",
     description: `Você está prestes a descobrir o poder dos dados em decisões estratégicas. Este bootcamp intensivo de 20 horas foi pensado para transformar iniciantes em profissionais prontos para atuar em engenharia analítica, combinando fundamentos de dados com práticas de mercado.
 
 Você aprenderá a construir pipelines de dados do zero, entender modelagem para BI, aplicar boas práticas de governança e visualizar dados com ferramentas poderosas como PowerBI, Metabase, dbt, Athena e Glue. Também abordaremos ETL com PySpark e Airflow, consumo de dados com SQL avançado e integração em ambientes de nuvem (AWS/GCP).
@@ -90,7 +75,7 @@ O curso é conduzido por Wuldson Franco, especialista com atuação em empresas 
     imageUrl: "/coursecard-amazing-data.png",
     bannerSite: "/banner-site-amazing.png",
     professor: "Wuldson Franco",
-    linkedin: "https://www.linkedin.com/in/",
+    linkedin: "https://www.linkedin.com/in/wuldsonfranco/",
     datas: ["02/08/2025", "16/08/2025", "30/08/2025"],
     horario: "08:00 - 12:00 e 13:00 - 15:00",
     modalidade: "PRESENCIAL | REMOTO AO VIVO",

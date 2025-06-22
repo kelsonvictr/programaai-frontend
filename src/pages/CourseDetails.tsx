@@ -43,6 +43,7 @@ const CourseDetails: React.FC = () => {
             <strong>Duração:</strong> {course.duration} <br />
             <strong>Investimento:</strong> {course.price}
   {course.obsPrice && <span> ({course.obsPrice})</span>} <br />
+            <strong>Formas de Pagamento:</strong> Pix ou Cartão de Crédito (em até 12x)<br/>
             <Button
               variant="outline-primary"
               size="sm"
