@@ -514,7 +514,10 @@ const Inscricao: React.FC = () => {
                     <Modal.Title>Termos do Curso</Modal.Title>
                 </Modal.Header>
                 <Modal.Body>
-                    <pre style={{ whiteSpace: "pre-wrap" }}>{termosDoCurso}</pre>
+                    <div
+                        style={{ maxHeight: "60vh", overflowY: "auto" }}
+                        dangerouslySetInnerHTML={{ __html: termosDoCurso }}
+                    />
                 </Modal.Body>
                 <Modal.Footer>
                     <Button variant="secondary" onClick={() => setShowTermos(false)}>
