@@ -20,11 +20,27 @@ export const courses: Course[] = [
   {
     id: 2,
     title: "Bootcamp: AppSec Moderno com IA (Turma 01)",
-    description: `Em um cenário onde ciberataques estão cada vez mais sofisticados, a segurança de aplicações não pode mais ser reativa — ela precisa ser inteligente. Neste bootcamp prático de 20 horas, você vai mergulhar no universo da segurança ofensiva e defensiva, utilizando Inteligência Artificial para identificar vulnerabilidades em tempo real.
+    description: `Em um cenário onde os ciberataques evoluem mais rápido que as defesas tradicionais, a segurança de aplicações precisa ser proativa, automatizada e inteligente. Neste bootcamp prático de 20 horas, você vai explorar as fronteiras entre segurança ofensiva, defensiva e o uso de Inteligência Artificial aplicada a AppSec.
 
-Você aprenderá a integrar Python, Kali Linux, Burp Suite, OWASP ZAP, ferramentas de DevSecOps e pipelines de CI/CD com abordagens modernas como Shift Left Security. O conteúdo inclui desde fundamentos do OWASP Top 10, exploração de falhas em ambientes controlados, até a construção de automações com IA para prevenir exploits em produção. Também abordamos boas práticas de arquitetura segura em ambientes em nuvem (AWS/GCP), uso de Keycloak para autenticação robusta, e como configurar camadas de proteção com Cloudflare, WAF e IAM.
+A jornada passa por fundamentos como o OWASP Top 10, princípios CIA, DevSecOps e compliance (ISO 27001, LGPD, PCI-DSS), além de práticas modernas como Shift Left Security e análise de código assistida por IA. Você vai aprender a utilizar ferramentas como Burp Suite, OWASP ZAP, Semgrep e SonarQube, integrar segurança em pipelines CI/CD e aplicar testes SAST, DAST e IAST de forma eficaz.
 
-Com a experiência do professor Digenaldo Neto — Engenheiro de Segurança na Jusbrasil com passagens pela Globo, ServiceNet e Anchor Loans — você terá acesso a vivências de ponta aplicadas em grandes sistemas distribuídos do mercado.`,
+Também abordaremos segurança em APIs REST, GraphQL e gRPC, ambientes em nuvem como AWS e GCP, containers, escaneamento de imagens e práticas robustas de controle de acesso (JWT, OAuth2, OpenFGA).
+
+O conteúdo é altamente prático: desde ataques simulados em ambientes controlados (Juice Shop, DVWA, Hackazon) até a automação de defesas com IA, incluindo revisão de pull requests, análise de vulnerabilidades e resposta a incidentes com apoio de LLMs como o ChatGPT.
+
+Pré-requisitos ideais (noções básicas):
+
+1. Programação  
+Lógica de programação e estruturas básicas (if, loops, funções)  
+Leitura e escrita de código simples em Python, JavaScript ou Java
+
+2. Redes de Computadores  
+Entendimento básico de HTTP/HTTPS, requisições, headers  
+Diferença entre cliente e servidor, e o papel de uma API
+
+3. Ambientes de Desenvolvimento  
+Saber instalar e executar ferramentas em sistemas Linux (preferencialmente via terminal)  
+Noções básicas de Git e GitHub (clonar repositório, abrir pull request)`,
     duration: "20 horas",
     price: "R$199,99",
     obsPrice: "promoção de lançamento, no pix",
@@ -35,7 +51,7 @@ Com a experiência do professor Digenaldo Neto — Engenheiro de Segurança na J
     datas: ["19/07/2025", "02/08/2025", "16/08/2025"],
     horario: "08:00 - 12:00 e 13:00 - 15:00",
     modalidade: "PRESENCIAL | REMOTO AO VIVO",
-    bio: "Engenheiro de Segurança na Jusbrasil, Digenaldo possui ampla experiência em segurança da informação, arquitetura distribuída e desenvolvimento com Golang e Python. Atuou em grandes empresas como Globo, Anchor Loans, Jusbrasil e ServiceNet Tecnologia, liderando times e projetos voltados à segurança de aplicações, alta escalabilidade, APIs públicas e arquitetura de autenticação com Keycloak. É mestre em Tecnologia da Informação pela IFPB e certificado em práticas modernas de segurança e hacking ético.",
+    bio: "Engenheiro de Segurança na Jusbrasil, Digenaldo é mestre em Tecnologia da Informação (IFPB) com pesquisa focada em detecção de ataques DDoS via machine learning. Possui mais de 10 anos de experiência em engenharia de software, com ênfase em segurança da informação, sistemas distribuídos e cloud. Atuou em projetos de grande visibilidade na Rede Globo, como Big Brother Brasil e Cartola FC, e hoje lidera iniciativas em autenticação, segurança de APIs e arquitetura resiliente na Jusbrasil. É especializado em Golang e Python e práticas modernas de cibersegurança."
   },
   {
     id: 3,
