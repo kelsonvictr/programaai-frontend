@@ -31,6 +31,7 @@ interface FormState {
     estudanteTI: string
     estudanteDetalhe: string
     aceitaTermos: boolean
+    website: string
 }
 
 const Inscricao: React.FC = () => {
@@ -54,6 +55,7 @@ const Inscricao: React.FC = () => {
         estudanteTI: "",
         estudanteDetalhe: "",
         aceitaTermos: false,
+        website: "", 
     })
     const [errors, setErrors] = useState<string[]>([])
     const [showAIAmigo, setShowAIAmigo] = useState(false)
@@ -154,6 +156,9 @@ const Inscricao: React.FC = () => {
         if (form.estudanteTI !== "Não" && !form.estudanteDetalhe.trim())
             errs.push("Detalhe onde estuda/estudou.")
         if (!form.aceitaTermos) errs.push("Você precisa concordar com os termos.")
+        if (form.website.trim() !== "")
+            errs.push("A submissão foi bloqueada por comportamento suspeito.")
+
         setErrors(errs)
         return errs.length === 0
     }
@@ -472,6 +477,17 @@ const Inscricao: React.FC = () => {
                             checked={form.aceitaTermos}
                             onChange={handleChange}
                             required
+                        />
+                    </Form.Group>
+
+                    <Form.Group className="d-none">
+                        <Form.Label>Website</Form.Label>
+                        <Form.Control
+                            type="text"
+                            name="website"
+                            value={form.website}
+                            onChange={handleChange}
+                            autoComplete="off"
                         />
                     </Form.Group>
 
