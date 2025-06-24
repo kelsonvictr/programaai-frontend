@@ -183,7 +183,10 @@ const Inscricao: React.FC = () => {
                             ? `Indicação de ${form.amigoIndicacao}`
                             : form.fonteAI,
                 nomeAmigo: form.amigoIndicacao || "",
-                curso: course?.title || ""
+                curso: course?.title || "",
+                aceitouTermos: form.aceitaTermos,
+                versaoTermo: "v1.0",
+
             })
 
             if (response.status === 201 || response.status === 200) {
