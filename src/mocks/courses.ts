@@ -14,6 +14,7 @@ export interface Course {
   horario: string
   modalidade: string
   bio: string
+  prerequisitos?: string[]
 }
 
 export const courses: Course[] = [
@@ -26,21 +27,7 @@ A jornada passa por fundamentos como o OWASP Top 10, princípios CIA, DevSecOps 
 
 Também abordaremos segurança em APIs REST, GraphQL e gRPC, ambientes em nuvem como AWS e GCP, containers, escaneamento de imagens e práticas robustas de controle de acesso (JWT, OAuth2, OpenFGA).
 
-O conteúdo é altamente prático: desde ataques simulados em ambientes controlados (Juice Shop, DVWA, Hackazon) até a automação de defesas com IA, incluindo revisão de pull requests, análise de vulnerabilidades e resposta a incidentes com apoio de LLMs como o ChatGPT.
-
-Pré-requisitos ideais (noções básicas):
-
-1. Programação  
-Lógica de programação e estruturas básicas (if, loops, funções)  
-Leitura e escrita de código simples em Python, JavaScript ou Java
-
-2. Redes de Computadores  
-Entendimento básico de HTTP/HTTPS, requisições, headers  
-Diferença entre cliente e servidor, e o papel de uma API
-
-3. Ambientes de Desenvolvimento  
-Saber instalar e executar ferramentas em sistemas Linux (preferencialmente via terminal)  
-Noções básicas de Git e GitHub (clonar repositório, abrir pull request)`,
+O conteúdo é altamente prático: desde ataques simulados em ambientes controlados (Juice Shop, DVWA, Hackazon) até a automação de defesas com IA, incluindo revisão de pull requests, análise de vulnerabilidades e resposta a incidentes com apoio de LLMs como o ChatGPT.`,
     duration: "20 horas",
     price: "R$199,99",
     obsPrice: "promoção de lançamento, no pix",
@@ -51,7 +38,15 @@ Noções básicas de Git e GitHub (clonar repositório, abrir pull request)`,
     datas: ["19/07/2025", "02/08/2025", "16/08/2025"],
     horario: "08:00 - 12:00 e 13:00 - 15:00",
     modalidade: "PRESENCIAL | REMOTO AO VIVO",
-    bio: "Engenheiro de Segurança na Jusbrasil, Digenaldo é mestre em Tecnologia da Informação (IFPB) com pesquisa focada em detecção de ataques DDoS via machine learning. Possui mais de 10 anos de experiência em engenharia de software, com ênfase em segurança da informação, sistemas distribuídos e cloud. Atuou em projetos de grande visibilidade na Rede Globo, como Big Brother Brasil e Cartola FC, e hoje lidera iniciativas em autenticação, segurança de APIs e arquitetura resiliente na Jusbrasil. É especializado em Golang e Python e práticas modernas de cibersegurança."
+    bio: "Engenheiro de Segurança na Jusbrasil, Digenaldo é mestre em Tecnologia da Informação (IFPB) com pesquisa focada em detecção de ataques DDoS via machine learning. Possui mais de 10 anos de experiência em engenharia de software, com ênfase em segurança da informação, sistemas distribuídos e cloud. Atuou em projetos de grande visibilidade na Rede Globo, como Big Brother Brasil e Cartola FC, e hoje lidera iniciativas em autenticação, segurança de APIs e arquitetura resiliente na Jusbrasil. É especializado em Golang e Python e práticas modernas de cibersegurança.",
+    prerequisitos: [
+    "Lógica de programação e estruturas básicas (if, loops, funções)",
+    "Leitura e escrita de código simples em Python, JavaScript ou Java",
+    "Entendimento básico de HTTP/HTTPS, requisições e headers",
+    "Conhecimento sobre a diferença entre cliente e servidor e o papel de uma API",
+    "Capacidade de instalar e executar ferramentas em sistemas Linux (preferencialmente via terminal)",
+    "Noções básicas de Git e GitHub (clonar repositório, abrir pull request)"
+  ]
   },
   {
     id: 3,
@@ -76,6 +71,13 @@ O professor Higor Souza tem sólida experiência como desenvolvedor backend em e
     horario: "08:00 - 12:00 e 13:00 - 15:00",
     modalidade: "PRESENCIAL | REMOTO AO VIVO",
     bio: "Especialista em Java, Spring Boot e AWS Lambda, Higor atua há mais de 4 anos com desenvolvimento backend, entregando soluções robustas e inovadoras. Já passou por empresas como Captalys, Phoebus, Global Hitss e atualmente está na Conexa. Com forte base em microserviços, testes automatizados e integração com APIs externas, também é experiente em bancos de dados como PostgreSQL e MongoDB. Higor se destaca por sua capacidade de liderar melhorias técnicas com foco em qualidade e performance.",
+    prerequisitos: [
+      "Interesse em aprender programação do zero",
+      "Conhecimentos básicos em lógica (opcional)",
+      "Vontade de se aprofundar em backend moderno",
+      "Notebook com Java instalado (orientamos no início do curso)"
+    ]
+  
   },
   {
     id: 4,
@@ -96,5 +98,13 @@ O curso é conduzido por Wuldson Franco, especialista com atuação em empresas 
     horario: "08:00 - 12:00 e 13:00 - 15:00",
     modalidade: "PRESENCIAL | REMOTO AO VIVO",
     bio: "Com passagens por empresas como A3Data, UNIESP, NTT Data, Hospital Nossa Senhora das Neves e Rede Mater Dei, Wuldson é um engenheiro de dados com sólida formação em Big Data e BI para o setor de saúde. Atua com ferramentas como PySpark, Airflow, dbt, PowerBI, Metabase, Glue, S3 e Athena. Também é professor universitário nas áreas de Banco de Dados e Engenharia Analítica, com MBA e certificações internacionais. Sua trajetória une prática de mercado com conhecimento acadêmico para transformar dados em decisões estratégicas.",
+    prerequisitos: [
+      "Interesse por dados e suas aplicações",
+      "Noções básicas de lógica ou Excel",
+      "Familiaridade com leitura de gráficos e tabelas",
+      "Curiosidade em entender como dados geram valor para negócios",
+      "Notebook com navegador moderno (não precisa saber programar)"
+    ]
+
   }
 ]

@@ -69,6 +69,18 @@ const CourseDetails: React.FC = () => {
           <h5>Sobre o curso</h5>
           <p>{course.description}</p>
 
+          {course.prerequisitos && course.prerequisitos.length > 0 && (
+          <>
+            <hr />
+            <h5>Pré-requisitos</h5>
+            <ul>
+              {course.prerequisitos.map((item, idx) => (
+                <li key={idx} style={{ marginBottom: "0.5rem" }}>{item}</li>
+              ))}
+            </ul>
+          </>
+        )}
+
           <div className="mt-4 d-flex flex-column flex-md-row gap-3">
           <div>
             <Link to={`/inscricao/${id}`} className="btn btn-success btn-lg fw-bold px-4 py-2">
