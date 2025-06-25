@@ -81,16 +81,25 @@ const CourseDetails: React.FC = () => {
           </>
         )}
 
-          <div className="mt-4 d-flex flex-column flex-md-row gap-3">
-          <div>
-            <Link to={`/inscricao/${id}`} className="btn btn-success btn-lg fw-bold px-4 py-2">
-              🚀 Inscreva-se agora
-            </Link>
-            <p className="mt-2 mb-0 text-success-emphasis small">
-              👨‍💻👩‍💻 Poucas vagas restantes! Garanta seu lugar.
-            </p>
+          <div className="alert alert-warning d-flex align-items-start gap-2" role="alert">
+            <span style={{ fontSize: "1.5rem" }}>💻</span>
+            <div>
+              <strong>Atenção!</strong> Não disponibilizamos computadores no local do curso. É necessário que cada aluno leve seu <strong>notebook pessoal</strong>.  
+              <br />
+              Essa abordagem é excelente pois garante que o <strong>ambiente de desenvolvimento</strong> configurado em sala estará prontinho para você continuar praticando em casa!
+            </div>
           </div>
-        </div>
+
+          <div className="mt-4 d-flex flex-column flex-md-row gap-3">
+            <div>
+              <Link to={`/inscricao/${id}`} className="btn btn-success btn-lg fw-bold px-4 py-2">
+                🚀 Inscreva-se agora
+              </Link>
+              <p className="mt-2 mb-0 text-success-emphasis small">
+                👨‍💻👩‍💻 Poucas vagas restantes! Garanta seu lugar.
+              </p>
+            </div>
+          </div>
 
         </Card.Body>
       </Card>
