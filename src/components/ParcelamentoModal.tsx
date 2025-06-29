@@ -32,26 +32,32 @@ const ParcelamentoModal: React.FC<ParcelamentoModalProps> = ({
         {parcelas.length === 0 ? (
           <p className="text-muted">Ainda não há simulações disponíveis para este valor.</p>
         ) : (
-          <Table striped bordered hover responsive>
-            <thead>
-              <tr>
-                <th>Parcelas</th>
-                <th>Valor de cada parcela</th>
-                <th>Total final</th>
-              </tr>
-            </thead>
-            <tbody>
-              {parcelas.map((p, idx) => (
-                <tr key={idx}>
-                  <td>{p.vezes}x</td>
-                  <td>{p.valorParcela}</td>
-                  <td>{p.total}</td>
+          <>
+            <Table striped bordered hover responsive>
+              <thead>
+                <tr>
+                  <th>Parcelas</th>
+                  <th>Valor de cada parcela</th>
+                  <th>Total final</th>
                 </tr>
-              ))}
-            </tbody>
-          </Table>
+              </thead>
+              <tbody>
+                {parcelas.map((p, idx) => (
+                  <tr key={idx}>
+                    <td>{p.vezes}x</td>
+                    <td>{p.valorParcela}</td>
+                    <td>{p.total}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </Table>
+            <p className="text-muted small mt-3">
+              💳 <strong>Importante:</strong> Os valores apresentados são uma simulação com base nas taxas atuais do Nubank e podem sofrer alterações a qualquer momento, conforme políticas do banco emissor do cartão.
+            </p>
+          </>
         )}
       </Modal.Body>
+
       <Modal.Footer>
         <Button variant="secondary" onClick={onHide}>
           Fechar
