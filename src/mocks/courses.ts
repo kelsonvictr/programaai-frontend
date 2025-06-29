@@ -150,6 +150,54 @@ O curso é conduzido por Wuldson Franco, especialista com atuação em empresas 
       "Curiosidade em entender como dados geram valor para negócios",
       "Notebook com navegador moderno (não precisa saber programar)"
     ]
+  },
+  {
+    id: 5,
+    title: "Bootcamp: Meu Primeiro App com TypeScript e React Native (Turma 01)",
+    description: `Você já conhece ReactJS ou outro framework web e quer expandir seus horizontes? Este bootcamp é a ponte entre o mundo web e o universo dos apps!
 
+  Ao longo de 20 horas de aula, vamos construir um app completo com autenticação e CRUD usando Firebase como backend. Antes de mergulhar no React Native, você vai aprender a base de TypeScript e entender por que esse superset de JavaScript se tornou padrão na criação de aplicações modernas. Tudo isso com orientação direta, foco em boas práticas e resultado prático na tela do seu celular.`,
+    duration: "20 horas",
+    price: "R$199,99",
+    obsPrice: "promoção de lançamento, no pix",
+    imageUrl: "/banner-site-reactnative.png",
+    bannerSite: "/banner-site-reactnative.png",
+    professor: "Kelson Almeida",
+    linkedin: "https://www.linkedin.com/in/kelson-almeida/",
+    datas: ["26/07/2025", "02/08/2025", "23/08/2025"],
+    horario: "08:00 - 12:00 e 13:00 - 15:00",
+    modalidade: "PRESENCIAL | REMOTO AO VIVO",
+    bio: "Desenvolvedor Senior na NTT Data, atuando no banco Itaú. Professor universitário na UNIESP - Centro Universitário e Mestre em Informática pela UFPB. Criador da programa ai, é apaixonado por ensinar e por tecnologias como Java, Kotlin, JavaScript/TypeScript, React e Python. Mais de 100 alunos já passaram pelo seu Curso Presencial de Programação Fullstack, que une didática prática e experiência de mercado.",
+    prerequisitos: [
+      "Já ter tido algum contato com ReactJS (mesmo que básico)",
+      "Conhecimento geral de JavaScript (variáveis, funções, arrays, etc.)",
+      "Interesse em aprender como funciona um app mobile na prática",
+      "Notebook próprio com permissão para instalar ferramentas de desenvolvimento"
+    ],
+    publicoAlvo: [
+      "Pessoas que já estudaram um pouco de ReactJS e querem experimentar o mundo mobile",
+      "Desenvolvedores web em início de jornada que desejam criar seu primeiro app com TypeScript",
+      "Estudantes ou autodidatas que já criaram algo com ReactJS e querem aprender sobre apps com Firebase",
+      "Quem já conhece a base do front-end e quer transformar esse conhecimento em um app real"
+    ],
+    oQueVaiAprender: [
+      "Fundamentos essenciais do TypeScript e como usá-lo com segurança em projetos React Native",
+      "Configurar um projeto React Native com Expo de forma rápida e prática",
+      "Criar um app mobile com múltiplas telas e navegação moderna (Stack + Tabs)",
+      "Construir um sistema de autenticação com Firebase Authentication",
+      "Salvar e recuperar dados com Firebase Firestore em tempo real",
+      "Organizar um projeto completo com boas práticas de código e estrutura de pastas",
+      "Publicar seu app em modo de teste no seu próprio celular"
+    ],
+    modulos: [
+      "Introdução ao TypeScript: tipos, interfaces, inferência e boas práticas",
+      "Configuração do ambiente com Expo e criação do primeiro app",
+      "Criação de componentes reutilizáveis com props e useState",
+      "Navegação entre telas com React Navigation (Stack e Tabs)",
+      "Integração com Firebase Authentication (registro, login e logout)",
+      "Leitura e escrita de dados no Firebase Firestore",
+      "Estilização com Flexbox e organização visual do app",
+      "Publicação do app em modo de teste e próximos passos no mundo mobile"
+    ]
   }
 ]
