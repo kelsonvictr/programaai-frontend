@@ -160,7 +160,7 @@ O curso é conduzido por Wuldson Franco, especialista com atuação em empresas 
     duration: "20 horas",
     price: "R$199,99",
     obsPrice: "promoção de lançamento, no pix",
-    imageUrl: "/banner-site-reactnative.png",
+    imageUrl: "/coursecard-reactnative.png",
     bannerSite: "/banner-site-reactnative.png",
     professor: "Kelson Almeida",
     linkedin: "https://www.linkedin.com/in/kelson-almeida/",
