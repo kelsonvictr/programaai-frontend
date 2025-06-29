@@ -1,7 +1,7 @@
 import React, { useState } from "react"
 import { Navbar, Nav, Container } from "react-bootstrap"
 import { Link, useLocation } from "react-router-dom"
-import logo from "../assets/logo-dourada.png"
+import logo from "../assets/logo.png"
 import styles from "./NavBar.module.css"
 
 const NavBar: React.FC = () => {
