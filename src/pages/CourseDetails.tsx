@@ -69,10 +69,46 @@ const CourseDetails: React.FC = () => {
           <h5>Sobre o curso</h5>
           <p>{course.description}</p>
 
-          {course.prerequisitos && course.prerequisitos.length > 0 && (
+          {course.publicoAlvo && course.publicoAlvo.length > 0 && (
           <>
             <hr />
-            <h5>Pré-requisitos</h5>
+            <h5>🎯 Público-alvo</h5>
+            <ul>
+              {course.publicoAlvo.map((item, idx) => (
+                <li key={idx} style={{ marginBottom: "0.5rem" }}>{item}</li>
+              ))}
+            </ul>
+          </>
+        )}
+
+        {course.oQueVaiAprender && course.oQueVaiAprender.length > 0 && (
+          <>
+            <hr />
+            <h5>✅ O que você vai aprender</h5>
+            <ul>
+              {course.oQueVaiAprender.map((item, idx) => (
+                <li key={idx} style={{ marginBottom: "0.5rem" }}>{item}</li>
+              ))}
+            </ul>
+          </>
+        )}
+
+        {course.modulos && course.modulos.length > 0 && (
+          <>
+            <hr />
+            <h5>📦 Módulos do curso</h5>
+            <ol>
+              {course.modulos.map((item, idx) => (
+                <li key={idx} style={{ marginBottom: "0.5rem" }}>{item}</li>
+              ))}
+            </ol>
+          </>
+        )}
+
+        {course.prerequisitos && course.prerequisitos.length > 0 && (
+          <>
+            <hr />
+            <h5>🧠 Pré-requisitos</h5>
             <ul>
               {course.prerequisitos.map((item, idx) => (
                 <li key={idx} style={{ marginBottom: "0.5rem" }}>{item}</li>
