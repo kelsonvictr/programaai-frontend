@@ -22,7 +22,7 @@ export interface Course {
 
 export const courses: Course[] = [
   {
-    id: 2,
+    id: 3,
     title: "Bootcamp: AppSec Moderno com IA (Turma 01)",
     description: `Em um cenário onde os ciberataques evoluem mais rápido que as defesas tradicionais, a segurança de aplicações precisa ser proativa, automatizada e inteligente. Neste bootcamp prático de 20 horas, você vai explorar as fronteiras entre segurança ofensiva, defensiva e o uso de Inteligência Artificial aplicada a AppSec.
 
@@ -71,7 +71,7 @@ export const courses: Course[] = [
     ]
   },
   {
-    id: 3,
+    id: 2,
     title: "Bootcamp: Java Starter (Turma 01)",
     description: `Comece sua jornada na programação com Java de forma prática e guiada!
 O Java Starter é um curso voltado para iniciantes que desejam aprender os fundamentos da programação utilizando a linguagem Java, aliando teoria essencial com prática direta em sala. Ao longo do curso, o aluno aprenderá desde conceitos básicos como variáveis e estruturas de controle, até orientação a objetos e programação funcional com expressões lambda. O conteúdo também serve como base sólida para quem deseja futuramente se aprofundar em frameworks como o Spring Boot, em nossa Jornada Spring.
