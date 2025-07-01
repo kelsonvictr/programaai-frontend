@@ -125,32 +125,52 @@ Você quer começar sua jornada com Java da forma certa, do básico à prática 
     ]
   },
   {
-    id: 4,
-    title: "Bootcamp Amazing Data Intelligence: do zero ao analytics engineering (Turma 01)",
-    description: `Você está prestes a descobrir o poder dos dados em decisões estratégicas. Este bootcamp intensivo de 20 horas foi pensado para transformar iniciantes em profissionais prontos para atuar em engenharia analítica, combinando fundamentos de dados com práticas de mercado.
+  id: 4,
+  title: "Bootcamp Amazing Data Intelligence: do zero ao analytics engineering (Turma 01)",
+  description: `Você está prestes a descobrir o poder dos dados em decisões estratégicas. Este bootcamp intensivo de 20 horas foi pensado para transformar iniciantes em profissionais prontos para atuar em engenharia analítica, combinando fundamentos de dados com práticas de mercado.
 
 Você aprenderá a construir pipelines de dados do zero, entender modelagem para BI, aplicar boas práticas de governança e visualizar dados com ferramentas poderosas como PowerBI, Metabase, dbt, Athena e Glue. Também abordaremos ETL com PySpark e Airflow, consumo de dados com SQL avançado e integração em ambientes de nuvem (AWS/GCP).
 
 O curso é conduzido por Wuldson Franco, especialista com atuação em empresas como A3Data, Rede Mater Dei, UNIESP e NTT Data. Wuldson combina experiência acadêmica com projetos reais no setor de saúde e grande volume de dados, oferecendo uma visão completa de como transformar dados em decisões com eficiência, rastreabilidade e impacto de negócio real.`,
-    duration: "20 horas",
-    price: "R$199,99",
-    obsPrice: "promoção de lançamento, no pix",
-    imageUrl: "/coursecard-amazing-data.png",
-    bannerSite: "/banner-site-amazing.png",
-    professor: "Wuldson Franco",
-    linkedin: "https://www.linkedin.com/in/wuldsonfranco/",
-    datas: ["09/08/2025", "30/08/2025", "13/09/2025"],
-    horario: "08:00 - 12:00 e 13:00 - 15:00",
-    modalidade: "PRESENCIAL | REMOTO AO VIVO",
-    bio: "Com passagens por empresas como A3Data, UNIESP, NTT Data, Hospital Nossa Senhora das Neves e Rede Mater Dei, Wuldson é um engenheiro de dados com sólida formação em Big Data e BI para o setor de saúde. Atua com ferramentas como PySpark, Airflow, dbt, PowerBI, Metabase, Glue, S3 e Athena. Também é professor universitário nas áreas de Banco de Dados e Engenharia Analítica, com MBA e certificações internacionais. Sua trajetória une prática de mercado com conhecimento acadêmico para transformar dados em decisões estratégicas.",
-    prerequisitos: [
-      "Interesse por dados e suas aplicações",
-      "Noções básicas de lógica ou Excel",
-      "Familiaridade com leitura de gráficos e tabelas",
-      "Curiosidade em entender como dados geram valor para negócios",
-      "Notebook com navegador moderno (não precisa saber programar)"
-    ]
-  },
+  duration: "12 horas",
+  price: "R$180,00",
+  obsPrice: "promoção de lançamento, no pix",
+  imageUrl: "/coursecard-amazing-data.png",
+  bannerSite: "/banner-site-amazing.png",
+  professor: "Wuldson Franco",
+  linkedin: "https://www.linkedin.com/in/wuldsonfranco/",
+  datas: ["02/08/2025", "30/08/2025"],
+  horario: "08:00 - 12:00 e 13:00 - 15:00",
+  modalidade: "PRESENCIAL | REMOTO AO VIVO",
+  bio: "Especialista em Engenharia de Dados e Analytics com sólida experiência em projetos de BI e dados no setor de saúde, financeiro e telecon. Professor universitário, Product Owner e mentor técnico em tecnologias como AWS, Google Cloud, Python, SQL, Airflow, dbt e PySpark. Certificado em Big Data e nuvem, atua como referência em engenharia analítica, desenvolvendo pipelines e indicadores para grandes volumes de dados.",
+  prerequisitos: [
+    "Conhecimento básico de SQL",
+    "Noções de lógica de programação (qualquer linguagem)",
+    "**Desejável experiência com ambiente Linux ou Docker (mas não obrigatório)",
+    "Vontade de aprender e colocar a mão na massa!"
+  ],
+  publicoAlvo: [
+    "Profissionais que desejam migrar ou se especializar em engenharia de dados",
+    "Analistas de BI, cientistas de dados e desenvolvedores que queiram entender pipelines de dados completos",
+    "Estudantes e recém-formados em TI, Ciência de Dados, Estatística, Engenharia ou áreas correlatas",
+    "Líderes e gestores que precisam compreender a base técnica da inteligência analítica moderna"
+  ],
+  oQueVaiAprender: [
+    "Como construir um pipeline de dados completo, do ingestion à camada de analytics",
+    "Arquiteturas de dados modernas (medallion architecture, data lakes, data warehouses)",
+    "Ferramentas essenciais como Docker, Python, PostgreSQL e Metabase",
+    "Boas práticas em ETL/ELT para dados estruturados e semiestruturados",
+    "Transformação de dados em insights com dashboards e relatórios avançados",
+    "Introdução à governança e qualidade de dados"
+  ],
+  modulos: [
+    "Fundamentos da Engenharia de Dados e Analytics",
+    "Construindo Pipelines com Python: Leitura e escrita de dados em diversos formatos",
+    "Integração e Armazenamento com PostgreSQL: configurando um data lake e modelagem de esquemas bronze, silver e gold",
+    "Conceitos-chave: ETL, ELT, Data Lake, Data Warehouse, arquiteturas modernas",
+    "Visualização e Análise de Dados: construção de dashboards com Metabase e storytelling de dados"
+  ]
+},
   {
     id: 5,
     title: "Bootcamp: Meu Primeiro App com TypeScript e React Native (Turma 01)",
@@ -164,7 +184,7 @@ O curso é conduzido por Wuldson Franco, especialista com atuação em empresas 
     bannerSite: "/banner-site-reactnative.png",
     professor: "Kelson Almeida",
     linkedin: "https://www.linkedin.com/in/kelson-almeida/",
-    datas: ["26/07/2025", "02/08/2025", "23/08/2025"],
+    datas: ["26/07/2025", "16/08/2025", "23/08/2025"],
     horario: "08:00 - 12:00 e 13:00 - 15:00",
     modalidade: "PRESENCIAL | REMOTO AO VIVO",
     bio: "Desenvolvedor Senior na NTT Data, atuando no banco Itaú. Professor universitário na UNIESP - Centro Universitário e Mestre em Informática pela UFPB. Criador da programa ai, é apaixonado por ensinar e por tecnologias como Java, Kotlin, JavaScript/TypeScript, React e Python. Mais de 100 alunos já passaram pelo seu Curso Presencial de Programação Fullstack, que une didática prática e experiência de mercado.",
