@@ -183,7 +183,6 @@ const Inscricao: React.FC = () => {
         <strong>Escolha a forma de pagamento:</strong>
         <Form.Check type="radio" label={`PIX - R$ ${valorBase.toFixed(2)}`} name="paymentMethod" checked={paymentMethod === "PIX"} onChange={() => setPaymentMethod("PIX")} />
         <Form.Check type="radio" label={`Cartão de Crédito - R$ ${valorCartao.toFixed(2)} (em até 12x de R$ ${parcela12x.toFixed(2)})`} name="paymentMethod" checked={paymentMethod === "CARTAO"} onChange={() => setPaymentMethod("CARTAO")} />
-        <small className="text-muted">* O valor no cartão já inclui 8% de taxa. Parcelamento em até 12x.</small>
       </div>
 
       {errors.length > 0 && (

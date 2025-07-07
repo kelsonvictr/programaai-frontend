@@ -44,13 +44,6 @@ const CourseDetails: React.FC = () => {
             <strong>Investimento:</strong> {course.price}
   {course.obsPrice && <span> ({course.obsPrice})</span>} <br />
             <strong>Formas de Pagamento:</strong> Pix ou Cartão de Crédito (em até 12x)<br/>
-            <Button
-              variant="outline-primary"
-              size="sm"
-              onClick={() => setShowParcelamento(true)}
-            >
-              Ver opções de parcelamento
-            </Button>
 
           </p>
 
