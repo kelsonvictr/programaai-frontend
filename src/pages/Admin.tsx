@@ -5,7 +5,6 @@ import { signInWithEmailAndPassword, onAuthStateChanged, signOut } from 'firebas
 import { Container, Table, Button, Form, Spinner, Alert } from 'react-bootstrap'
 
 const API_URL = `${import.meta.env.VITE_API_URL}/admin/inscricoes`
-const ADMIN_KEY = import.meta.env.VITE_ADMIN_KEY
 
 export default function Admin() {
   const [user, setUser] = useState<any>(null)
@@ -14,11 +13,16 @@ export default function Admin() {
   const [inscricoes, setInscricoes] = useState<any[]>([])
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
+  const [token, setToken] = useState<string>('')
 
   useEffect(() => {
-    onAuthStateChanged(auth, (u) => {
+    onAuthStateChanged(auth, async (u) => {
       setUser(u)
-      if (u) fetchInscricoes()
+      if (u) {
+        const t = await u.getIdToken()
+        setToken(t)
+        fetchInscricoes(t)
+      }
     })
   }, [])
 
@@ -26,7 +30,11 @@ export default function Admin() {
     e.preventDefault()
     setError(null)
     try {
-      await signInWithEmailAndPassword(auth, email, senha)
+      const cred = await signInWithEmailAndPassword(auth, email, senha)
+      const t = await cred.user.getIdToken()
+      setToken(t)
+      setUser(cred.user)
+      fetchInscricoes(t)
     } catch (err: any) {
       setError(err.message)
     }
@@ -35,13 +43,15 @@ export default function Admin() {
   const logout = async () => {
     await signOut(auth)
     setInscricoes([])
+    setToken('')
   }
 
-  const fetchInscricoes = async () => {
+  const fetchInscricoes = async (jwt: string) => {
     setLoading(true)
+    setError(null)
     try {
       const { data } = await axios.get(API_URL, {
-        headers: { 'x-api-key': ADMIN_KEY }
+        headers: { Authorization: `Bearer ${jwt}` }
       })
       setInscricoes(data)
     } catch (err) {
@@ -56,7 +66,7 @@ export default function Admin() {
     if (!window.confirm('Confirma excluir esta inscrição?')) return
     try {
       await axios.delete(`${API_URL}/${id}`, {
-        headers: { 'x-api-key': ADMIN_KEY }
+        headers: { Authorization: `Bearer ${token}` }
       })
       setInscricoes(inscricoes.filter(i => i.id !== id))
     } catch (err) {
