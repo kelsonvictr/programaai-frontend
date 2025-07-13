@@ -58,6 +58,9 @@ const Inscricao: React.FC = () => {
   const [showTermos, setShowTermos] = useState(false)
   const [showParcelamento, setShowParcelamento] = useState(false)
   const [paymentMethod, setPaymentMethod] = useState<"PIX" | "CARTAO">("PIX")
+  const [showSucesso, setShowSucesso] = useState(false)
+  const [linkPagamento, setLinkPagamento] = useState("")
+
 
 
   useEffect(() => {
@@ -117,6 +120,8 @@ const Inscricao: React.FC = () => {
     try {
       const response = await axios.post(`${import.meta.env.VITE_API_URL}`, {
         nomeCompleto: form.nome,
+        cpf: form.cpf,
+        rg: form.rg,
         email: form.email,
         whatsapp: form.celular.replace(/\s|\(|\)|-/g, ""),
         sexo: form.sexo,
@@ -136,11 +141,18 @@ const Inscricao: React.FC = () => {
       })
 
       if (response.status === 201 || response.status === 200) {
-        const linkPagamento = response.data.linkPagamento
-        window.location.href = linkPagamento
+        const link = response.data.linkPagamento
+        setLinkPagamento(link)
+        setShowSucesso(true)
+
+        // redireciona em 10s
+        setTimeout(() => {
+          window.location.href = link
+        }, 10000)
       } else {
         setErrors(["Erro ao enviar sua inscrição. Tente novamente mais tarde."])
       }
+
     } catch (err) {
       console.error("Erro ao enviar inscrição:", err)
       setErrors(["Erro ao enviar sua inscrição. Tente novamente mais tarde."])
@@ -464,6 +476,23 @@ const Inscricao: React.FC = () => {
           <Button variant="secondary" onClick={() => setShowTermos(false)}>Fechar</Button>
         </Modal.Footer>
       </Modal>
+
+      <Modal show={showSucesso} onHide={() => {}} backdrop="static" keyboard={false} centered>
+      <Modal.Header>
+        <Modal.Title>Inscrição efetuada com sucesso!</Modal.Title>
+      </Modal.Header>
+      <Modal.Body>
+        <p>✅ Sua inscrição foi realizada com sucesso!</p>
+        <p>📄 <a href={linkPagamento} target="_blank" rel="noopener noreferrer">
+          Clique aqui para proceder com o pagamento
+        </a></p>
+        <p>✉️ Você também receberá um e-mail com as informações de pagamento.</p>
+        <div className="text-center mt-3">
+          <div className="spinner-border text-primary" role="status" />
+          <p className="mt-2">Você será redirecionado automaticamente em até 10 segundos…</p>
+        </div>
+      </Modal.Body>
+    </Modal>
 
       <ParcelamentoModal show={showParcelamento} onHide={() => setShowParcelamento(false)} valor={valorBase} />
     </Container>
