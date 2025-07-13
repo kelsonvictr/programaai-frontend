@@ -6,11 +6,22 @@ import { Container, Table, Button, Form, Spinner, Alert } from 'react-bootstrap'
 
 const API_URL = `${import.meta.env.VITE_API_URL}/galaxy/inscricoes`
 
+type Inscricao = {
+  id: string
+  nomeCompleto: string
+  email: string
+  curso: string
+  dataInscricao: string
+  whatsapp: string
+  ondeEstuda?: string
+  asaasPaymentLinkUrl?: string
+}
+
 export default function Admin() {
   const [user, setUser] = useState<any>(null)
   const [email, setEmail] = useState('')
   const [senha, setSenha] = useState('')
-  const [inscricoes, setInscricoes] = useState<any[]>([])
+  const [inscricoes, setInscricoes] = useState<Inscricao[]>([])
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [token, setToken] = useState<string>('')
@@ -50,10 +61,11 @@ export default function Admin() {
     setLoading(true)
     setError(null)
     try {
-      const { data } = await axios.get(API_URL, {
+      const { data } = await axios.get<Inscricao[]>(API_URL, {
         headers: { Authorization: `Bearer ${jwt}` }
       })
-      setInscricoes(data)
+      const ordenadas = data.sort((a, b) => new Date(b.dataInscricao).getTime() - new Date(a.dataInscricao).getTime())
+      setInscricoes(ordenadas)
     } catch (err) {
       console.error(err)
       setError('Erro ao carregar inscrições')
@@ -95,36 +107,60 @@ export default function Admin() {
     )
   }
 
+  const inscricoesPorCurso = inscricoes.reduce((acc, inscricao) => {
+    if (!acc[inscricao.curso]) acc[inscricao.curso] = []
+    acc[inscricao.curso].push(inscricao)
+    return acc
+  }, {} as Record<string, Inscricao[]>)
+
   return (
     <Container className="py-5">
       <h2>Inscrições</h2>
       <Button variant="secondary" onClick={logout} className="mb-3">Sair</Button>
       {loading && <Spinner animation="border" />}
       {error && <Alert variant="danger">{error}</Alert>}
-      <Table striped bordered hover>
-        <thead>
-          <tr>
-            <th>Nome</th>
-            <th>Curso</th>
-            <th>Email</th>
-            <th>Ações</th>
-          </tr>
-        </thead>
-        <tbody>
-          {inscricoes.map(i => (
-            <tr key={i.id}>
-              <td>{i.nomeCompleto}</td>
-              <td>{i.curso}</td>
-              <td>{i.email}</td>
-              <td>
-                <Button variant="danger" size="sm" onClick={() => deletar(i.id)}>
-                  🗑️ Deletar
-                </Button>
-              </td>
-            </tr>
-          ))}
-        </tbody>
-      </Table>
+
+      {Object.entries(inscricoesPorCurso).map(([curso, lista]) => (
+        <div key={curso} className="mb-5">
+          <h4>{curso}</h4>
+          <Table striped bordered hover>
+            <thead>
+              <tr>
+                <th>Data/Hora</th>
+                <th>Nome</th>
+                <th>Email</th>
+                <th>WhatsApp</th>
+                <th>Onde Estuda</th>
+                <th>Link Pagamento</th>
+                <th>Ações</th>
+              </tr>
+            </thead>
+            <tbody>
+              {lista.map(i => (
+                <tr key={i.id}>
+                  <td>
+                    {new Date(i.dataInscricao).toLocaleString()}
+                  </td>
+                  <td>{i.nomeCompleto}</td>
+                  <td>{i.email}</td>
+                  <td>{i.whatsapp}</td>
+                  <td>{i.ondeEstuda || '-'}</td>
+                  <td>
+                    {i.asaasPaymentLinkUrl
+                      ? <a href={i.asaasPaymentLinkUrl} target="_blank" rel="noreferrer">Link</a>
+                      : '-'}
+                  </td>
+                  <td>
+                    <Button variant="danger" size="sm" onClick={() => deletar(i.id)}>
+                      🗑️ Deletar
+                    </Button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </Table>
+        </div>
+      ))}
     </Container>
   )
 }
