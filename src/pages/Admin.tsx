@@ -4,7 +4,7 @@ import { auth } from '../firebase'
 import { signInWithEmailAndPassword, onAuthStateChanged, signOut } from 'firebase/auth'
 import { Container, Table, Button, Form, Spinner, Alert } from 'react-bootstrap'
 
-const API_URL = `${import.meta.env.VITE_API_URL}/admin/inscricoes`
+const API_URL = `${import.meta.env.VITE_API_URL}/galaxy/inscricoes`
 
 export default function Admin() {
   const [user, setUser] = useState<any>(null)
@@ -78,7 +78,7 @@ export default function Admin() {
   if (!user) {
     return (
       <Container className="py-5" style={{ maxWidth: 400 }}>
-        <h2>Login Admin</h2>
+        <h2>Galaxy</h2>
         <Form onSubmit={login}>
           <Form.Group className="mb-3">
             <Form.Label>Email</Form.Label>
