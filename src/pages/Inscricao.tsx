@@ -118,7 +118,7 @@ const Inscricao: React.FC = () => {
     if (!validate()) return
 
     try {
-      const response = await axios.post(`${import.meta.env.VITE_API_URL}`, {
+      const response = await axios.post(`${import.meta.env.VITE_API_URL}/inscricao`, {
         nomeCompleto: form.nome,
         cpf: form.cpf,
         rg: form.rg,
