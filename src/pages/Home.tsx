@@ -19,8 +19,11 @@ const Home: React.FC = () => {
           <Col md={6} className="mb-4 mb-md-0 text-md-start text-center">
             <h1>Programação, IA e muito café.</h1>
 
-            <Row className="my-4 text-center">
-              <Col md={6} className="mb-3 mb-md-0">
+            <Row
+              className="my-4 text-center justify-content-center"
+              style={{ gap: "8px", flexWrap: "nowrap", overflowX: "auto" }}
+            >
+              <Col xs={6} md={6} style={{ flex: "0 0 auto", maxWidth: "300px" }}>
                 <video
                   src="/videos/sala-web.mp4"
                   autoPlay
@@ -28,11 +31,11 @@ const Home: React.FC = () => {
                   loop
                   playsInline
                   className="rounded shadow"
-                  style={{ maxHeight: 250, maxWidth: "100%" }}
+                  style={{ maxHeight: 250, width: "100%" }}
                 />
               </Col>
 
-              <Col md={6}>
+              <Col xs={6} md={6} style={{ flex: "0 0 auto", maxWidth: "300px" }}>
                 <video
                   src="/videos/video-2-web.mp4"
                   autoPlay
@@ -40,10 +43,11 @@ const Home: React.FC = () => {
                   loop
                   playsInline
                   className="rounded shadow"
-                  style={{ maxHeight: 250, maxWidth: "100%" }}
+                  style={{ maxHeight: 250, width: "100%" }}
                 />
               </Col>
             </Row>
+
 
 
             <p className="lead">
