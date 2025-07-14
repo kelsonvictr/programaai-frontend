@@ -8,7 +8,7 @@ import { courses } from "../mocks/courses"
 const Home: React.FC = () => {
   const novidades = courses
     .sort((a, b) => b.id - a.id)
-    .slice(0, 3)
+    .slice(0, 4)
 
   return (
     <>
@@ -17,7 +17,7 @@ const Home: React.FC = () => {
       <Container className="py-2">
         <Row className="align-items-start">
           <Col md={6} className="mb-4 mb-md-0 text-md-start text-center">
-            <h1>Programação, IA 👩‍💻👨‍💻 e muito café ☕</h1>
+            <h2>Programação, IA 👩‍💻👨‍💻 e muito café ☕</h2>
 
             <Row
               className="my-4 text-center justify-content-center"
@@ -124,7 +124,9 @@ const Home: React.FC = () => {
                 </Card.Text>
                 <Button
                   as="a"
-                  href="https://wa.me/5583986608771"
+                  href={`https://wa.me/5583986608771?text=${encodeURIComponent(
+                    "Oi prof. Kelson, venho do site da programa AI, poderia me esclarecer algumas dúvidas?"
+                  )}`}
                   target="_blank"
                   rel="noopener noreferrer"
                   variant="success"
