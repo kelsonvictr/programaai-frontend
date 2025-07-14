@@ -9,6 +9,7 @@ export interface Course {
   imageUrl: string
   bannerSite: string
   professor: string
+  profFoto: string
   linkedin: string
   datas: string[]
   horario: string
@@ -33,6 +34,7 @@ export const courses: Course[] = [
     imageUrl: "/coursecard-reactnative.png",
     bannerSite: "/banners/banner-site-reactnative.png",
     professor: "Kelson Almeida",
+    profFoto: "/professores/kelson.jpeg",
     linkedin: "https://www.linkedin.com/in/kelson-almeida/",
     datas: ["26/07/2025", "02/08/2025", "23/08/2025"],
     horario: "08:00 - 12:00 e 13:00 - 15:00",
@@ -86,6 +88,7 @@ export const courses: Course[] = [
     imageUrl: "/coursecard-appsec.png",
     bannerSite: "/banners/banner-site-appsec.png",
     professor: "Digenaldo Neto",
+    profFoto: "/professores/digenaldo.jpeg",
     linkedin: "https://www.linkedin.com/in/digenaldo/",
     datas: ["06/09/2025", "13/09/2025", "20/09/2025"],
     horario: "08:00 - 12:00 e 13:00 - 15:00",
@@ -133,6 +136,7 @@ O curso é conduzido por Wuldson Franco, especialista com atuação em empresas 
   imageUrl: "/coursecard-amazing-data.png",
   bannerSite: "/banners/banner-site-amazing.png",
   professor: "Wuldson Franco",
+  profFoto: "/professores/wuldson.jpeg",
   linkedin: "https://www.linkedin.com/in/wuldsonfranco/",
   datas: ["16/08/2025", "30/08/2025"],
   horario: "08:00 - 12:00 e 13:00 - 15:00",
@@ -181,6 +185,7 @@ Você quer começar sua jornada com Java da forma certa, do básico à prática 
     imageUrl: "/coursecard-javastarter.png",
     bannerSite: "/banners/banner-site-javastarter.png",
     professor: "Higor Souza",
+    profFoto: "/professores/higor.jpeg",
     linkedin: "https://www.linkedin.com/in/higor-souza-andrade/",
     datas: ["27/09/2025", "04/10/2025", "18/10/2025"],
     horario: "08:00 - 12:00 e 13:00 - 15:00",

@@ -78,20 +78,37 @@ const Home: React.FC = () => {
             <h3 className="mb-4">Novidades</h3>
             {novidades.map(curso => (
               <Card key={curso.id} className="mb-3 shadow-sm">
-                <Card.Body className="p-3 d-flex justify-content-between align-items-center">
-                  <div>
+                <Card.Body className="d-flex">
+                  {/* Foto do professor */}
+                  <img
+                    src={curso.profFoto}
+                    alt={curso.professor}
+                    style={{
+                      width: 64,
+                      height: 64,
+                      objectFit: "cover",
+                      borderRadius: "50%",
+                      marginRight: "1rem"
+                    }}
+                  />
+
+                  <div className="flex-grow-1">
                     <Card.Title className="h6 mb-1">{curso.title}</Card.Title>
-                    <small className="text-muted">{curso.duration}</small>
+                    <small className="text-muted d-block mb-1">{curso.duration}</small>
+                    <p className="mb-2">
+                      {curso.description.slice(0, 60)}...
+                    </p>
+                    <Link
+                      to={`/cursos/${curso.id}`}
+                      className="btn btn-outline-primary btn-sm"
+                    >
+                      Ver curso
+                    </Link>
                   </div>
-                  <Link
-                    to={`/cursos/${curso.id}`}
-                    className="btn btn-outline-primary btn-sm"
-                  >
-                    Ver curso
-                  </Link>
                 </Card.Body>
               </Card>
             ))}
+
           </Col>
         </Row>
 
