@@ -1,5 +1,5 @@
 import React from "react"
-import { Container, Row, Col, Button, Card, Carousel } from "react-bootstrap"
+import { Container, Row, Col, Button, Card } from "react-bootstrap"
 import { Link } from "react-router-dom"
 import { FaWhatsapp } from "react-icons/fa"
 import BannerCarousel from "../components/BannerCarousel"
