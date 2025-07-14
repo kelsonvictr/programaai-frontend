@@ -1,5 +1,5 @@
 import React from "react"
-import { Container, Row, Col, Button, Card } from "react-bootstrap"
+import { Container, Row, Col, Button, Card, Carousel } from "react-bootstrap"
 import { Link } from "react-router-dom"
 import { FaWhatsapp } from "react-icons/fa"
 import BannerCarousel from "../components/BannerCarousel"
@@ -20,11 +20,14 @@ const Home: React.FC = () => {
             <h1>Programação, IA e muito café.</h1>
 
             <div className="my-4 text-center">
-              <img
-                src="/sala1.png"
-                alt="Sala de Treinamento Programa AI"
-                className="img-fluid rounded"
-                style={{ maxHeight: 250 }}
+              <video
+                src="/videos/sala-web.mp4"
+                autoPlay
+                muted
+                loop
+                playsInline
+                className="rounded shadow"
+                style={{ maxHeight: 250, maxWidth: "100%" }}
               />
             </div>
 
