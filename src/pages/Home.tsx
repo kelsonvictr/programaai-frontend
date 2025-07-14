@@ -19,17 +19,32 @@ const Home: React.FC = () => {
           <Col md={6} className="mb-4 mb-md-0 text-md-start text-center">
             <h1>Programação, IA e muito café.</h1>
 
-            <div className="my-4 text-center">
-              <video
-                src="/videos/sala-web.mp4"
-                autoPlay
-                muted
-                loop
-                playsInline
-                className="rounded shadow"
-                style={{ maxHeight: 250, maxWidth: "100%" }}
-              />
-            </div>
+            <Row className="my-4 text-center">
+              <Col md={6} className="mb-3 mb-md-0">
+                <video
+                  src="/videos/sala-web.mp4"
+                  autoPlay
+                  muted
+                  loop
+                  playsInline
+                  className="rounded shadow"
+                  style={{ maxHeight: 250, maxWidth: "100%" }}
+                />
+              </Col>
+
+              <Col md={6}>
+                <video
+                  src="/videos/video-2-web.mp4"
+                  autoPlay
+                  muted
+                  loop
+                  playsInline
+                  className="rounded shadow"
+                  style={{ maxHeight: 250, maxWidth: "100%" }}
+                />
+              </Col>
+            </Row>
+
 
             <p className="lead">
               Cursos livres e bootcamps que te preparam para o mercado!
