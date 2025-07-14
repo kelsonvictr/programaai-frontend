@@ -14,10 +14,10 @@ const Home: React.FC = () => {
     <>
       <BannerCarousel />
 
-      <Container className="py-5">
+      <Container className="py-2">
         <Row className="align-items-start">
           <Col md={6} className="mb-4 mb-md-0 text-md-start text-center">
-            <h1>Programação, IA e muito café.</h1>
+            <h1>Programação, IA 👩‍💻👨‍💻 e muito café ☕</h1>
 
             <Row
               className="my-4 text-center justify-content-center"
