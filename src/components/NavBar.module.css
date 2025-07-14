@@ -112,11 +112,24 @@
 
 
 .whatsappButton {
+  display: flex;
+  justify-content: center;
+  align-items: center;
   margin: 0 auto;
   text-align: center;
+  z-index: 1;
 }
 
 .whatsappButton button {
   font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 8px; /* espaço entre o ícone e o texto */
+  padding: 0.4rem 0.8rem;
+}
+
+.whatsappButton img {
+  height: 20px;
+  vertical-align: middle;
 }
 

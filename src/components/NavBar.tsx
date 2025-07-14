@@ -26,6 +26,7 @@ const NavBar: React.FC = () => {
         <Navbar.Toggle onClick={() => setExpanded(prev => !prev)} aria-controls="navbar-nav" />
 
         <Navbar.Collapse id="navbar-nav">
+          {/* Links à esquerda */}
           <Nav className="me-auto">
             <Nav.Link
               as={Link}
@@ -36,7 +37,29 @@ const NavBar: React.FC = () => {
             >
               Início
             </Nav.Link>
+          </Nav>
 
+          {/* Botão centralizado */}
+          <div className="mx-auto">
+            <a
+              href={whatsappLink}
+              target="_blank"
+              rel="noopener noreferrer"
+              className={styles.whatsappButton}
+            >
+              <Button variant="success">
+                <img
+                  src="https://upload.wikimedia.org/wikipedia/commons/5/5e/WhatsApp_icon.png"
+                  alt="WhatsApp"
+                  style={{ height: "20px", marginRight: "8px", verticalAlign: "middle" }}
+                />
+                Fale com a gente no WhatsApp
+              </Button>
+            </a>
+          </div>
+
+          {/* Links à direita */}
+          <Nav className="ms-auto">
             <Nav.Link
               as={Link}
               to="/cursos"
@@ -47,18 +70,6 @@ const NavBar: React.FC = () => {
               Cursos
             </Nav.Link>
           </Nav>
-
-          {/* Botão centralizado */}
-          <a
-            href={whatsappLink}
-            target="_blank"
-            rel="noopener noreferrer"
-            className={styles.whatsappButton}
-          >
-            <Button variant="success">
-              📞 Fale com a gente no WhatsApp
-            </Button>
-          </a>
         </Navbar.Collapse>
       </Container>
     </Navbar>
