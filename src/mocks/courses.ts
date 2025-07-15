@@ -187,7 +187,7 @@ Você quer começar sua jornada com Java da forma certa, do básico à prática 
     professor: "Higor Souza",
     profFoto: "/professores/higor.jpeg",
     linkedin: "https://www.linkedin.com/in/higor-souza-andrade/",
-    datas: ["27/09/2025", "04/10/2025", "18/10/2025"],
+    datas: ["18/10/2025", "25/10/2025", "01/11/2025"],
     horario: "08:00 - 12:00 e 13:00 - 15:00",
     modalidade: "PRESENCIAL | REMOTO AO VIVO",
     bio: "Com mais de 10 anos de experiência no mercado de tecnologia, atua há 5 anos como desenvolvedor de software. Atualmente atua como desenvolvedor back-end com foco nas tecnologias Java e Spring. Possui vivência em projetos dos setores de meios de pagamento, marketplaces e precificação de crédito, com forte atuação na manutenção e evolução de soluções baseadas em microserviços em ambientes de cloud computing — sempre buscando evoluir essas soluções com performance, qualidade e visão de negócio. Além da atuação técnica, ministra cursos de programação com foco em iniciantes, adotando uma abordagem moderna que integra o uso de inteligência artificial, como o ChatGPT, para acelerar o aprendizado, desenvolver o raciocínio lógico e incentivar a autonomia dos alunos.",
