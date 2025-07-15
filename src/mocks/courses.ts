@@ -90,7 +90,7 @@ export const courses: Course[] = [
     professor: "Digenaldo Neto",
     profFoto: "/professores/digenaldo.jpeg",
     linkedin: "https://www.linkedin.com/in/digenaldo/",
-    datas: ["06/09/2025", "13/09/2025", "20/09/2025"],
+    datas: ["06/09/2025", "20/09/2025", "04/10/2025"],
     horario: "08:00 - 12:00 e 13:00 - 15:00",
     modalidade: "PRESENCIAL | REMOTO AO VIVO",
     bio: "Engenheiro de Segurança na Jusbrasil, Digenaldo é mestre em Tecnologia da Informação (IFPB) com pesquisa focada em detecção de ataques DDoS via machine learning. Possui mais de 10 anos de experiência em engenharia de software, com ênfase em segurança da informação, sistemas distribuídos e cloud. Atuou em projetos de grande visibilidade na Rede Globo, como Big Brother Brasil e Cartola FC, e hoje lidera iniciativas em autenticação, segurança de APIs e arquitetura resiliente na Jusbrasil. É especializado em Golang e Python e práticas modernas de cibersegurança.",
