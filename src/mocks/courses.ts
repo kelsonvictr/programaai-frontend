@@ -36,7 +36,7 @@ export const courses: Course[] = [
     professor: "Kelson Almeida",
     profFoto: "/professores/kelson.jpeg",
     linkedin: "https://www.linkedin.com/in/kelson-almeida/",
-    datas: ["26/07/2025", "02/08/2025", "23/08/2025"],
+    datas: ["26/07/2025", "02/08/2025", "09/08/2025"],
     horario: "08:00 - 12:00 e 13:00 - 15:00",
     modalidade: "PRESENCIAL | REMOTO AO VIVO",
     bio: "Desenvolvedor Senior na NTT Data, atuando no banco Itaú. Professor universitário na UNIESP - Centro Universitário e Mestre em Informática pela UFPB. Criador da programa ai, é apaixonado por ensinar e por tecnologias como Java, Kotlin, JavaScript/TypeScript, React e Python. Mais de 100 alunos já passaram pelo seu Curso Presencial de Programação Fullstack, que une didática prática e experiência de mercado.",
