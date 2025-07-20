@@ -131,7 +131,7 @@ Você aprenderá a construir pipelines de dados do zero, entender modelagem para
 
 O curso é conduzido por Wuldson Franco, especialista com atuação em empresas como A3Data, Rede Mater Dei, UNIESP e NTT Data. Wuldson combina experiência acadêmica com projetos reais no setor de saúde e grande volume de dados, oferecendo uma visão completa de como transformar dados em decisões com eficiência, rastreabilidade e impacto de negócio real.`,
   duration: "12 horas",
-  price: "R$180,00",
+  price: "R$179,99",
   obsPrice: "promoção de lançamento, no pix",
   imageUrl: "/coursecard-amazing-data.png",
   bannerSite: "/banners/banner-site-amazing.png",
