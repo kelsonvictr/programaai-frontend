@@ -17,7 +17,7 @@ const Home: React.FC = () => {
       <Container className="py-2">
         <Row className="align-items-start">
           <Col md={6} className="mb-4 mb-md-0 text-md-start text-center">
-            <h2>Programação, IA 👩‍💻👨‍💻 e muito café ☕</h2>
+            <h3>Muita Programação, IA e Café! ☕👩‍💻👨‍💻</h3>
 
             <Row
               className="my-4 text-center justify-content-center"
