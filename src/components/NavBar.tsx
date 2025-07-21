@@ -1,6 +1,7 @@
 import React, { useState } from "react"
 import { Navbar, Nav, Container, Button } from "react-bootstrap"
 import { Link, useLocation } from "react-router-dom"
+import { FaLinkedin, FaInstagram } from "react-icons/fa"
 import logo from "../assets/logo.png"
 import styles from "./NavBar.module.css"
 
@@ -47,7 +48,7 @@ const NavBar: React.FC = () => {
           </div>
 
           {/* Links juntos no canto direito */}
-          <Nav className="ms-auto">
+          <Nav className="ms-auto align-items-center">
             <Nav.Link
               as={Link}
               to="/"
@@ -66,6 +67,28 @@ const NavBar: React.FC = () => {
               active={location.pathname === "/cursos"}
             >
               Cursos
+            </Nav.Link>
+
+            {/* LinkedIn */}
+            <Nav.Link
+              href="https://www.linkedin.com/company/programaaidev"
+              target="_blank"
+              rel="noopener noreferrer"
+              className={`${styles.navLink} ms-2`}
+              title="LinkedIn"
+            >
+              <FaLinkedin size={20} />
+            </Nav.Link>
+
+            {/* Instagram */}
+            <Nav.Link
+              href="https://instagram.com/programaai.dev"
+              target="_blank"
+              rel="noopener noreferrer"
+              className={`${styles.navLink} ms-2`}
+              title="Instagram"
+            >
+              <FaInstagram size={20} />
             </Nav.Link>
           </Nav>
         </Navbar.Collapse>
