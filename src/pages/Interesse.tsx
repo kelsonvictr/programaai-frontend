@@ -16,7 +16,7 @@ const ListaInteresse = () => {
   const [interesses, setInteresses] = useState<string[]>([])
   const [aceitaContato, setAceitaContato] = useState(false)
   const [website, setWebsite] = useState("") // honeypot
-  const [enviado, setEnviado] = useState(false)
+  //const [enviado, setEnviado] = useState(false)
 
   const [showModalSucesso, setShowModalSucesso] = useState(false)
   const [showModalRegras, setShowModalRegras] = useState(false)
@@ -61,7 +61,7 @@ const ListaInteresse = () => {
     }
 
     console.log("📩 Dados enviados (mock):", dados)
-    setEnviado(true)
+    //setEnviado(true)
     setShowModalSucesso(true)
   }
 
