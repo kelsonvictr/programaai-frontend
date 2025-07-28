@@ -1,5 +1,13 @@
 import { useState } from "react"
-import { Container, Form, Button, Alert } from "react-bootstrap"
+import {
+  Container,
+  Form,
+  Button,
+  Alert,
+  Modal,
+  Row,
+  Col
+} from "react-bootstrap"
 
 const ListaInteresse = () => {
   const [nome, setNome] = useState("")
@@ -7,7 +15,11 @@ const ListaInteresse = () => {
   const [whatsapp, setWhatsapp] = useState("")
   const [interesses, setInteresses] = useState<string[]>([])
   const [aceitaContato, setAceitaContato] = useState(false)
+  const [website, setWebsite] = useState("") // honeypot
   const [enviado, setEnviado] = useState(false)
+
+  const [showModalSucesso, setShowModalSucesso] = useState(false)
+  const [showModalRegras, setShowModalRegras] = useState(false)
 
   const opcoesInteresse = [
     "Fullstack",
@@ -30,6 +42,11 @@ const ListaInteresse = () => {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
 
+    // Proteção contra bots
+    if (website) {
+      return
+    }
+
     if (!nome || !email || !whatsapp || interesses.length === 0 || !aceitaContato) {
       alert("Por favor, preencha todos os campos obrigatórios.")
       return
@@ -45,81 +62,145 @@ const ListaInteresse = () => {
 
     console.log("📩 Dados enviados (mock):", dados)
     setEnviado(true)
+    setShowModalSucesso(true)
   }
 
   return (
     <Container className="mt-5 mb-5">
-      <h2 className="mb-4">Entre para o Clube programa AI</h2>
+      <Alert variant="info" className="text-center">
+        🎁 <strong>É totalmente gratuito</strong> entrar no Clube programa AI e você já garante <strong>5% de desconto</strong> em qualquer curso!
+      </Alert>
 
-      {enviado ? (
-        <Alert variant="success">
-          Obrigado por se cadastrar! Em breve você receberá novidades e seu cupom de 5% de desconto no e-mail.
-        </Alert>
-      ) : (
-        <Form onSubmit={handleSubmit}>
-          <Form.Group className="mb-3">
-            <Form.Label>Nome completo</Form.Label>
-            <Form.Control
-              type="text"
-              value={nome}
-              onChange={e => setNome(e.target.value)}
-              placeholder="Digite seu nome"
-              required
-            />
-          </Form.Group>
+      <h2 className="mb-4 text-center">Entre para o Clube programa AI</h2>
 
-          <Form.Group className="mb-3">
-            <Form.Label>E-mail</Form.Label>
-            <Form.Control
-              type="email"
-              value={email}
-              onChange={e => setEmail(e.target.value)}
-              placeholder="exemplo@email.com"
-              required
-            />
-          </Form.Group>
+      <Form onSubmit={handleSubmit}>
+        <Form.Group className="mb-3">
+          <Form.Label>Nome completo</Form.Label>
+          <Form.Control
+            type="text"
+            value={nome}
+            onChange={e => setNome(e.target.value)}
+            placeholder="Digite seu nome"
+            required
+          />
+        </Form.Group>
 
-          <Form.Group className="mb-3">
-            <Form.Label>WhatsApp</Form.Label>
-            <Form.Control
-              type="tel"
-              value={whatsapp}
-              onChange={e => setWhatsapp(e.target.value)}
-              placeholder="(83) 99999-9999"
-              required
-            />
-          </Form.Group>
+        <Form.Group className="mb-3">
+          <Form.Label>E-mail</Form.Label>
+          <Form.Control
+            type="email"
+            value={email}
+            onChange={e => setEmail(e.target.value)}
+            placeholder="exemplo@email.com"
+            required
+          />
+        </Form.Group>
 
-          <Form.Group className="mb-3">
-            <Form.Label>Áreas de interesse</Form.Label>
-            <div>
-              {opcoesInteresse.map(area => (
+        <Form.Group className="mb-3">
+          <Form.Label>WhatsApp</Form.Label>
+          <Form.Control
+            type="tel"
+            value={whatsapp}
+            onChange={e => setWhatsapp(e.target.value)}
+            placeholder="(83) 99999-9999"
+            required
+          />
+        </Form.Group>
+
+        {/* Honeypot - campo invisível */}
+        <Form.Group className="mb-3 d-none">
+          <Form.Label>Website</Form.Label>
+          <Form.Control
+            type="text"
+            name="website"
+            value={website}
+            onChange={e => setWebsite(e.target.value)}
+          />
+        </Form.Group>
+
+        <Form.Group className="mb-3">
+          <Form.Label>Áreas de interesse</Form.Label>
+          <Row>
+            {opcoesInteresse.map(area => (
+              <Col xs={12} sm={6} md={4} key={area}>
                 <Form.Check
-                  key={area}
                   type="checkbox"
                   label={area}
                   checked={interesses.includes(area)}
                   onChange={() => handleCheckboxChange(area)}
                 />
-              ))}
-            </div>
-          </Form.Group>
+              </Col>
+            ))}
+          </Row>
+        </Form.Group>
 
-          <Form.Group className="mb-3">
-            <Form.Check
-              type="checkbox"
-              label="Concordo em receber comunicações por e-mail e WhatsApp da programa AI sobre cursos nas áreas escolhidas."
-              checked={aceitaContato}
-              onChange={() => setAceitaContato(!aceitaContato)}
-              required
-            />
-          </Form.Group>
+        <Form.Group className="mb-4">
+          <Form.Check
+            type="checkbox"
+            label={
+              <>
+                Concordo em receber comunicações por e-mail e WhatsApp da programa AI sobre cursos nas áreas escolhidas.
+                <br />
+                <a
+                  href="#"
+                  onClick={(e) => {
+                    e.preventDefault()
+                    setShowModalRegras(true)
+                  }}
+                  style={{ fontSize: "0.9rem" }}
+                >
+                  Ver regras do Clube
+                </a>
+              </>
+            }
+            checked={aceitaContato}
+            onChange={() => setAceitaContato(!aceitaContato)}
+            required
+          />
+        </Form.Group>
 
-          <Button variant="primary" type="submit">
+        <div className="text-center">
+          <Button variant="primary" type="submit" size="lg">
             Quero entrar para o Clube
           </Button>
-        </Form>
-      )}
+        </div>
+      </Form>
+
+      {/* Modal de sucesso */}
+      <Modal show={showModalSucesso} onHide={() => setShowModalSucesso(false)} centered>
+        <Modal.Header closeButton>
+          <Modal.Title>🎉 Bem-vindo(a) ao Clube programa AI!</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          Você agora tem <strong>5% de desconto garantido</strong> em qualquer curso. Em breve entraremos em contato com mais novidades!
+        </Modal.Body>
+        <Modal.Footer>
+          <Button variant="success" onClick={() => setShowModalSucesso(false)}>
+            Fechar
+          </Button>
+        </Modal.Footer>
+      </Modal>
+
+      {/* Modal de regras */}
+      <Modal show={showModalRegras} onHide={() => setShowModalRegras(false)} centered>
+        <Modal.Header closeButton>
+          <Modal.Title>📜 Regras do Clube programa AI</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <ul>
+            <li>A entrada é 100% gratuita.</li>
+            <li>O desconto de 5% é válido para qualquer curso enquanto a promoção estiver ativa.</li>
+            <li>A promoção pode ser encerrada a qualquer momento, sem aviso prévio.</li>
+            <li>Você receberá comunicações por e-mail ou WhatsApp conforme suas áreas de interesse.</li>
+            <li>O desconto não é acumulativo com outras promoções.</li>
+          </ul>
+        </Modal.Body>
+        <Modal.Footer>
+          <Button variant="secondary" onClick={() => setShowModalRegras(false)}>
+            Entendi
+          </Button>
+        </Modal.Footer>
+      </Modal>
     </Container>
   )
 }
