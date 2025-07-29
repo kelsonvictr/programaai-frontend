@@ -22,6 +22,7 @@ const ListaInteresse = () => {
 
   const [showModalSucesso, setShowModalSucesso] = useState(false)
   const [showModalRegras, setShowModalRegras] = useState(false)
+  const [showModalJaCadastrado, setShowModalJaCadastrado] = useState(false) 
 
   const navigate = useNavigate() 
 
@@ -45,14 +46,9 @@ const ListaInteresse = () => {
     )
   }
 
-  // Função simples para formatar o WhatsApp no formato: +55 (83) 98660-8771
   const formatarWhatsapp = (valor: string) => {
     let apenasNumeros = valor.replace(/\D/g, "")
-
-    if (!apenasNumeros.startsWith("55")) {
-      apenasNumeros = "55" + apenasNumeros
-    }
-
+    if (!apenasNumeros.startsWith("55")) apenasNumeros = "55" + apenasNumeros
     apenasNumeros = apenasNumeros.slice(0, 13)
 
     const pais = apenasNumeros.substring(0, 2)
@@ -73,7 +69,6 @@ const ListaInteresse = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-
     if (website) return
 
     if (!nome || !email || !whatsapp || interesses.length === 0 || !aceitaContato) {
@@ -89,11 +84,16 @@ const ListaInteresse = () => {
         `${import.meta.env.VITE_API_URL}/clube/interesse`,
         dados
       )
-
       setShowModalSucesso(true)
-    } catch (error) {
+    } catch (error: any) {
       console.error("❌ Erro ao enviar:", error)
-      alert("Ocorreu um erro ao enviar seus dados. Tente novamente mais tarde.")
+
+      // ✅ Tratando o caso de e-mail duplicado (409 Conflict)
+      if (error.response && error.response.status === 409) {
+        setShowModalJaCadastrado(true)
+      } else {
+        alert("Ocorreu um erro ao enviar seus dados. Tente novamente mais tarde.")
+      }
     } finally {
       setEnviando(false)
     }
@@ -101,7 +101,7 @@ const ListaInteresse = () => {
 
   const fecharModalSucesso = () => {
     setShowModalSucesso(false)
-    navigate("/") // ⬅️ redireciona para página principal
+    navigate("/")
   }
 
   return (
@@ -113,6 +113,7 @@ const ListaInteresse = () => {
       <h2 className="mb-4 text-center">Entre para o Clube programa AI</h2>
 
       <Form onSubmit={handleSubmit}>
+        {/* Campos do formulário */}
         <Form.Group className="mb-3">
           <Form.Label>Nome completo</Form.Label>
           <Form.Control
@@ -146,7 +147,7 @@ const ListaInteresse = () => {
           />
         </Form.Group>
 
-        {/* Honeypot - campo invisível */}
+        {/* Honeypot oculto */}
         <Form.Group className="mb-3 d-none">
           <Form.Label>Website</Form.Label>
           <Form.Control
@@ -157,6 +158,7 @@ const ListaInteresse = () => {
           />
         </Form.Group>
 
+        {/* Checkboxes de interesse */}
         <Form.Group className="mb-3">
           <Form.Label>Áreas de interesse</Form.Label>
           <Row>
@@ -173,6 +175,7 @@ const ListaInteresse = () => {
           </Row>
         </Form.Group>
 
+        {/* Aceite */}
         <Form.Group className="mb-4">
           <Form.Check
             type="checkbox"
@@ -221,6 +224,22 @@ const ListaInteresse = () => {
         <Modal.Footer>
           <Button variant="success" onClick={fecharModalSucesso}>
             Fechar
+          </Button>
+        </Modal.Footer>
+      </Modal>
+
+      {/* Modal já cadastrado */}
+      <Modal show={showModalJaCadastrado} onHide={() => setShowModalJaCadastrado(false)} centered>
+        <Modal.Header closeButton>
+          <Modal.Title>📩 Você já faz parte do Clube!</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          O e-mail informado já está cadastrado no <b>Clube programa AI</b>.  
+          Você já pode aproveitar <strong>5% de desconto</strong> em nossos cursos. 🚀
+        </Modal.Body>
+        <Modal.Footer>
+          <Button variant="success" onClick={() => setShowModalJaCadastrado(false)}>
+            Entendi!
           </Button>
         </Modal.Footer>
       </Modal>
