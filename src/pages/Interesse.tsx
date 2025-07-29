@@ -8,6 +8,7 @@ import {
   Row,
   Col
 } from "react-bootstrap"
+import axios from "axios"
 
 const ListaInteresse = () => {
   const [nome, setNome] = useState("")
@@ -16,12 +17,13 @@ const ListaInteresse = () => {
   const [interesses, setInteresses] = useState<string[]>([])
   const [aceitaContato, setAceitaContato] = useState(false)
   const [website, setWebsite] = useState("") // honeypot
-  //const [enviado, setEnviado] = useState(false)
 
   const [showModalSucesso, setShowModalSucesso] = useState(false)
   const [showModalRegras, setShowModalRegras] = useState(false)
 
   const opcoesInteresse = [
+    "Programação do Zero",
+    "Lógica de Programação",
     "Fullstack",
     "Frontend",
     "Backend",
@@ -39,32 +41,36 @@ const ListaInteresse = () => {
     )
   }
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault()
+const handleSubmit = async (e: React.FormEvent) => {
+  e.preventDefault()
 
-    // Proteção contra bots
-    if (website) {
-      return
-    }
+  if (website) return
 
-    if (!nome || !email || !whatsapp || interesses.length === 0 || !aceitaContato) {
-      alert("Por favor, preencha todos os campos obrigatórios.")
-      return
-    }
-
-    const dados = {
-      nome,
-      email,
-      whatsapp,
-      interesses,
-      aceitaContato
-    }
-
-    console.log("📩 Dados enviados (mock):", dados)
-    //setEnviado(true)
-    setShowModalSucesso(true)
+  if (!nome || !email || !whatsapp || interesses.length === 0 || !aceitaContato) {
+    alert("Por favor, preencha todos os campos obrigatórios.")
+    return
   }
 
+  const dados = {
+    nome,
+    email,
+    whatsapp,
+    interesses,
+    aceitaContato
+  }
+
+    try {
+        await axios.post(
+        `${import.meta.env.VITE_API_URL}/lista-interesse`, 
+        dados
+        )
+
+        setShowModalSucesso(true)
+    } catch (error) {
+        console.error("❌ Erro ao enviar:", error)
+        alert("Ocorreu um erro ao enviar seus dados. Tente novamente mais tarde.")
+    }
+    }
   return (
     <Container className="mt-5 mb-5">
       <Alert variant="info" className="text-center">
