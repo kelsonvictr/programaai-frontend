@@ -61,7 +61,7 @@ const handleSubmit = async (e: React.FormEvent) => {
 
     try {
         await axios.post(
-        `${import.meta.env.VITE_API_URL}/lista-interesse`, 
+        `${import.meta.env.VITE_API_URL}/clube/interesse`, 
         dados
         )
 
