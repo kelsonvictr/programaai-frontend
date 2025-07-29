@@ -17,6 +17,7 @@ const ListaInteresse = () => {
   const [interesses, setInteresses] = useState<string[]>([])
   const [aceitaContato, setAceitaContato] = useState(false)
   const [website, setWebsite] = useState("") // honeypot
+  const [enviando, setEnviando] = useState(false)
 
   const [showModalSucesso, setShowModalSucesso] = useState(false)
   const [showModalRegras, setShowModalRegras] = useState(false)
@@ -41,36 +42,60 @@ const ListaInteresse = () => {
     )
   }
 
-const handleSubmit = async (e: React.FormEvent) => {
-  e.preventDefault()
+  // Função simples para formatar o WhatsApp no formato: +55 (83) 98660-8771
+  const formatarWhatsapp = (valor: string) => {
+    let apenasNumeros = valor.replace(/\D/g, "")
 
-  if (website) return
+    if (!apenasNumeros.startsWith("55")) {
+      apenasNumeros = "55" + apenasNumeros
+    }
 
-  if (!nome || !email || !whatsapp || interesses.length === 0 || !aceitaContato) {
-    alert("Por favor, preencha todos os campos obrigatórios.")
-    return
+    apenasNumeros = apenasNumeros.slice(0, 13)
+
+    const pais = apenasNumeros.substring(0, 2)
+    const ddd = apenasNumeros.substring(2, 4)
+    const parte1 = apenasNumeros.substring(4, 9)
+    const parte2 = apenasNumeros.substring(9, 13)
+
+    if (parte2) return `+${pais} (${ddd}) ${parte1}-${parte2}`
+    if (parte1) return `+${pais} (${ddd}) ${parte1}`
+    if (ddd) return `+${pais} (${ddd}`
+    if (pais) return `+${pais}`
+    return ""
   }
 
-  const dados = {
-    nome,
-    email,
-    whatsapp,
-    interesses,
-    aceitaContato
+  const handleWhatsappChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setWhatsapp(formatarWhatsapp(e.target.value))
   }
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault()
+
+    if (website) return
+
+    if (!nome || !email || !whatsapp || interesses.length === 0 || !aceitaContato) {
+      alert("Por favor, preencha todos os campos obrigatórios.")
+      return
+    }
+
+    const dados = { nome, email, whatsapp, interesses, aceitaContato }
 
     try {
-        await axios.post(
-        `${import.meta.env.VITE_API_URL}/clube/interesse`, 
+      setEnviando(true)
+      await axios.post(
+        `${import.meta.env.VITE_API_URL}/clube/interesse`,
         dados
-        )
+      )
 
-        setShowModalSucesso(true)
+      setShowModalSucesso(true)
     } catch (error) {
-        console.error("❌ Erro ao enviar:", error)
-        alert("Ocorreu um erro ao enviar seus dados. Tente novamente mais tarde.")
+      console.error("❌ Erro ao enviar:", error)
+      alert("Ocorreu um erro ao enviar seus dados. Tente novamente mais tarde.")
+    } finally {
+      setEnviando(false)
     }
-    }
+  }
+
   return (
     <Container className="mt-5 mb-5">
       <Alert variant="info" className="text-center">
@@ -107,8 +132,8 @@ const handleSubmit = async (e: React.FormEvent) => {
           <Form.Control
             type="tel"
             value={whatsapp}
-            onChange={e => setWhatsapp(e.target.value)}
-            placeholder="(83) 99999-9999"
+            onChange={handleWhatsappChange}
+            placeholder="+55 (83) 99999-9999"
             required
           />
         </Form.Group>
@@ -166,8 +191,13 @@ const handleSubmit = async (e: React.FormEvent) => {
         </Form.Group>
 
         <div className="text-center">
-          <Button variant="primary" type="submit" size="lg">
-            Quero entrar para o Clube
+          <Button 
+            variant="primary" 
+            type="submit" 
+            size="lg" 
+            disabled={!aceitaContato || enviando}
+          >
+            {enviando ? "Enviando..." : "Quero entrar para o Clube"}
           </Button>
         </div>
       </Form>
