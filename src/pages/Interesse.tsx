@@ -9,6 +9,7 @@ import {
   Col
 } from "react-bootstrap"
 import axios from "axios"
+import { useNavigate } from "react-router-dom" 
 
 const ListaInteresse = () => {
   const [nome, setNome] = useState("")
@@ -21,6 +22,8 @@ const ListaInteresse = () => {
 
   const [showModalSucesso, setShowModalSucesso] = useState(false)
   const [showModalRegras, setShowModalRegras] = useState(false)
+
+  const navigate = useNavigate() 
 
   const opcoesInteresse = [
     "Programação do Zero",
@@ -94,6 +97,11 @@ const ListaInteresse = () => {
     } finally {
       setEnviando(false)
     }
+  }
+
+  const fecharModalSucesso = () => {
+    setShowModalSucesso(false)
+    navigate("/") // ⬅️ redireciona para página principal
   }
 
   return (
@@ -203,7 +211,7 @@ const ListaInteresse = () => {
       </Form>
 
       {/* Modal de sucesso */}
-      <Modal show={showModalSucesso} onHide={() => setShowModalSucesso(false)} centered>
+      <Modal show={showModalSucesso} onHide={fecharModalSucesso} centered>
         <Modal.Header closeButton>
           <Modal.Title>🎉 Bem-vindo(a) ao Clube programa AI!</Modal.Title>
         </Modal.Header>
@@ -211,7 +219,7 @@ const ListaInteresse = () => {
           Você agora tem <strong>5% de desconto garantido</strong> em qualquer curso. Em breve entraremos em contato com mais novidades!
         </Modal.Body>
         <Modal.Footer>
-          <Button variant="success" onClick={() => setShowModalSucesso(false)}>
+          <Button variant="success" onClick={fecharModalSucesso}>
             Fechar
           </Button>
         </Modal.Footer>
