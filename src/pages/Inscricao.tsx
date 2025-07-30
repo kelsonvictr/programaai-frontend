@@ -60,6 +60,8 @@ const Inscricao: React.FC = () => {
   const [paymentMethod, setPaymentMethod] = useState<"PIX" | "CARTAO">("PIX")
   const [showSucesso, setShowSucesso] = useState(false)
   const [linkPagamento, setLinkPagamento] = useState("")
+  const [isClubeMember, setIsClubeMember] = useState(false)
+  const [checkingClube, setCheckingClube] = useState(false)
 
 
 
@@ -67,9 +69,23 @@ const Inscricao: React.FC = () => {
     if (!course) navigate("/cursos")
   }, [course, navigate])
 
-  const valorBase = course ? parseFloat(course.price.replace("R$", "").replace(",", ".")) : 0
-  const valorCartao = +(valorBase * 1.08).toFixed(2)
+
+  const valorBase = course
+    ? parseFloat(course.price.replace("R$", "").replace(",", "."))
+    : 0
+
+  // aplica 5% se for membro
+  const valorBaseDesconto = isClubeMember
+    ? +(valorBase * 0.95).toFixed(2)
+    : valorBase
+
+  // recalcula cartão e parcelas
+  const valorCartao = +(valorBaseDesconto * 1.08).toFixed(2)
   const parcela12x = +(valorCartao / 12).toFixed(2)
+
+
+  //const valorCartao = +(valorBase * 1.08).toFixed(2)
+  //const parcela12x = +(valorCartao / 12).toFixed(2)
 
   const maskCpf = (v: string) => v.replace(/\D/g, "").slice(0, 11).replace(/^(\d{3})(\d)/, "$1.$2").replace(/^(\d{3}\.\d{3})(\d)/, "$1.$2").replace(/^(\d{3}\.\d{3}\.\d{3})(\d)/, "$1-$2")
   const maskDate = (v: string) => v.replace(/\D/g, "").slice(0, 8).replace(/^(\d{2})(\d)/, "$1/$2").replace(/^(\d{2}\/\d{2})(\d)/, "$1/$2")
@@ -79,6 +95,33 @@ const Inscricao: React.FC = () => {
     raw = raw.slice(0, 13)
     return "+" + raw.slice(0, 2) + (raw.length > 2 ? " (" + raw.slice(2, 4) + ")" : "") + (raw.length >= 4 ? " " + raw.slice(4, 9) : "") + (raw.length >= 9 ? "-" + raw.slice(9, 13) : "")
   }
+  // adiciona abaixo de maskCel(...)
+  const checkClube = async (email: string) => {
+    if (!email) return
+    setCheckingClube(true)
+    try {
+      const resp = await axios.get(
+        `${import.meta.env.VITE_API_URL}/clube/interesse`,
+        { params: { email } }
+      )
+      setIsClubeMember(resp.data.existe)
+    } catch (err) {
+      console.error("Erro ao verificar clube", err)
+      // opcional: mostrar mensagem silenciosa
+    } finally {
+      setCheckingClube(false)
+    }
+  }
+  const handleEmailConfirmBlur = () => {
+    if (
+      /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email) &&
+      form.email === form.emailConfirm
+    ) {
+      checkClube(form.email)
+    }
+  }
+
+
 
   const handleChange = (e: any) => {
     const { name, type, value, checked } = e.target as HTMLInputElement
@@ -136,7 +179,7 @@ const Inscricao: React.FC = () => {
         curso: course?.title || "",
         aceitouTermos: form.aceitaTermos,
         versaoTermo: "v1.0",
-        valor: valorBase,
+        valor: valorBaseDesconto,
         paymentMethod: paymentMethod
       })
 
@@ -192,10 +235,16 @@ const Inscricao: React.FC = () => {
       </p>
 
       <div className="mb-4">
+        {checkingClube && <p>🔍 Verificando desconto do Clube...</p>}
+        {isClubeMember && (
+          <Alert variant="success">
+            🎉 Você ganhou 5% de desconto por ser membro do Clube programa AI!
+          </Alert>
+        )}
         <strong>Escolha a forma de pagamento:</strong>
         <Form.Check
           type="radio"
-          label={`PIX - R$ ${valorBase.toFixed(2).replace('.', ',')}`}
+          label={`PIX - R$ ${valorBaseDesconto.toFixed(2).replace('.', ',')}`}
           name="paymentMethod"
           checked={paymentMethod === "PIX"}
           onChange={() => setPaymentMethod("PIX")}
@@ -203,7 +252,7 @@ const Inscricao: React.FC = () => {
 
         <Form.Check
           type="radio"
-          label={`Cartão de Crédito - R$ ${valorCartao.toFixed(2).replace('.', ',')} (em até 12x de R$ ${parcela12x.toFixed(2).replace('.', ',')})`}
+          label={`Cartão de Crédito - R$ ${valorCartao.toFixed(2).replace('.', ',')} (até 12x de R$ ${parcela12x.toFixed(2).replace('.', ',')})`}
           name="paymentMethod"
           checked={paymentMethod === "CARTAO"}
           onChange={() => setPaymentMethod("CARTAO")}
@@ -307,6 +356,7 @@ const Inscricao: React.FC = () => {
                             name="emailConfirm"
                             value={form.emailConfirm}
                             onChange={handleChange}
+                            onBlur={handleEmailConfirmBlur}
                             required
                         />
                     </Form.Group>
