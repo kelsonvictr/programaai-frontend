@@ -125,6 +125,12 @@ const Inscricao: React.FC = () => {
 
   const handleChange = (e: any) => {
     const { name, type, value, checked } = e.target as HTMLInputElement
+
+    // se o usuário mexer em email ou emailConfirm, remove o desconto
+    if (name === "email" || name === "emailConfirm") {
+      setIsClubeMember(false)
+    }
+
     setForm(f => ({
       ...f,
       [name]: type === "checkbox" ? checked : value,
@@ -235,12 +241,6 @@ const Inscricao: React.FC = () => {
       </p>
 
       <div className="mb-4">
-        {checkingClube && <p>🔍 Verificando desconto do Clube...</p>}
-        {isClubeMember && (
-          <Alert variant="success">
-            🎉 Você ganhou 5% de desconto por ser membro do Clube programa AI!
-          </Alert>
-        )}
         <strong>Escolha a forma de pagamento:</strong>
         <Form.Check
           type="radio"
@@ -361,6 +361,13 @@ const Inscricao: React.FC = () => {
                         />
                     </Form.Group>
 
+                    {checkingClube && <p>🔍 Verificando desconto do Clube...</p>}
+                    {isClubeMember && (
+                      <Alert variant="success">
+                        🎉 Você ganhou 5% de desconto por ser membro do Clube programa AI!
+                      </Alert>
+                    )}
+
                     <Form.Group className="mb-3">
                         <Form.Label>
                             Sexo <span className="text-danger">*</span>
@@ -381,7 +388,7 @@ const Inscricao: React.FC = () => {
 
                     <Form.Group className="mb-3">
                         <Form.Label>
-                            Como conheceu a Programa AI? <span className="text-danger">*</span>
+                            Como conheceu a programa AI? <span className="text-danger">*</span>
                         </Form.Label>
                         <Form.Select
                             name="fonteAI"
