@@ -121,6 +121,17 @@ const Inscricao: React.FC = () => {
     }
   }
 
+  useEffect(() => {
+  const emailValido = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email)
+  // só dispara quando tiver e-mails válidos e iguais
+  if (emailValido && form.email === form.emailConfirm) {
+    checkClube(form.email)
+  } else {
+    // limpa o estado de clube caso mudem ou não batam
+    setIsClubeMember(false)
+  }
+}, [form.email, form.emailConfirm])
+
 
 
   const handleChange = (e: any) => {
