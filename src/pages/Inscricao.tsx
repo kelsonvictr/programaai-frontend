@@ -7,6 +7,7 @@ import { courses } from "../mocks/courses"
 import axios from "axios"
 import { termosDoCurso } from "../mocks/terms"
 import ParcelamentoModal from "../components/ParcelamentoModal"
+import { FaWhatsapp } from "react-icons/fa"
 
 interface FormState {
   nome: string
@@ -269,6 +270,21 @@ const Inscricao: React.FC = () => {
           onChange={() => setPaymentMethod("CARTAO")}
         />
       </div>
+
+      <Button
+            as="a"
+            href={`https://wa.me/5583986608771?text=${encodeURIComponent(
+              "Oi prof. Kelson, venho do site da programa AI, poderia me esclarecer algumas dúvidas?"
+            )}`}
+            target="_blank"
+            rel="noopener noreferrer"
+            variant="success"
+            size="lg"
+          >
+            <FaWhatsapp size={20} className="me-2" />
+            Fala com a gente pelo WhatsApp
+          </Button>
+          <br/>
 
       {errors.length > 0 && (
         <Alert variant="danger">

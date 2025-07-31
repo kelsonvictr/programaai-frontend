@@ -1,7 +1,7 @@
 import React from "react"
 import { useParams, useNavigate, Link } from "react-router-dom"
 import { Container, Card, Button, Alert} from "react-bootstrap"
-import { FaLinkedin } from "react-icons/fa"
+import { FaLinkedin, FaWhatsapp } from "react-icons/fa"
 import { courses } from "../mocks/courses"
 import ParcelamentoModal from "../components/ParcelamentoModal"
 import { useState } from "react"
@@ -32,7 +32,7 @@ const CourseDetails: React.FC = () => {
           src={course.imageUrl}
           alt={`Imagem do curso ${course.title}`}
           style={{ maxHeight: "530px", objectFit: "cover" }}
-        />
+        /> 
         <Card.Body>
           <Card.Title as="h2">{course.title}</Card.Title>
 
@@ -45,7 +45,23 @@ const CourseDetails: React.FC = () => {
   {course.obsPrice && <span> ({course.obsPrice})</span>} <br />
             <strong>Formas de Pagamento:</strong> Pix ou Cartão de Crédito (em até 12x)<br/>
 
+
           </p>
+
+          <Button
+                as="a"
+                href={`https://wa.me/5583986608771?text=${encodeURIComponent(
+                  "Oi prof. Kelson, venho do site da programa AI, poderia me esclarecer algumas dúvidas?"
+                )}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                variant="success"
+                size="lg"
+              >
+                <FaWhatsapp size={20} className="me-2" />
+                Fala com a gente pelo WhatsApp
+              </Button>
+              <br/>
 
           <hr />
 

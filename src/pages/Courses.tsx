@@ -22,6 +22,7 @@ const Courses: React.FC = () => (
       <FaWhatsapp size={20} className="me-2" />
       Fala com a gente pelo WhatsApp
     </Button>
+    <br/>
     <Row>
       {courses.map(curso => (
         <Col key={curso.id} sm={12} md={6} lg={4}>
