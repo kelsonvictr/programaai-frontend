@@ -10,19 +10,11 @@ const BannerCarousel: React.FC = () => (
     {courses.map(c => (
       <Carousel.Item key={c.id} className={styles.item}>
         <Link to={`/cursos/${c.id}`}>
-          <picture>
-            {/* Serve bannerMobile até 576px */}
-            <source
-              media="(max-width: 576px)"
-              srcSet={c.bannerMobile}
-            />
-            {/* Fallback (desktop) */}
-            <img
-              className={styles.image}
-              src={c.bannerSite}
-              alt={c.title}
-            />
-          </picture>
+          <img
+            className={styles.image}
+            src={`${c.bannerSite}`}
+            alt={c.title}
+          />
         </Link>
       </Carousel.Item>
     ))}
