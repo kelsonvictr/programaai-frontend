@@ -138,7 +138,7 @@ O curso é conduzido por Wuldson Franco, especialista com atuação em empresas 
   obsPrice: "promoção de lançamento, no pix",
   imageUrl: "/coursecard-amazing-data.png",
   bannerSite: "/banners/banner-site-amazing.png",
-  bannerMobile: "/banners/banner-mobile-amazing.jpg",
+  bannerMobile: "/banners/banner-mobile-amazing.png",
   professor: "Wuldson Franco",
   profFoto: "/professores/wuldson.jpeg",
   linkedin: "https://www.linkedin.com/in/wuldsonfranco/",
