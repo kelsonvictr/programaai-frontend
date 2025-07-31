@@ -19,6 +19,20 @@ const Home: React.FC = () => {
           <Col md={6} className="mb-4 mb-md-0 text-md-start text-center">
             <h3>Muita Programação, IA e Café! ☕👩‍💻👨‍💻</h3>
 
+            <Button
+                  as="a"
+                  href={`https://wa.me/5583986608771?text=${encodeURIComponent(
+                    "Oi prof. Kelson, venho do site da programa AI, poderia me esclarecer algumas dúvidas?"
+                  )}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  variant="success"
+                  size="lg"
+                >
+                  <FaWhatsapp size={20} className="me-2" />
+                  Fale conosco pelo WhatsApp
+                </Button>
+
             <Row
               className="my-4 text-center justify-content-center"
               style={{ gap: "8px", flexWrap: "nowrap", overflowX: "auto" }}

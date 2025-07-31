@@ -8,6 +8,7 @@ export interface Course {
   obsPrice?: string
   imageUrl: string
   bannerSite: string
+  bannerMobile: string
   professor: string
   profFoto: string
   linkedin: string
@@ -33,6 +34,7 @@ export const courses: Course[] = [
     obsPrice: "promoção de lançamento, no pix",
     imageUrl: "/coursecard-reactnative.png",
     bannerSite: "/banners/banner-site-reactnative.png",
+    bannerMobile: "/banners/banner-mobile-amazing.png",
     professor: "Kelson Almeida",
     profFoto: "/professores/kelson.jpeg",
     linkedin: "https://www.linkedin.com/in/kelson-almeida/",
@@ -87,6 +89,7 @@ export const courses: Course[] = [
     obsPrice: "promoção de lançamento, no pix",
     imageUrl: "/coursecard-appsec.png",
     bannerSite: "/banners/banner-site-appsec.png",
+    bannerMobile: "/banners/banner-mobile-amazing.png",
     professor: "Digenaldo Neto",
     profFoto: "/professores/digenaldo.jpeg",
     linkedin: "https://www.linkedin.com/in/digenaldo/",
@@ -135,6 +138,7 @@ O curso é conduzido por Wuldson Franco, especialista com atuação em empresas 
   obsPrice: "promoção de lançamento, no pix",
   imageUrl: "/coursecard-amazing-data.png",
   bannerSite: "/banners/banner-site-amazing.png",
+  bannerMobile: "/banners/banner-mobile-amazing.jpg",
   professor: "Wuldson Franco",
   profFoto: "/professores/wuldson.jpeg",
   linkedin: "https://www.linkedin.com/in/wuldsonfranco/",
@@ -184,6 +188,7 @@ Você quer começar sua jornada com Java da forma certa, do básico à prática 
     obsPrice: "promoção de lançamento, no pix",
     imageUrl: "/coursecard-javastarter.png",
     bannerSite: "/banners/banner-site-javastarter.png",
+    bannerMobile: "/banners/banner-mobile-amazing.png",
     professor: "Higor Souza",
     profFoto: "/professores/higor.jpeg",
     linkedin: "https://www.linkedin.com/in/higor-souza-andrade/",
