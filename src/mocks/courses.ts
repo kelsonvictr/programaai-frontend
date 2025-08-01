@@ -74,7 +74,7 @@ export const courses: Course[] = [
       "Publicação do app em modo de teste e próximos passos no mundo mobile"
     ]
   },
-  {
+  /*{
     id: 3,
     title: "Bootcamp: AppSec Moderno com IA (Turma 01)",
     description: `Em um cenário onde os ciberataques evoluem mais rápido que as defesas tradicionais, a segurança de aplicações precisa ser proativa, automatizada e inteligente. Neste bootcamp prático de 20 horas, você vai explorar as fronteiras entre segurança ofensiva, defensiva e o uso de Inteligência Artificial aplicada a AppSec.
@@ -124,7 +124,7 @@ export const courses: Course[] = [
       "Análise e Testes de Segurança com Ferramentas e IA (SAST, DAST, IAST, OWASP Top 10)",
       "Segurança em APIs, Cloud e Projeto Prático Final (AWS, GCP, Kubernetes, ataques simulados)"
     ]
-  },
+  },*/
   {
   id: 2,
   title: "Bootcamp Amazing Data Intelligence: do zero ao analytics engineering (Turma 01)",
