@@ -94,16 +94,19 @@ const Inscricao: React.FC = () => {
     }
 
     axios
-      .get<Course>(`${import.meta.env.VITE_API_URL}/cursos?id=${id}`)
+      .get<Course | Course[]>(`${import.meta.env.VITE_API_URL}/cursos`, {
+      params: { id }
+    })
       .then(resp => {
-        setCourse(resp.data)
+        const data = resp.data
+        const curso = Array.isArray(data) ? data[0] : data
+        setCourse(curso)
       })
       .catch(() => {
         navigate("/")       // se não achar, volta pra home
       })
       .finally(() => {
         setLoading(false)
-        console.log("CURSO: ", course)
       })
   }, [id, navigate])
 
