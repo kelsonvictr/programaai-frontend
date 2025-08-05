@@ -90,7 +90,7 @@ const Inscricao: React.FC = () => {
 
   useEffect(() => {
     if (!id) {
-      navigate("/cursos")
+      navigate("/")
       return
     }
 
@@ -102,7 +102,7 @@ const Inscricao: React.FC = () => {
         setCourse(resp.data)
       })
       .catch(() => {
-        navigate("/cursos")
+        navigate("/")
       })
       .finally(() => {
         setLoadingCourse(false)
