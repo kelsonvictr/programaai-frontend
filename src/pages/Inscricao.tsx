@@ -94,7 +94,7 @@ const Inscricao: React.FC = () => {
     }
 
     axios
-      .get<Course>(`${import.meta.env.VITE_API_URL}/cursos/${id}`)
+      .get<Course>(`${import.meta.env.VITE_API_URL}/cursos?id=${id}`)
       .then(resp => {
         setCourse(resp.data)
       })
