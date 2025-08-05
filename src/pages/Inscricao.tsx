@@ -103,6 +103,7 @@ const Inscricao: React.FC = () => {
       })
       .finally(() => {
         setLoading(false)
+        console.log("CURSO: ", course)
       })
   }, [id, navigate])
 
