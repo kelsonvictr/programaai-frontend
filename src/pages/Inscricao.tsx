@@ -1,7 +1,7 @@
 // src/pages/Inscricao.tsx
 
 import React, { useState, useEffect } from "react"
-import { useParams, useNavigate } from "react-router-dom"
+import { useNavigate, useLocation } from "react-router-dom"
 import { Container, Form, Button, Alert, Modal } from "react-bootstrap"
 import axios from "axios"
 import { termosDoCurso } from "../mocks/terms"
@@ -51,8 +51,10 @@ interface Course {
 }
 
 const Inscricao: React.FC = () => {
-  const { id } = useParams<{ id: string }>()  
-  const navigate = useNavigate()
+  const navigate  = useNavigate()
+  const location  = useLocation()
+  const qs        = new URLSearchParams(location.search)
+  const id        = qs.get("curso")
 
   const [form, setForm] = useState<FormState>({
     nome: "",
