@@ -3,7 +3,6 @@
 import React, { useState, useEffect } from "react"
 import { useParams, useNavigate } from "react-router-dom"
 import { Container, Form, Button, Alert, Modal } from "react-bootstrap"
-import { courses } from "../mocks/courses"
 import axios from "axios"
 import { termosDoCurso } from "../mocks/terms"
 import ParcelamentoModal from "../components/ParcelamentoModal"
@@ -28,10 +27,32 @@ interface FormState {
   website: string
 }
 
+interface Course {
+  id: string
+  title: string
+  description: string
+  duration: string
+  price: string
+  obsPrice?: string
+  imageUrl: string
+  bannerSite: string
+  bannerMobile: string
+  professor: string
+  profFoto: string
+  linkedin: string
+  datas: string[]
+  horario: string
+  modalidade: string
+  bio: string
+  prerequisitos?: string[]
+  publicoAlvo?: string[]
+  oQueVaiAprender?: string[]
+  modulos?: string[]
+}
+
 const Inscricao: React.FC = () => {
   const { id } = useParams<{ id: string }>()  
   const navigate = useNavigate()
-  const course = courses.find(c => c.id === Number(id))
 
   const [form, setForm] = useState<FormState>({
     nome: "",
@@ -63,12 +84,42 @@ const Inscricao: React.FC = () => {
   const [linkPagamento, setLinkPagamento] = useState("")
   const [isClubeMember, setIsClubeMember] = useState(false)
   const [checkingClube, setCheckingClube] = useState(false)
-
+  const [course, setCourse] = useState<Course | null>(null)
+  const [loadingCourse, setLoadingCourse] = useState(true)
 
 
   useEffect(() => {
-    if (!course) navigate("/cursos")
-  }, [course, navigate])
+    if (!id) {
+      navigate("/cursos")
+      return
+    }
+
+    axios
+      .get<Course>(`${import.meta.env.VITE_API_URL}/cursos`, {
+        params: { id }
+      })
+      .then((resp) => {
+        setCourse(resp.data)
+      })
+      .catch(() => {
+        navigate("/cursos")
+      })
+      .finally(() => {
+        setLoadingCourse(false)
+      })
+  }, [id, navigate])
+
+  if (loadingCourse) {
+    return (
+      <Container className="py-5 text-center">
+        <div className="spinner-border" role="status" />
+      </Container>
+    )
+  }
+
+  if (!course) {
+    return null
+  }
 
 
   const valorBase = course
