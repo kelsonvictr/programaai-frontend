@@ -1,7 +1,7 @@
 // src/pages/Inscricao.tsx
 
 import React, { useState, useEffect } from "react"
-import { useNavigate, useLocation } from "react-router-dom"
+import { useNavigate, useParams } from "react-router-dom"
 import { Container, Form, Button, Alert, Modal } from "react-bootstrap"
 import axios from "axios"
 import { termosDoCurso } from "../mocks/terms"
@@ -51,10 +51,8 @@ interface Course {
 }
 
 const Inscricao: React.FC = () => {
+  const { id } = useParams<{ id: string }>()
   const navigate  = useNavigate()
-  const location  = useLocation()
-  const qs        = new URLSearchParams(location.search)
-  const id        = qs.get("curso")
 
   const [form, setForm] = useState<FormState>({
     nome: "",
@@ -87,31 +85,28 @@ const Inscricao: React.FC = () => {
   const [isClubeMember, setIsClubeMember] = useState(false)
   const [checkingClube, setCheckingClube] = useState(false)
   const [course, setCourse] = useState<Course | null>(null)
-  const [loadingCourse, setLoadingCourse] = useState(true)
-
+  const [loading, setLoading] = useState(true)
 
   useEffect(() => {
     if (!id) {
-      navigate("/")
+      navigate("/")        // se não tiver id, joga pra home
       return
     }
 
     axios
-      .get<Course>(`${import.meta.env.VITE_API_URL}/cursos`, {
-        params: { id }
-      })
-      .then((resp) => {
+      .get<Course>(`${import.meta.env.VITE_API_URL}/cursos/${id}`)
+      .then(resp => {
         setCourse(resp.data)
       })
       .catch(() => {
-        navigate("/")
+        navigate("/")       // se não achar, volta pra home
       })
       .finally(() => {
-        setLoadingCourse(false)
+        setLoading(false)
       })
   }, [id, navigate])
 
-  if (loadingCourse) {
+  if (loading) {
     return (
       <Container className="py-5 text-center">
         <div className="spinner-border" role="status" />
