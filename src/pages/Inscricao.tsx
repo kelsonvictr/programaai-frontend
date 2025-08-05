@@ -8,6 +8,9 @@ import { termosDoCurso } from "../mocks/terms"
 import ParcelamentoModal from "../components/ParcelamentoModal"
 import { FaWhatsapp } from "react-icons/fa"
 
+// Tipo genérico para Form.Control (input, select ou textarea)
+type FormControlElement = HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement
+
 interface FormState {
   nome: string
   cpf: string
@@ -52,8 +55,9 @@ interface Course {
 
 const Inscricao: React.FC = () => {
   const { id } = useParams<{ id: string }>()
-  const navigate  = useNavigate()
+  const navigate = useNavigate()
 
+  // ─── Estados ───────────────────────────────────────────────────
   const [form, setForm] = useState<FormState>({
     nome: "",
     cpf: "",
@@ -72,7 +76,6 @@ const Inscricao: React.FC = () => {
     aceitaTermos: false,
     website: "",
   })
-
   const [errors, setErrors] = useState<string[]>([])
   const [showAIAmigo, setShowAIAmigo] = useState(false)
   const [showCursoOutro, setShowCursoOutro] = useState(false)
@@ -87,68 +90,7 @@ const Inscricao: React.FC = () => {
   const [course, setCourse] = useState<Course | null>(null)
   const [loading, setLoading] = useState(true)
 
-  useEffect(() => {
-    if (!id) {
-      navigate("/")        // se não tiver id, joga pra home
-      return
-    }
-
-    axios
-      .get<Course | Course[]>(`${import.meta.env.VITE_API_URL}/cursos`, {
-      params: { id }
-    })
-      .then(resp => {
-        const data = resp.data
-        const curso = Array.isArray(data) ? data[0] : data
-        setCourse(curso)
-      })
-      .catch(() => {
-        navigate("/")       // se não achar, volta pra home
-      })
-      .finally(() => {
-        setLoading(false)
-      })
-  }, [id, navigate])
-
-  if (loading) {
-    return (
-      <Container className="py-5 text-center">
-        <div className="spinner-border" role="status" />
-      </Container>
-    )
-  }
-
-  if (!course) {
-    return null
-  }
-
-
-  const valorBase = course
-    ? parseFloat(course.price.replace("R$", "").replace(",", "."))
-    : 0
-
-  // aplica 5% se for membro
-  const valorBaseDesconto = isClubeMember
-    ? +(valorBase * 0.95).toFixed(2)
-    : valorBase
-
-  // recalcula cartão e parcelas
-  const valorCartao = +(valorBaseDesconto * 1.08).toFixed(2)
-  const parcela12x = +(valorCartao / 12).toFixed(2)
-
-
-  //const valorCartao = +(valorBase * 1.08).toFixed(2)
-  //const parcela12x = +(valorCartao / 12).toFixed(2)
-
-  const maskCpf = (v: string) => v.replace(/\D/g, "").slice(0, 11).replace(/^(\d{3})(\d)/, "$1.$2").replace(/^(\d{3}\.\d{3})(\d)/, "$1.$2").replace(/^(\d{3}\.\d{3}\.\d{3})(\d)/, "$1-$2")
-  const maskDate = (v: string) => v.replace(/\D/g, "").slice(0, 8).replace(/^(\d{2})(\d)/, "$1/$2").replace(/^(\d{2}\/\d{2})(\d)/, "$1/$2")
-  const maskCel = (v: string) => {
-    let raw = v.replace(/\D/g, "")
-    if (!raw.startsWith("55")) raw = "55" + raw
-    raw = raw.slice(0, 13)
-    return "+" + raw.slice(0, 2) + (raw.length > 2 ? " (" + raw.slice(2, 4) + ")" : "") + (raw.length >= 4 ? " " + raw.slice(4, 9) : "") + (raw.length >= 9 ? "-" + raw.slice(9, 13) : "")
-  }
-  // adiciona abaixo de maskCel(...)
+  // ─── Função de checagem de clube ───────────────────────────────
   const checkClube = async (email: string) => {
     if (!email) return
     setCheckingClube(true)
@@ -158,13 +100,13 @@ const Inscricao: React.FC = () => {
         { params: { email } }
       )
       setIsClubeMember(resp.data.existe)
-    } catch (err) {
-      console.error("Erro ao verificar clube", err)
-      // opcional: mostrar mensagem silenciosa
+    } catch {
+      // silencia erro
     } finally {
       setCheckingClube(false)
     }
   }
+
   const handleEmailConfirmBlur = () => {
     if (
       /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email) &&
@@ -174,32 +116,92 @@ const Inscricao: React.FC = () => {
     }
   }
 
+  // ─── Carrega o curso ────────────────────────────────────────────
   useEffect(() => {
-  const emailValido = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email)
-  // só dispara quando tiver e-mails válidos e iguais
-  if (emailValido && form.email === form.emailConfirm) {
-    checkClube(form.email)
-  } else {
-    // limpa o estado de clube caso mudem ou não batam
-    setIsClubeMember(false)
-  }
-}, [form.email, form.emailConfirm])
+    if (!id) {
+      navigate("/")
+      return
+    }
+    axios
+      .get<Course | Course[]>(`${import.meta.env.VITE_API_URL}/cursos`, {
+        params: { id }
+      })
+      .then(resp => {
+        const data = resp.data
+        const curso = Array.isArray(data) ? data[0] : data
+        if (!curso) {
+          navigate("/")
+        } else {
+          setCourse(curso)
+        }
+      })
+      .catch(() => {
+        navigate("/")
+      })
+      .finally(() => {
+        setLoading(false)
+      })
+  }, [id, navigate])
 
-
-
-  const handleChange = (e: any) => {
-    const { name, type, value, checked } = e.target as HTMLInputElement
-
-    // se o usuário mexer em email ou emailConfirm, remove o desconto
-    if (name === "email" || name === "emailConfirm") {
+  // ─── Reage a mudanças de e-mail ─────────────────────────────────
+  useEffect(() => {
+    const emailValido = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email)
+    if (emailValido && form.email === form.emailConfirm) {
+      checkClube(form.email)
+    } else {
       setIsClubeMember(false)
     }
+  }, [form.email, form.emailConfirm])
 
-    setForm(f => ({
-      ...f,
-      [name]: type === "checkbox" ? checked : value,
-    }))
+  // ─── Early returns ──────────────────────────────────────────────
+  if (loading) {
+    return (
+      <Container className="py-5 text-center">
+        <div className="spinner-border" role="status" />
+      </Container>
+    )
+  }
+  if (!course) return null
 
+  // ─── Máscaras ───────────────────────────────────────────────────
+  const maskCpf = (v: string) =>
+    v.replace(/\D/g, "")
+      .slice(0, 11)
+      .replace(/^(\d{3})(\d)/, "$1.$2")
+      .replace(/^(\d{3}\.\d{3})(\d)/, "$1.$2")
+      .replace(/^(\d{3}\.\d{3}\.\d{3})(\d)/, "$1-$2")
+  const maskDate = (v: string) =>
+    v.replace(/\D/g, "")
+      .slice(0, 8)
+      .replace(/^(\d{2})(\d)/, "$1/$2")
+      .replace(/^(\d{2}\/\d{2})(\d)/, "$1/$2")
+  const maskCel = (v: string) => {
+    let raw = v.replace(/\D/g, "")
+    if (!raw.startsWith("55")) raw = "55" + raw
+    raw = raw.slice(0, 13)
+    return (
+      "+" +
+      raw.slice(0, 2) +
+      (raw.length > 2 ? " (" + raw.slice(2, 4) + ")" : "") +
+      (raw.length >= 4 ? " " + raw.slice(4, 9) : "") +
+      (raw.length >= 9 ? "-" + raw.slice(9, 13) : "")
+    )
+  }
+
+  // ─── Handlers ───────────────────────────────────────────────────
+const handleChange: React.ChangeEventHandler<FormControlElement> = e => {
+  const { name, type, value } = e.target
+  // só extrai checked via cast, porque só faz sentido em <input type="checkbox">
+  const checked = (e.target as HTMLInputElement).checked
+
+  if (name === "email" || name === "emailConfirm") {
+    setIsClubeMember(false)
+  }
+
+  setForm(f => ({
+    ...f,
+    [name]: type === "checkbox" ? checked : value
+  }))
     if (name === "fonteAI") {
       const isAmigo = value === "Recomendação de amigos"
       setShowAIAmigo(isAmigo)
@@ -216,61 +218,12 @@ const Inscricao: React.FC = () => {
       if (!precisaDetalhar) setForm(f => ({ ...f, estudanteDetalhe: "" }))
     }
   }
-
   const handleCpfChange = (e: React.ChangeEvent<HTMLInputElement>) =>
     setForm(f => ({ ...f, cpf: maskCpf(e.target.value) }))
-
   const handleDateChange = (e: React.ChangeEvent<HTMLInputElement>) =>
     setForm(f => ({ ...f, dataNascimento: maskDate(e.target.value) }))
-
   const handleCelChange = (e: React.ChangeEvent<HTMLInputElement>) =>
     setForm(f => ({ ...f, celular: maskCel(e.target.value) }))
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
-    if (!validate()) return
-
-    try {
-      const response = await axios.post(`${import.meta.env.VITE_API_URL}/inscricao`, {
-        nomeCompleto: form.nome,
-        cpf: form.cpf,
-        rg: form.rg,
-        email: form.email,
-        whatsapp: form.celular.replace(/\s|\(|\)|-/g, ""),
-        sexo: form.sexo,
-        dataNascimento: form.dataNascimento.split("/").reverse().join("-"),
-        formacaoTI: form.estudanteTI,
-        ondeEstuda: form.estudanteDetalhe,
-        comoSoube:
-          form.fonteAI === "Outros" ? form.fonteCursoOutro :
-          form.fonteAI === "Recomendação de amigos" ? `Indicação de ${form.amigoIndicacao}` :
-          form.fonteAI,
-        nomeAmigo: form.amigoIndicacao || "",
-        curso: course?.title || "",
-        aceitouTermos: form.aceitaTermos,
-        versaoTermo: "v1.0",
-        valor: valorBaseDesconto,
-        paymentMethod: paymentMethod
-      })
-
-      if (response.status === 201 || response.status === 200) {
-        const link = response.data.linkPagamento
-        setLinkPagamento(link)
-        setShowSucesso(true)
-
-        // redireciona em 10s
-        setTimeout(() => {
-          window.location.href = link
-        }, 10000)
-      } else {
-        setErrors(["Erro ao enviar sua inscrição. Tente novamente mais tarde."])
-      }
-
-    } catch (err) {
-      console.error("Erro ao enviar inscrição:", err)
-      setErrors(["Erro ao enviar sua inscrição. Tente novamente mais tarde."])
-    }
-  }
 
   const validate = () => {
     const errs: string[] = []
@@ -283,11 +236,14 @@ const Inscricao: React.FC = () => {
     if (form.email !== form.emailConfirm) errs.push("E-mails não conferem.")
     if (!form.sexo) errs.push("Selecione seu sexo.")
     if (!form.fonteAI) errs.push("Como conheceu a Programa AI? é obrigatório.")
-    if (form.fonteAI === "Recomendação de amigos" && !form.amigoIndicacao.trim()) errs.push("Informe nome e sobrenome do amigo que indicou.")
+    if (form.fonteAI === "Recomendação de amigos" && !form.amigoIndicacao.trim())
+      errs.push("Informe nome e sobrenome do amigo que indicou.")
     if (!form.fonteCurso) errs.push("Como conheceu este curso? é obrigatório.")
-    if (form.fonteCurso === "Outros" && !form.fonteCursoOutro.trim()) errs.push("Detalhe como conheceu o curso.")
+    if (form.fonteCurso === "Outros" && !form.fonteCursoOutro.trim())
+      errs.push("Detalhe como conheceu o curso.")
     if (!form.estudanteTI) errs.push("Informe se é estudante de TI.")
-    if (form.estudanteTI !== "Não" && !form.estudanteDetalhe.trim()) errs.push("Detalhe onde estuda/estudou.")
+    if (form.estudanteTI !== "Não" && !form.estudanteDetalhe.trim())
+      errs.push("Detalhe onde estuda/estudou.")
     if (!form.aceitaTermos) errs.push("Você precisa concordar com os termos.")
     if (form.website.trim() !== "") errs.push("A submissão foi bloqueada por comportamento suspeito.")
 
@@ -295,7 +251,49 @@ const Inscricao: React.FC = () => {
     return errs.length === 0
   }
 
-  if (!course) return null
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault()
+    if (!validate()) return
+    try {
+      const resp = await axios.post(`${import.meta.env.VITE_API_URL}/inscricao`, {
+        nomeCompleto: form.nome,
+        cpf: form.cpf,
+        rg: form.rg,
+        email: form.email,
+        whatsapp: form.celular.replace(/\D/g, ""),
+        sexo: form.sexo,
+        dataNascimento: form.dataNascimento.split("/").reverse().join("-"),
+        formacaoTI: form.estudanteTI,
+        ondeEstuda: form.estudanteDetalhe,
+        comoSoube:
+          form.fonteAI === "Outros"
+            ? form.fonteCursoOutro
+            : form.fonteAI === "Recomendação de amigos"
+            ? `Indicação de ${form.amigoIndicacao}`
+            : form.fonteAI,
+        nomeAmigo: form.amigoIndicacao || "",
+        curso: course.title,
+        aceitouTermos: form.aceitaTermos,
+        versaoTermo: "v1.0",
+        valor:
+          parseFloat(course.price.replace("R$", "").replace(",", ".")) *
+          (isClubeMember ? 0.95 : 1),
+        paymentMethod
+      })
+      const link = resp.data.linkPagamento
+      setLinkPagamento(link)
+      setShowSucesso(true)
+      setTimeout(() => (window.location.href = link), 10000)
+    } catch {
+      setErrors(["Erro ao enviar sua inscrição. Tente novamente mais tarde."])
+    }
+  }
+
+  // ─── JSX ────────────────────────────────────────────────────────
+  const valorBase = parseFloat(course.price.replace("R$", "").replace(",", "."))
+  const valorBaseDesconto = isClubeMember ? +(valorBase * 0.95).toFixed(2) : valorBase
+  const valorCartao = +(valorBaseDesconto * 1.08).toFixed(2)
+  const parcela12x = +(valorCartao / 12).toFixed(2)
 
   return (
     <Container className="py-5" style={{ maxWidth: 600 }}>
