@@ -85,8 +85,8 @@ const Inscricao: React.FC = () => {
   //const [paymentMethod, setPaymentMethod] = useState<"PIX" | "CARTAO">("PIX")
   //const [showSucesso, setShowSucesso] = useState(false)
   //const [linkPagamento, setLinkPagamento] = useState("")
-  const [isClubeMember, setIsClubeMember] = useState(false)
-  const [checkingClube, setCheckingClube] = useState(false)
+  //const [isClubeMember, setIsClubeMember] = useState(false)
+  //const [checkingClube, setCheckingClube] = useState(false)
   const [course, setCourse] = useState<Course | null>(null)
   const [loading, setLoading] = useState(true)
 
@@ -97,7 +97,7 @@ const Inscricao: React.FC = () => {
 
 
   // ─── Função de checagem de clube ───────────────────────────────
-  const checkClube = async (email: string) => {
+  /*const checkClube = async (email: string) => {
     if (!email) return
     setCheckingClube(true)
     try {
@@ -111,16 +111,16 @@ const Inscricao: React.FC = () => {
     } finally {
       setCheckingClube(false)
     }
-  }
+  }*/
 
-  const handleEmailConfirmBlur = () => {
+  /*const handleEmailConfirmBlur = () => {
     if (
       /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email) &&
       form.email === form.emailConfirm
     ) {
       checkClube(form.email)
     }
-  }
+  }*/
 
   // ─── Carrega o curso ────────────────────────────────────────────
   useEffect(() => {
@@ -150,14 +150,14 @@ const Inscricao: React.FC = () => {
   }, [id, navigate])
 
   // ─── Reage a mudanças de e-mail ─────────────────────────────────
-  useEffect(() => {
+  /*useEffect(() => {
     const emailValido = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email)
     if (emailValido && form.email === form.emailConfirm) {
       checkClube(form.email)
     } else {
       setIsClubeMember(false)
     }
-  }, [form.email, form.emailConfirm])
+  }, [form.email, form.emailConfirm])*/
 
   // ─── Early returns ──────────────────────────────────────────────
   if (loading) {
@@ -200,9 +200,9 @@ const handleChange: React.ChangeEventHandler<FormControlElement> = e => {
   // só extrai checked via cast, porque só faz sentido em <input type="checkbox">
   const checked = (e.target as HTMLInputElement).checked
 
-  if (name === "email" || name === "emailConfirm") {
+  /*if (name === "email" || name === "emailConfirm") {
     setIsClubeMember(false)
-  }
+  }*/
 
   setForm(f => ({
     ...f,
@@ -452,17 +452,9 @@ const handleChange: React.ChangeEventHandler<FormControlElement> = e => {
                             name="emailConfirm"
                             value={form.emailConfirm}
                             onChange={handleChange}
-                            onBlur={handleEmailConfirmBlur}
                             required
                         />
                     </Form.Group>
-
-                    {checkingClube && <p>🔍 Verificando desconto do Clube...</p>}
-                    {isClubeMember && (
-                      <Alert variant="success">
-                        🎉 Você ganhou 5% de desconto por ser membro do Clube programa AI!
-                      </Alert>
-                    )}
 
                     <Form.Group className="mb-3">
                         <Form.Label>

@@ -8,7 +8,6 @@ import CourseDetails from "./pages/CourseDetails"
 import Inscricao from "./pages/Inscricao"
 import CookieBanner from "./components/CookieBanner"
 import Admin from "./pages/Admin"
-import ListaInteresse from "./pages/Interesse"
 import Pagamento from "./pages/Pagamento"
 
 const App: React.FC = () => {
@@ -20,7 +19,6 @@ const App: React.FC = () => {
         <Route path="/cursos/:id" element={<CourseDetails />} />
         <Route path="/inscricao/:id" element={<Inscricao />} />
         <Route path="/galaxy" element={<Admin />} />
-        <Route path="/interesse" element={<ListaInteresse />} />
         <Route path="/pagamento/:inscricaoId" element={<Pagamento />} />
       </Routes>
       <CookieBanner />
