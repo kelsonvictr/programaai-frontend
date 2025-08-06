@@ -82,13 +82,19 @@ const Inscricao: React.FC = () => {
   const [showEstudanteDetalhe, setShowEstudanteDetalhe] = useState(false)
   const [showTermos, setShowTermos] = useState(false)
   const [showParcelamento, setShowParcelamento] = useState(false)
-  const [paymentMethod, setPaymentMethod] = useState<"PIX" | "CARTAO">("PIX")
-  const [showSucesso, setShowSucesso] = useState(false)
-  const [linkPagamento, setLinkPagamento] = useState("")
+  //const [paymentMethod, setPaymentMethod] = useState<"PIX" | "CARTAO">("PIX")
+  //const [showSucesso, setShowSucesso] = useState(false)
+  //const [linkPagamento, setLinkPagamento] = useState("")
   const [isClubeMember, setIsClubeMember] = useState(false)
   const [checkingClube, setCheckingClube] = useState(false)
   const [course, setCourse] = useState<Course | null>(null)
   const [loading, setLoading] = useState(true)
+
+  const [cupom, setCupom] = useState<string>("")
+  const [validCupom, setValidCupom] = useState<boolean | null>(null)
+  const [desconto, setDesconto] = useState<number>(0)
+  const [valorFinal, setValorFinal] = useState<number>(0)
+
 
   // ─── Função de checagem de clube ───────────────────────────────
   const checkClube = async (email: string) => {
@@ -275,51 +281,64 @@ const handleChange: React.ChangeEventHandler<FormControlElement> = e => {
         curso: course.title,
         aceitouTermos: form.aceitaTermos,
         versaoTermo: "v1.0",
-        valor:
-          parseFloat(course.price.replace("R$", "").replace(",", ".")) *
-          (isClubeMember ? 0.95 : 1),
-        paymentMethod
+        cupom: cupom || undefined
       })
-      const link = resp.data.linkPagamento
-      setLinkPagamento(link)
-      setShowSucesso(true)
-      setTimeout(() => (window.location.href = link), 10000)
+      //const link = resp.data.linkPagamento
+      //setLinkPagamento(link)
+      //setShowSucesso(true)
+      //setTimeout(() => (window.location.href = link), 10000)
+      navigate(`/pagamento/${resp.data.inscricao_id}`)
     } catch {
       setErrors(["Erro ao enviar sua inscrição. Tente novamente mais tarde."])
     }
   }
 
+  const checkCupom = async () => {
+  if (!cupom.trim()) return
+  try {
+    const resp = await axios.get(
+      `${import.meta.env.VITE_API_URL}/checa-cupom`,
+      { params: { cupom, curso: course!.title } }
+    )
+    if (resp.data.valid) {
+      // a lambda só retorna valid:true, então você precisa obter o desconto
+      // e recalcular usando o valor base:
+      // exemplo: porcentagem de 10% ou valor fixo R$10,00
+      const descontoRaw = resp.data.desconto as string  // ajuste na lambda p/ retornar também o campo `desconto`
+      let d = 0
+      const base = parseFloat(course!.price.replace("R$", "").replace(",", "."))
+      if (descontoRaw.endsWith("%")) {
+        d = base * (parseFloat(descontoRaw)/100)
+      } else {
+        d = parseFloat(descontoRaw.replace("R$","").replace(",","."))
+      }
+      setDesconto(d)
+      setValorFinal(Math.max(0, base - d))
+      setValidCupom(true)
+    } else {
+      setValidCupom(false)
+    }
+  } catch {
+    setValidCupom(false)
+  }
+}
+
+
   // ─── JSX ────────────────────────────────────────────────────────
   const valorBase = parseFloat(course.price.replace("R$", "").replace(",", "."))
-  const valorBaseDesconto = isClubeMember ? +(valorBase * 0.95).toFixed(2) : valorBase
-  const valorCartao = +(valorBaseDesconto * 1.08).toFixed(2)
-  const parcela12x = +(valorCartao / 12).toFixed(2)
+  //const valorBaseDesconto = isClubeMember ? +(valorBase * 0.95).toFixed(2) : valorBase
+  //const valorCartao = +(valorBaseDesconto * 1.08).toFixed(2)
+  //const parcela12x = +(valorCartao / 12).toFixed(2)
 
   return (
     <Container className="py-5" style={{ maxWidth: 600 }}>
       <h2 className="mb-2 text-center">Inscrição: {course.title}</h2>
       <p className="text-center mb-2">
-        <strong>Valor do curso:</strong> {course.price}
+        <strong>Valor do curso:</strong>{" "}
+        {validCupom
+          ? `R$ ${valorFinal.toFixed(2)}`
+          : course.price}
       </p>
-
-      <div className="mb-4">
-        <strong>Escolha a forma de pagamento:</strong>
-        <Form.Check
-          type="radio"
-          label={`PIX - R$ ${valorBaseDesconto.toFixed(2).replace('.', ',')}`}
-          name="paymentMethod"
-          checked={paymentMethod === "PIX"}
-          onChange={() => setPaymentMethod("PIX")}
-        />
-
-        <Form.Check
-          type="radio"
-          label={`Cartão de Crédito - R$ ${valorCartao.toFixed(2).replace('.', ',')} (até 12x de R$ ${parcela12x.toFixed(2).replace('.', ',')})`}
-          name="paymentMethod"
-          checked={paymentMethod === "CARTAO"}
-          onChange={() => setPaymentMethod("CARTAO")}
-        />
-      </div>
 
       <Button
             as="a"
@@ -605,6 +624,29 @@ const handleChange: React.ChangeEventHandler<FormControlElement> = e => {
                         </Alert>
                     )}
 
+                    <Form.Group className="mb-3">
+                      <Form.Label>Cupom de desconto</Form.Label>
+                      <Form.Control
+                        name="cupom"
+                        value={cupom}
+                        onChange={e => setCupom(e.target.value.toUpperCase())}
+                        onBlur={checkCupom}
+                        placeholder="Digite seu cupom"
+                      />
+                      {validCupom === true && (
+                        <Alert variant="success">
+                          🎉 Cupom válido! Você ganhou R$ {desconto.toFixed(2)} de desconto.  
+                          Novo valor: R$ {valorFinal.toFixed(2)}
+                        </Alert>
+                      )}
+                      {validCupom === false && (
+                        <Alert variant="danger">
+                          ❌ Cupom inválido para este curso.
+                        </Alert>
+                      )}
+                    </Form.Group>
+
+
                     <div className="text-center">
                         <Button variant="primary" type="submit">
                             Enviar Inscrição
@@ -624,7 +666,7 @@ const handleChange: React.ChangeEventHandler<FormControlElement> = e => {
         </Modal.Footer>
       </Modal>
 
-      <Modal show={showSucesso} onHide={() => {}} backdrop="static" keyboard={false} centered>
+      {/*<Modal show={showSucesso} onHide={() => {}} backdrop="static" keyboard={false} centered>
       <Modal.Header>
         <Modal.Title>Inscrição efetuada com sucesso!</Modal.Title>
       </Modal.Header>
@@ -639,7 +681,7 @@ const handleChange: React.ChangeEventHandler<FormControlElement> = e => {
           <p className="mt-2">Você será redirecionado automaticamente em até 10 segundos…</p>
         </div>
       </Modal.Body>
-    </Modal>
+    </Modal>*/}
 
       <ParcelamentoModal show={showParcelamento} onHide={() => setShowParcelamento(false)} valor={valorBase} />
     </Container>
