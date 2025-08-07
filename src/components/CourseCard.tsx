@@ -30,7 +30,7 @@ const CourseCard: React.FC<CourseCardProps> = ({
 }) => {
   return (
     <Card className="mb-4 h-100 shadow-sm">
-      <Link to={`/inscricao/${id}`}>
+      <Link to={`/curso/${id}`}>
         <Card.Img
           variant="top"
           src={imageUrl}
@@ -80,9 +80,9 @@ const CourseCard: React.FC<CourseCardProps> = ({
         </Card.Text>
 
         <div className="text-end mt-3">
-          <Link to={`/inscricao/${id}`}>
+          <Link to={`/curso/${id}`}>
             <Button variant="primary" size="sm">
-              Inscrever-se
+              Ver Detalhes
             </Button>
           </Link>
         </div>
