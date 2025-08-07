@@ -345,12 +345,12 @@ const handleChange: React.ChangeEventHandler<FormControlElement> = e => {
       <div className="text-center mb-4">
         <p>
           <strong>Valor no PIX à vista:</strong>{" "}
-          R$ {valorDesconto.toFixed(2).replace(",", ".")}
+          R$ {valorDesconto.toFixed(2).replace(".", ",")}
         </p>
         <p>
           <strong>Valor no CARTÃO:</strong>{" "}
-          R$ {valorCartao.toFixed(2).replace(",", ".")} ou em até 12× de R${" "}
-          {parcela12.toFixed(2).replace(",", ".")}
+          R$ {valorCartao.toFixed(2).replace(".", ",")} ou em até 12× de R${" "}
+          {parcela12.toFixed(2).replace(".", ",")}
         </p>
       </div>
 
