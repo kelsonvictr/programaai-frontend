@@ -5,7 +5,6 @@ import CourseCard from "../components/CourseCard"
 import axios from "axios"
 import { FaWhatsapp } from "react-icons/fa"
 
-// Interface para tipar seus cursos (pode ajustar campos conforme o seu backend)
 interface Course {
   id: string
   title: string
@@ -27,6 +26,7 @@ interface Course {
   publicoAlvo?: string[]
   oQueVaiAprender?: string[]
   modulos?: string[]
+  ativo: boolean
 }
 
 const Courses: React.FC = () => {
@@ -37,21 +37,22 @@ const Courses: React.FC = () => {
   useEffect(() => {
     axios
       .get<Course[]>(`${import.meta.env.VITE_API_URL}/cursos`)
-      .then(resp => {
-        setCourses(resp.data)
-      })
+      .then(resp => setCourses(resp.data))
       .catch(err => {
         console.error("Erro ao carregar cursos:", err)
         setError("Não foi possível carregar a lista de cursos. Tente novamente mais tarde.")
       })
-      .finally(() => {
-        setLoading(false)
-      })
+      .finally(() => setLoading(false))
   }, [])
+
+  // separa ativos e encerrados
+  const activeCourses = courses.filter(c => c.ativo)
+  const closedCourses = courses.filter(c => !c.ativo)
 
   return (
     <Container className="py-5">
       <h2 className="mb-4">Nossos Cursos</h2>
+
       <Button
         as="a"
         href={`https://wa.me/5583986608771?text=${encodeURIComponent(
@@ -74,19 +75,42 @@ const Courses: React.FC = () => {
       )}
 
       {error && (
-        <Alert variant="danger">
-          {error}
-        </Alert>
+        <Alert variant="danger">{error}</Alert>
       )}
 
       {!loading && !error && (
-        <Row>
-          {courses.map(curso => (
-            <Col key={curso.id} sm={12} md={6} lg={4} className="mb-4">
-              <CourseCard {...curso} />
-            </Col>
-          ))}
-        </Row>
+        <>
+          {/* cursos ativos */}
+          <Row>
+            {activeCourses.map(curso => (
+              <Col key={curso.id} sm={12} md={6} lg={4} className="mb-4">
+                <CourseCard {...curso} />
+              </Col>
+            ))}
+          </Row>
+
+          {/* seção de encerrados */}
+          {closedCourses.length > 0 && (
+            <>
+              <h3 className="mt-5 text-center text-muted">Vagas Encerradas</h3>
+              <Row>
+                {closedCourses.map(curso => (
+                  <Col key={curso.id} sm={12} md={6} lg={4} className="mb-4">
+                    <div className="position-relative">
+                      <CourseCard {...curso} />
+                      <div
+                        className="position-absolute top-0 start-0 w-100 h-100 d-flex align-items-center justify-content-center"
+                        style={{ backgroundColor: "rgba(0,0,0,0.6)" }}
+                      >
+                        <span className="text-white fs-4">Vagas encerradas</span>
+                      </div>
+                    </div>
+                  </Col>
+                ))}
+              </Row>
+            </>
+          )}
+        </>
       )}
     </Container>
   )
