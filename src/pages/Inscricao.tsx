@@ -330,15 +330,29 @@ const handleChange: React.ChangeEventHandler<FormControlElement> = e => {
   //const valorCartao = +(valorBaseDesconto * 1.08).toFixed(2)
   //const parcela12x = +(valorCartao / 12).toFixed(2)
 
+    // valorDesconto: já com cupom, se houver
+  const valorDesconto = validCupom ? valorFinal : valorBase
+
+  // valorCartao: acréscimo de 8% sobre o valorDesconto
+  const valorCartao = +(valorDesconto * 1.08).toFixed(2)
+
+  // parcela em 12x
+  const parcela12 = +(valorCartao / 12).toFixed(2)
+
   return (
     <Container className="py-5" style={{ maxWidth: 600 }}>
       <h2 className="mb-2 text-center">Inscrição: {course.title}</h2>
-      <p className="text-center mb-2">
-        <strong>Valor do curso:</strong>{" "}
-        {validCupom
-          ? `R$ ${valorFinal.toFixed(2)}`
-          : course.price}
-      </p>
+      <div className="text-center mb-4">
+        <p>
+          <strong>Valor no PIX à vista:</strong>{" "}
+          R$ {valorDesconto.toFixed(2)}
+        </p>
+        <p>
+          <strong>Valor no CARTÃO:</strong>{" "}
+          R$ {valorCartao.toFixed(2)} ou em até 12× de R${" "}
+          {parcela12.toFixed(2)}
+        </p>
+      </div>
 
       <Button
             as="a"
