@@ -45,7 +45,6 @@ const Courses: React.FC = () => {
       .finally(() => setLoading(false))
   }, [])
 
-  // separa ativos e encerrados
   const activeCourses = courses.filter(c => c.ativo)
   const closedCourses = courses.filter(c => !c.ativo)
 
@@ -80,7 +79,7 @@ const Courses: React.FC = () => {
 
       {!loading && !error && (
         <>
-          {/* cursos ativos */}
+          {/* Cursos ativos */}
           <Row>
             {activeCourses.map(curso => (
               <Col key={curso.id} sm={12} md={6} lg={4} className="mb-4">
@@ -89,7 +88,7 @@ const Courses: React.FC = () => {
             ))}
           </Row>
 
-          {/* seção de encerrados */}
+          {/* Cursos encerrados */}
           {closedCourses.length > 0 && (
             <>
               <h3 className="mt-5 text-center text-muted">Vagas Encerradas</h3>
@@ -98,9 +97,13 @@ const Courses: React.FC = () => {
                   <Col key={curso.id} sm={12} md={6} lg={4} className="mb-4">
                     <div className="position-relative">
                       <CourseCard {...curso} />
+                      {/* Sobreposição visual */}
                       <div
                         className="position-absolute top-0 start-0 w-100 h-100 d-flex align-items-center justify-content-center"
-                        style={{ backgroundColor: "rgba(0,0,0,0.6)" }}
+                        style={{
+                          backgroundColor: "rgba(0,0,0,0.6)",
+                          pointerEvents: "none"  // permite clonck-through
+                        }}
                       >
                         <span className="text-white fs-4">Vagas encerradas</span>
                       </div>
