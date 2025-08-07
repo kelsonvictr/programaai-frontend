@@ -20,7 +20,6 @@ const CourseCard: React.FC<CourseCardProps> = ({
   id,
   title,
   description,
-  price,
   imageUrl,
   professor,
   linkedin,
@@ -45,9 +44,6 @@ const CourseCard: React.FC<CourseCardProps> = ({
         </small>
 
         <Card.Title>{title}</Card.Title>
-
-        {/* preço */}
-        <h5 className="text-success mb-3">{price}</h5>
 
         <div className="mb-2">
           <strong>Datas:</strong>{" "}
