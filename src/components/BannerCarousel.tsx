@@ -52,7 +52,7 @@ const BannerCarousel: React.FC = () => {
   }
 
   if (error || ativos.length === 0) {
-    // Sem banners para mostrar – fica silencioso (ou coloque um fallback aqui se quiser)
+    // Sem banners para mostrar
     return null
   }
 
