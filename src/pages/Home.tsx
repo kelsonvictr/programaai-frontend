@@ -1,14 +1,69 @@
-import React from "react"
-import { Container, Row, Col, Button, Card } from "react-bootstrap"
+// src/pages/Home.tsx
+import React, { useEffect, useMemo, useState } from "react"
+import { Container, Row, Col, Button, Card, Spinner, Alert } from "react-bootstrap"
 import { Link } from "react-router-dom"
 import { FaWhatsapp } from "react-icons/fa"
 import BannerCarousel from "../components/BannerCarousel"
-import { courses } from "../mocks/courses"
+import axios from "axios"
+
+interface Course {
+  id: string
+  title: string
+  description: string
+  duration: string
+  price: string
+  obsPrice?: string
+  imageUrl: string
+  bannerSite: string
+  bannerMobile: string
+  professor: string
+  profFoto: string
+  linkedin: string
+  datas: string[]
+  horario: string
+  modalidade: string
+  bio: string
+  prerequisitos?: string[]
+  publicoAlvo?: string[]
+  oQueVaiAprender?: string[]
+  modulos?: string[]
+  ativo?: boolean
+}
 
 const Home: React.FC = () => {
-  const novidades = courses
-    .sort((a, b) => b.id - a.id)
-    .slice(0, 4)
+  const [courses, setCourses] = useState<Course[]>([])
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
+
+  useEffect(() => {
+    let isMounted = true
+    axios
+      .get<Course[]>(`${import.meta.env.VITE_API_URL}/cursos`)
+      .then(resp => {
+        if (!isMounted) return
+        setCourses(resp.data || [])
+      })
+      .catch(err => {
+        console.error("Erro ao carregar cursos:", err)
+        if (!isMounted) return
+        setError("Não foi possível carregar os cursos agora. Tente novamente mais tarde.")
+      })
+      .finally(() => {
+        if (!isMounted) return
+        setLoading(false)
+      })
+    return () => { isMounted = false }
+  }, [])
+
+  // pega só cursos ativos (se 'ativo' vier ausente, considera ativo)
+  const novidades = useMemo(() => {
+    const ativos = courses.filter(c => c.ativo !== false)
+    const toNum = (v: string) => {
+      const n = Number(v)
+      return Number.isNaN(n) ? -Infinity : n
+    }
+    return [...ativos].sort((a, b) => toNum(b.id) - toNum(a.id)).slice(0, 4)
+  }, [courses])
 
   return (
     <>
@@ -20,18 +75,18 @@ const Home: React.FC = () => {
             <h3>Muita Programação, IA e Café! ☕👩‍💻👨‍💻</h3>
 
             <Button
-                  as="a"
-                  href={`https://wa.me/5583986608771?text=${encodeURIComponent(
-                    "Oi prof. Kelson, venho do site da programa AI, poderia me esclarecer algumas dúvidas?"
-                  )}`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  variant="success"
-                  size="lg"
-                >
-                  <FaWhatsapp size={20} className="me-2" />
-                  Fale conosco pelo WhatsApp
-                </Button>
+              as="a"
+              href={`https://wa.me/5583986608771?text=${encodeURIComponent(
+                "Oi prof. Kelson, venho do site da programa AI, poderia me esclarecer algumas dúvidas?"
+              )}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              variant="success"
+              size="lg"
+            >
+              <FaWhatsapp size={20} className="me-2" />
+              Fale conosco pelo WhatsApp
+            </Button>
 
             <Row
               className="my-4 text-center justify-content-center"
@@ -62,8 +117,6 @@ const Home: React.FC = () => {
               </Col>
             </Row>
 
-
-
             <p className="lead">
               Cursos livres e bootcamps que te preparam para o mercado!
               Sem lenga-lenga, muita prática, IA e didática!
@@ -90,7 +143,22 @@ const Home: React.FC = () => {
 
           <Col md={6}>
             <h3 className="mb-4">Novidades</h3>
-            {novidades.map(curso => (
+
+            {loading && (
+              <div className="text-center my-4">
+                <Spinner animation="border" role="status" />
+              </div>
+            )}
+
+            {error && (
+              <Alert variant="danger">{error}</Alert>
+            )}
+
+            {!loading && !error && novidades.length === 0 && (
+              <p className="text-muted">Sem novidades no momento. Volte em breve! 🙂</p>
+            )}
+
+            {!loading && !error && novidades.map(curso => (
               <Card key={curso.id} className="mb-3 shadow-sm">
                 <Card.Body className="d-flex">
                   {/* Foto do professor */}
@@ -122,7 +190,6 @@ const Home: React.FC = () => {
                 </Card.Body>
               </Card>
             ))}
-
           </Col>
         </Row>
 
