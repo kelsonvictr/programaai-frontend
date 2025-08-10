@@ -12,6 +12,7 @@ export default function AdminGuard({ children }: Props) {
 
   useEffect(() => {
     const unsub = onAuthStateChanged(auth, async u => {
+        console.log(ADMIN_EMAIL)
       if (!u) return setState('anon')
       const email = (u.email || '').toLowerCase()
       const allowed = ADMIN_EMAIL && email === ADMIN_EMAIL
