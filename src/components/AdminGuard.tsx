@@ -2,8 +2,7 @@
 import { useEffect, useState } from 'react'
 import type { ReactNode } from 'react'
 import { auth } from '../firebase'
-import { onAuthStateChanged } from 'firebase/auth'
-import { Navigate } from 'react-router-dom'
+import { onAuthStateChanged, signOut } from 'firebase/auth'
 
 type Props = { children: ReactNode }
 type GuardState = 'loading' | 'anon' | 'admin' | 'forbidden'
@@ -13,7 +12,7 @@ export default function AdminGuard({ children }: Props) {
 
   useEffect(() => {
     const unsub = onAuthStateChanged(auth, async u => {
-      if (!u) return setState('anon') // deixa renderizar a página com o form
+      if (!u) return setState('anon')
       const t = await u.getIdTokenResult(true)
       const isAdmin = t.claims?.admin === true
       setState(isAdmin ? 'admin' : 'forbidden')
@@ -22,7 +21,16 @@ export default function AdminGuard({ children }: Props) {
   }, [])
 
   if (state === 'loading') return null
-  if (state === 'forbidden') return <Navigate to="/" replace />
-  // anon ou admin renderiza a página (no Admin você mostra login ou dados)
+
+  if (state === 'forbidden') {
+    return (
+      <div style={{ padding: 24 }}>
+        <h3>Acesso restrito</h3>
+        <p>Esta área é apenas para administradores.</p>
+        <button onClick={() => signOut(auth)}>Sair e trocar de conta</button>
+      </div>
+    )
+  }
+
   return <>{children}</>
 }
