@@ -6,20 +6,23 @@ import { onAuthStateChanged } from 'firebase/auth'
 import { Navigate } from 'react-router-dom'
 
 type Props = { children: ReactNode }
+type GuardState = 'loading' | 'anon' | 'admin' | 'forbidden'
 
 export default function AdminGuard({ children }: Props) {
-  const [allowed, setAllowed] = useState<boolean | null>(null)
+  const [state, setState] = useState<GuardState>('loading')
 
   useEffect(() => {
     const unsub = onAuthStateChanged(auth, async u => {
-      if (!u) return setAllowed(false)
+      if (!u) return setState('anon') // deixa renderizar a página com o form
       const t = await u.getIdTokenResult(true)
       const isAdmin = t.claims?.admin === true
-      setAllowed(isAdmin /* || isAdminEmail */)
+      setState(isAdmin ? 'admin' : 'forbidden')
     })
     return () => unsub()
   }, [])
 
-  if (allowed === null) return null // ou um spinner
-  return allowed ? <>{children}</> : <Navigate to="/" replace />
+  if (state === 'loading') return null
+  if (state === 'forbidden') return <Navigate to="/" replace />
+  // anon ou admin renderiza a página (no Admin você mostra login ou dados)
+  return <>{children}</>
 }
