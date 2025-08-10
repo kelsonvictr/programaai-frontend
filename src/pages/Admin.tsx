@@ -2,9 +2,10 @@ import { useState, useEffect } from 'react'
 import axios from 'axios'
 import { auth } from '../firebase'
 import { signInWithEmailAndPassword, onAuthStateChanged, signOut } from 'firebase/auth'
-import { Container, Table, Button, Form, Spinner, Alert } from 'react-bootstrap'
+import { Container, Table, Button, Form, Spinner, Alert, Badge } from 'react-bootstrap'
 
-const API_URL = `${import.meta.env.VITE_API_URL}/galaxy/inscricoes`
+const API_BASE = import.meta.env.VITE_ADMIN_API as string
+const ENDPOINT = `${API_BASE}/galaxy/inscricoes-por-curso`
 
 type Inscricao = {
   id: string
@@ -12,22 +13,30 @@ type Inscricao = {
   email: string
   curso: string
   dataInscricao: string
-  whatsapp: string
+  whatsapp?: string
   ondeEstuda?: string
   asaasPaymentLinkUrl?: string
+  valorOriginal?: number
+  valorCurso?: number
+  cupom?: string | null
+}
+
+type ApiResp = {
+  total: number
+  cursos: Record<string, Inscricao[]>
 }
 
 export default function Admin() {
   const [user, setUser] = useState<any>(null)
   const [email, setEmail] = useState('')
   const [senha, setSenha] = useState('')
-  const [inscricoes, setInscricoes] = useState<Inscricao[]>([])
+  const [grupos, setGrupos] = useState<Record<string, Inscricao[]>>({})
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [token, setToken] = useState<string>('')
 
   useEffect(() => {
-    onAuthStateChanged(auth, async (u) => {
+    onAuthStateChanged(auth, async u => {
       setUser(u)
       if (u) {
         const t = await u.getIdToken()
@@ -53,7 +62,7 @@ export default function Admin() {
 
   const logout = async () => {
     await signOut(auth)
-    setInscricoes([])
+    setGrupos({})
     setToken('')
   }
 
@@ -61,11 +70,17 @@ export default function Admin() {
     setLoading(true)
     setError(null)
     try {
-      const { data } = await axios.get<Inscricao[]>(API_URL, {
+      const { data } = await axios.get<ApiResp>(ENDPOINT, {
         headers: { Authorization: `Bearer ${jwt}` }
       })
-      const ordenadas = data.sort((a, b) => new Date(b.dataInscricao).getTime() - new Date(a.dataInscricao).getTime())
-      setInscricoes(ordenadas)
+      // defensivo: garante ordenação desc em cada curso
+      const ordenado: Record<string, Inscricao[]> = {}
+      Object.entries(data.cursos || {}).forEach(([curso, lista]) => {
+        ordenado[curso] = [...lista].sort(
+          (a, b) => new Date(b.dataInscricao).getTime() - new Date(a.dataInscricao).getTime()
+        )
+      })
+      setGrupos(ordenado)
     } catch (err) {
       console.error(err)
       setError('Erro ao carregar inscrições')
@@ -74,23 +89,15 @@ export default function Admin() {
     }
   }
 
-  const deletar = async (id: string) => {
-    if (!window.confirm('Confirma excluir esta inscrição?')) return
-    try {
-      await axios.delete(`${API_URL}/${id}`, {
-        headers: { Authorization: `Bearer ${token}` }
-      })
-      setInscricoes(inscricoes.filter(i => i.id !== id))
-    } catch (err) {
-      console.error(err)
-      setError('Erro ao deletar inscrição')
-    }
+  // botão deletar desativado por enquanto (endpoint ainda não existe na Admin API)
+  const deletar = async (_id: string) => {
+    alert('Excluir ainda não disponível nesta API')
   }
 
   if (!user) {
     return (
-      <Container className="py-5" style={{ maxWidth: 400 }}>
-        <h2>Galaxy</h2>
+      <Container className="py-5" style={{ maxWidth: 420 }}>
+        <h2 className="mb-4">Galaxy (Admin)</h2>
         <Form onSubmit={login}>
           <Form.Group className="mb-3">
             <Form.Label>Email</Form.Label>
@@ -107,23 +114,29 @@ export default function Admin() {
     )
   }
 
-  const inscricoesPorCurso = inscricoes.reduce((acc, inscricao) => {
-    if (!acc[inscricao.curso]) acc[inscricao.curso] = []
-    acc[inscricao.curso].push(inscricao)
-    return acc
-  }, {} as Record<string, Inscricao[]>)
-
   return (
     <Container className="py-5">
-      <h2>Inscrições</h2>
-      <Button variant="secondary" onClick={logout} className="mb-3">Sair</Button>
+      <div className="d-flex align-items-center gap-3 mb-3">
+        <h2 className="mb-0">Inscrições por Curso</h2>
+        <Button variant="outline-secondary" size="sm" onClick={() => fetchInscricoes(token)}>
+          Atualizar
+        </Button>
+        <Button variant="secondary" size="sm" onClick={logout}>
+          Sair
+        </Button>
+      </div>
+
       {loading && <Spinner animation="border" />}
       {error && <Alert variant="danger">{error}</Alert>}
 
-      {Object.entries(inscricoesPorCurso).map(([curso, lista]) => (
+      {Object.entries(grupos).map(([curso, lista]) => (
         <div key={curso} className="mb-5">
-          <h4>{curso}</h4>
-          <Table striped bordered hover>
+          <div className="d-flex align-items-center gap-2 mb-2">
+            <h4 className="mb-0">{curso}</h4>
+            <Badge bg="dark">{lista.length}</Badge>
+          </div>
+
+          <Table striped bordered hover responsive>
             <thead>
               <tr>
                 <th>Data/Hora</th>
@@ -131,27 +144,27 @@ export default function Admin() {
                 <th>Email</th>
                 <th>WhatsApp</th>
                 <th>Onde Estuda</th>
-                <th>Link Pagamento</th>
+                <th>Valor</th>
+                <th>Cupom</th>
                 <th>Ações</th>
               </tr>
             </thead>
             <tbody>
               {lista.map(i => (
                 <tr key={i.id}>
-                  <td>
-                    {new Date(i.dataInscricao).toLocaleString()}
-                  </td>
+                  <td>{new Date(i.dataInscricao).toLocaleString()}</td>
                   <td>{i.nomeCompleto}</td>
                   <td>{i.email}</td>
-                  <td>{i.whatsapp}</td>
+                  <td>{i.whatsapp || '-'}</td>
                   <td>{i.ondeEstuda || '-'}</td>
                   <td>
-                    {i.asaasPaymentLinkUrl
-                      ? <a href={i.asaasPaymentLinkUrl} target="_blank" rel="noreferrer">Link</a>
+                    {typeof i.valorCurso === 'number'
+                      ? `R$ ${i.valorCurso.toFixed(2)}`
                       : '-'}
                   </td>
+                  <td>{i.cupom || '-'}</td>
                   <td>
-                    <Button variant="danger" size="sm" onClick={() => deletar(i.id)}>
+                    <Button variant="danger" size="sm" onClick={() => deletar(i.id)} disabled>
                       🗑️ Deletar
                     </Button>
                   </td>
@@ -161,6 +174,10 @@ export default function Admin() {
           </Table>
         </div>
       ))}
+
+      {!Object.keys(grupos).length && !loading && (
+        <Alert variant="info">Nenhuma inscrição encontrada.</Alert>
+      )}
     </Container>
   )
 }

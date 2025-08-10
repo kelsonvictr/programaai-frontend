@@ -8,6 +8,8 @@ import CourseDetails from "./pages/CourseDetails"
 import Inscricao from "./pages/Inscricao"
 import CookieBanner from "./components/CookieBanner"
 import Pagamento from "./pages/Pagamento"
+import AdminGuard from "./components/AdminGuard"
+import Admin from "./pages/Admin"
 
 const App: React.FC = () => {
   return (
@@ -18,6 +20,15 @@ const App: React.FC = () => {
         <Route path="/cursos/:id" element={<CourseDetails />} />
         <Route path="/inscricao/:id" element={<Inscricao />} />
         <Route path="/pagamento/:inscricaoId" element={<Pagamento />} />
+        {/* Rota protegida */}
+        <Route
+          path="/_galaxy"
+          element={
+            <AdminGuard>
+              <Admin />
+            </AdminGuard>
+            }
+        />
       </Routes>
       <CookieBanner />
     </Layout>
