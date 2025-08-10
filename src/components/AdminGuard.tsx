@@ -1,4 +1,3 @@
-// src/components/AdminGuard.tsx
 import { useEffect, useState } from 'react'
 import type { ReactNode } from 'react'
 import { auth } from '../firebase'
@@ -9,13 +8,14 @@ type GuardState = 'loading' | 'anon' | 'admin' | 'forbidden'
 
 export default function AdminGuard({ children }: Props) {
   const [state, setState] = useState<GuardState>('loading')
+  const ADMIN_EMAIL = (import.meta.env.VITE_ADMIN_EMAIL || '').toLowerCase()
 
   useEffect(() => {
     const unsub = onAuthStateChanged(auth, async u => {
       if (!u) return setState('anon')
-      const t = await u.getIdTokenResult(true)
-      const isAdmin = t.claims?.admin === true
-      setState(isAdmin ? 'admin' : 'forbidden')
+      const email = (u.email || '').toLowerCase()
+      const allowed = ADMIN_EMAIL && email === ADMIN_EMAIL
+      setState(allowed ? 'admin' : 'forbidden')
     })
     return () => unsub()
   }, [])
