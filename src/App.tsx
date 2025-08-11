@@ -8,7 +8,6 @@ import CourseDetails from "./pages/CourseDetails"
 import Inscricao from "./pages/Inscricao"
 import CookieBanner from "./components/CookieBanner"
 import Pagamento from "./pages/Pagamento"
-import AdminGuard from "./components/AdminGuard"
 import Admin from "./pages/Admin"
 
 const App: React.FC = () => {
