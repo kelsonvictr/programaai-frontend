@@ -20,13 +20,10 @@ const App: React.FC = () => {
         <Route path="/cursos/:id" element={<CourseDetails />} />
         <Route path="/inscricao/:id" element={<Inscricao />} />
         <Route path="/pagamento/:inscricaoId" element={<Pagamento />} />
-        {/* Rota protegida */}
         <Route
           path="/_galaxy"
           element={
-            <AdminGuard>
               <Admin />
-            </AdminGuard>
             }
         />
       </Routes>
