@@ -6,6 +6,7 @@ import { Container, Table, Button, Form, Spinner, Alert, Badge } from 'react-boo
 
 const API_BASE = import.meta.env.VITE_ADMIN_API as string
 const ENDPOINT = `${API_BASE}/galaxy/inscricoes-por-curso`
+const TOGGLE_ENDPOINT = `${API_BASE}/galaxy/inscricoes/toggle`
 
 type Inscricao = {
   id: string
@@ -19,6 +20,10 @@ type Inscricao = {
   valorOriginal?: number
   valorCurso?: number
   cupom?: string | null
+
+  // novos campos (podem vir ausentes → tratamos como null)
+  pago?: boolean | null
+  grupoWhatsapp?: boolean | null
 }
 
 type ApiResp = {
@@ -34,6 +39,9 @@ export default function Admin() {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [token, setToken] = useState<string>('')
+
+  // loading por toggle (chave: "id:field")
+  const [toggling, setToggling] = useState<Record<string, boolean>>({})
 
   useEffect(() => {
     onAuthStateChanged(auth, async u => {
@@ -89,9 +97,53 @@ export default function Admin() {
     }
   }
 
-  // botão deletar desativado por enquanto (endpoint ainda não existe na Admin API)
   const deletar = async (_id: string) => {
     alert('Excluir ainda não disponível nesta API')
+  }
+
+  // --- helpers ---
+  const fmtMoney = (v?: number) => (typeof v === 'number' ? `R$ ${v.toFixed(2)}` : '-')
+  const keyTF = (id: string, field: 'pago' | 'grupoWhatsapp') => `${id}:${field}`
+
+  // update otimista no estado local
+  const setLocalToggle = (id: string, field: 'pago' | 'grupoWhatsapp', value: boolean) => {
+    setGrupos(prev => {
+      const novo: typeof prev = {}
+      for (const [curso, lista] of Object.entries(prev)) {
+        novo[curso] = lista.map(i => (i.id === id ? { ...i, [field]: value } : i))
+      }
+      return novo
+    })
+  }
+
+  const toggleField = async (id: string, current: boolean | null | undefined, field: 'pago' | 'grupoWhatsapp') => {
+    if (!token) return
+    const nextValue = !(current === true) // null/false -> true ; true -> false (espelho do backend)
+    const toggleKey = keyTF(id, field)
+
+    // otimista
+    setLocalToggle(id, field, nextValue)
+    setToggling(s => ({ ...s, [toggleKey]: true }))
+    setError(null)
+
+    try {
+      await axios.post(
+        TOGGLE_ENDPOINT,
+        { id, field },
+        { headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' } }
+      )
+      // sucesso: nada a fazer, já está otimista
+    } catch (err) {
+      console.error(err)
+      setError(`Falha ao alternar ${field}`)
+      // rollback
+      setLocalToggle(id, field, !nextValue)
+    } finally {
+      setToggling(s => {
+        const { [toggleKey]: _, ...rest } = s
+        return rest
+      })
+    }
   }
 
   if (!user) {
@@ -146,30 +198,76 @@ export default function Admin() {
                 <th>Onde Estuda</th>
                 <th>Valor</th>
                 <th>Cupom</th>
+                <th className="text-center">
+                  <div className="d-flex flex-column align-items-center">
+                    <span>Pago</span>
+                    <Badge bg="success">✓</Badge>
+                  </div>
+                </th>
+                <th className="text-center">
+                  <div className="d-flex flex-column align-items-center">
+                    <span>Grupo</span>
+                    <Badge bg="info">WA</Badge>
+                  </div>
+                </th>
                 <th>Ações</th>
               </tr>
             </thead>
             <tbody>
-              {lista.map(i => (
-                <tr key={i.id}>
-                  <td>{new Date(i.dataInscricao).toLocaleString()}</td>
-                  <td>{i.nomeCompleto}</td>
-                  <td>{i.email}</td>
-                  <td>{i.whatsapp || '-'}</td>
-                  <td>{i.ondeEstuda || '-'}</td>
-                  <td>
-                    {typeof i.valorCurso === 'number'
-                      ? `R$ ${i.valorCurso.toFixed(2)}`
-                      : '-'}
-                  </td>
-                  <td>{i.cupom || '-'}</td>
-                  <td>
-                    <Button variant="danger" size="sm" onClick={() => deletar(i.id)} disabled>
-                      🗑️ Deletar
-                    </Button>
-                  </td>
-                </tr>
-              ))}
+              {lista.map(i => {
+                const pagoKey = keyTF(i.id, 'pago')
+                const grupoKey = keyTF(i.id, 'grupoWhatsapp')
+                const pagoChecked = !!i.pago
+                const grupoChecked = !!i.grupoWhatsapp
+
+                return (
+                  <tr key={i.id}>
+                    <td>{new Date(i.dataInscricao).toLocaleString()}</td>
+                    <td>{i.nomeCompleto}</td>
+                    <td>{i.email}</td>
+                    <td>{i.whatsapp || '-'}</td>
+                    <td>{i.ondeEstuda || '-'}</td>
+                    <td>{fmtMoney(i.valorCurso)}</td>
+                    <td>{i.cupom || '-'}</td>
+
+                    {/* Toggle Pago */}
+                    <td className="text-center">
+                      <div className="d-inline-flex align-items-center gap-2">
+                        <Form.Check
+                          type="switch"
+                          id={`pago-${i.id}`}
+                          checked={pagoChecked}
+                          disabled={!!toggling[pagoKey]}
+                          onChange={() => toggleField(i.id, i.pago, 'pago')}
+                          title="Marcar pagamento"
+                        />
+                        {toggling[pagoKey] && <Spinner size="sm" animation="border" />}
+                      </div>
+                    </td>
+
+                    {/* Toggle Grupo WhatsApp */}
+                    <td className="text-center">
+                      <div className="d-inline-flex align-items-center gap-2">
+                        <Form.Check
+                          type="switch"
+                          id={`grupo-${i.id}`}
+                          checked={grupoChecked}
+                          disabled={!!toggling[grupoKey]}
+                          onChange={() => toggleField(i.id, i.grupoWhatsapp, 'grupoWhatsapp')}
+                          title="Marcar entrada no grupo"
+                        />
+                        {toggling[grupoKey] && <Spinner size="sm" animation="border" />}
+                      </div>
+                    </td>
+
+                    <td>
+                      <Button variant="danger" size="sm" onClick={() => deletar(i.id)} disabled>
+                        🗑️ Deletar
+                      </Button>
+                    </td>
+                  </tr>
+                )
+              })}
             </tbody>
           </Table>
         </div>
