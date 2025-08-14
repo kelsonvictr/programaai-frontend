@@ -287,7 +287,13 @@ const handleChange: React.ChangeEventHandler<FormControlElement> = e => {
       //setLinkPagamento(link)
       //setShowSucesso(true)
       //setTimeout(() => (window.location.href = link), 10000)
-      navigate(`/pagamento/${resp.data.inscricao_id}`)
+      // verifica se é o curso fullstack
+      const isFullstack = course.title.includes("Curso Presencial Programação Fullstack")
+      if (isFullstack) {
+        navigate(`/pagamento/${resp.data.inscricao_id}?isFullstack=true`)
+      } else {
+        navigate(`/pagamento/${resp.data.inscricao_id}`)
+      }
     } catch {
       setErrors(["Erro ao enviar sua inscrição. Tente novamente mais tarde."])
     }
