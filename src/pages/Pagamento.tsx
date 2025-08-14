@@ -1,8 +1,11 @@
 // src/pages/Pagamento.tsx
 
-import React, { useEffect, useState } from "react"
+import React, { useEffect, useMemo, useState } from "react"
 import { useNavigate, useParams } from "react-router-dom"
-import { Container, Row, Col, Button, Alert, Spinner, Card, Placeholder, Badge } from "react-bootstrap"
+import {
+  Container, Row, Col, Button, Alert, Spinner, Card,
+  Placeholder, Badge
+} from "react-bootstrap"
 import axios from "axios"
 import { FaQrcode, FaCreditCard } from "react-icons/fa"
 import { BsFileEarmarkText } from "react-icons/bs"
@@ -42,6 +45,9 @@ type PagamentoInfo = {
   }
 }
 
+const isBadId = (v?: string) =>
+  !v || v.trim() === "" || v === "null" || v === "undefined"
+
 const Pagamento: React.FC = () => {
   const { inscricaoId } = useParams<{ inscricaoId?: string }>()
   const navigate = useNavigate()
@@ -49,18 +55,21 @@ const Pagamento: React.FC = () => {
   const [loading, setLoading] = useState<LoadingKind>(null)
   const [error, setError] = useState<string | null>(null)
   const [successMsg, setSuccessMsg] = useState<string | null>(null)
-
-  // Estado com informações do endpoint /pagamento-info
   const [info, setInfo] = useState<PagamentoInfo | null>(null)
   const [loadingInfo, setLoadingInfo] = useState<boolean>(true)
 
-  if (!inscricaoId) {
-    navigate("/")
-    return null
-  }
+  // Redireciona imediatamente se o ID estiver ausente/ruim
+  useEffect(() => {
+    if (isBadId(inscricaoId)) {
+      navigate("/", { replace: true })
+    }
+  }, [inscricaoId, navigate])
+
+  const validInscricaoId = useMemo(() => !isBadId(inscricaoId) ? inscricaoId! : null, [inscricaoId])
 
   // Carrega dados de pagamento (valores + textos de marketing)
   useEffect(() => {
+    if (!validInscricaoId) return
     let mounted = true
     ;(async () => {
       setLoadingInfo(true)
@@ -68,7 +77,7 @@ const Pagamento: React.FC = () => {
       try {
         const resp = await axios.get<PagamentoInfo>(
           `${import.meta.env.VITE_API_URL}/pagamento-info`,
-          { params: { inscricaoId } }
+          { params: { inscricaoId: validInscricaoId } }
         )
         if (mounted) setInfo(resp.data)
       } catch (err) {
@@ -79,19 +88,26 @@ const Pagamento: React.FC = () => {
       }
     })()
     return () => { mounted = false }
-  }, [inscricaoId])
+  }, [validInscricaoId])
 
   // Gera link do Asaas (PIX ou CARTÃO)
   const handlePayment = async (method: "PIX" | "CARTAO") => {
+    if (!validInscricaoId) return
     setError(null)
     setSuccessMsg(null)
     setLoading(method)
     try {
-      const resp = await axios.post<{ url: string }>(
+      const resp = await axios.post<{ url?: string }>(
         `${import.meta.env.VITE_API_URL}/paymentlink`,
-        { inscricaoId, paymentMethod: method }
+        { inscricaoId: validInscricaoId, paymentMethod: method }
       )
-      window.location.href = resp.data.url
+      const url = resp.data?.url
+      if (!url) {
+        setError("Não foi possível gerar o link de pagamento. Tente novamente.")
+        setLoading(null)
+        return
+      }
+      window.location.href = url
     } catch (err) {
       console.error("Erro ao gerar link de pagamento", err)
       setError("Não foi possível gerar o link de pagamento. Tente novamente.")
@@ -101,12 +117,13 @@ const Pagamento: React.FC = () => {
 
   // Solicita assinatura (6x de R$250 via pix/boleto) – aparece apenas quando a API indica que está disponível
   const handleAssinatura = async () => {
+    if (!validInscricaoId) return
     setError(null)
     setSuccessMsg(null)
     setLoading("ASSINATURA")
     try {
       await axios.post(`${import.meta.env.VITE_API_URL}/isAssinatura`, {
-        inscricaoId,
+        inscricaoId: validInscricaoId,
         isAssinatura: true
       })
       setSuccessMsg("Solicitação de assinatura enviada! Em breve entraremos em contato com os próximos passos.")
@@ -118,7 +135,7 @@ const Pagamento: React.FC = () => {
     }
   }
 
-  // UI de carregamento dos cards de preço (skeleton simples)
+  // Skeleton
   const PriceSkeleton = () => (
     <Card className="shadow-sm mb-4">
       <Card.Body>
@@ -135,6 +152,41 @@ const Pagamento: React.FC = () => {
     </Card>
   )
 
+  // Componente interno para garantir **mesma altura** nos botões
+  const BigActionButton: React.FC<{
+    variant: "success" | "primary" | "outline-secondary"
+    loading: boolean
+    icon: React.ReactNode
+    title: string
+    subtitle?: string
+    onClick?: () => void
+    disabled?: boolean
+  }> = ({ variant, loading, icon, title, subtitle, onClick, disabled }) => (
+    <Button
+      variant={variant}
+      size="lg"
+      className="w-100 d-flex flex-column align-items-center justify-content-center text-center"
+      style={{ lineHeight: 1.1, minHeight: 72 }}
+      onClick={onClick}
+      disabled={disabled}
+    >
+      {loading ? (
+        <Spinner animation="border" size="sm" className="mb-2" />
+      ) : (
+        <div className="mb-2" style={{ display: "flex", alignItems: "center", gap: 8 }}>
+          {icon}
+          <span>{title}</span>
+        </div>
+      )}
+      <small className="d-block" style={{ fontSize: "0.8em", opacity: 0.9 }}>
+        {subtitle || "\u00A0" /* mantém a segunda linha para igualar a altura */}
+      </small>
+    </Button>
+  )
+
+  // Se não há ID válido, não renderiza nada (o useEffect redireciona)
+  if (!validInscricaoId) return null
+
   return (
     <Container className="py-5" style={{ maxWidth: 820 }}>
       {/* Mensagem clara e amigável no topo */}
@@ -145,7 +197,7 @@ const Pagamento: React.FC = () => {
 
       <h2 className="text-center mb-2">Pagamento da Inscrição</h2>
       <p className="text-center text-muted mb-4">
-        <small>ID da inscrição: <strong>#{inscricaoId}</strong></small>
+        <small>ID da inscrição: <strong>#{validInscricaoId}</strong></small>
       </p>
 
       {error && <Alert variant="danger" className="mb-4">{error}</Alert>}
@@ -242,67 +294,43 @@ const Pagamento: React.FC = () => {
 
           <Row className="g-3">
             <Col xs={12} md={6}>
-              {/* PIX */}
-              <Button
+              <BigActionButton
                 variant="success"
-                size="lg"
-                className="w-100 d-flex align-items-center justify-content-center"
+                loading={loading === "PIX"}
+                icon={<FaQrcode size={20} />}
+                title={info?.pix?.valorFmt ? `Pagar com PIX (${info.pix.valorFmt})` : "Pagar com PIX"}
+                subtitle="à vista"
                 onClick={() => handlePayment("PIX")}
                 disabled={!!loading}
-              >
-                {loading === "PIX" ? (
-                  <Spinner animation="border" size="sm" className="me-2" />
-                ) : (
-                  <FaQrcode className="me-2" />
-                )}
-                {info?.pix?.valorFmt ? `Pagar com PIX (${info.pix.valorFmt})` : "Pagar com PIX"}
-              </Button>
+              />
             </Col>
 
             <Col xs={12} md={6}>
-              {/* CARTÃO */}
-              <Button
+              <BigActionButton
                 variant="primary"
-                size="lg"
-                className="w-100 d-flex flex-column align-items-center justify-content-center"
+                loading={loading === "CARTAO"}
+                icon={<FaCreditCard size={20} />}
+                title={info?.cartao?.valorFmt ? `Cartão de Crédito (${info.cartao.valorFmt})` : "Cartão de Crédito"}
+                subtitle={info?.cartao?.ate12x?.valorParcelaFmt
+                  ? `até 12× de ${info.cartao.ate12x.valorParcelaFmt}`
+                  : "até 12×"}
                 onClick={() => handlePayment("CARTAO")}
                 disabled={!!loading}
-                style={{ lineHeight: 1.1 }}
-              >
-                {loading === "CARTAO" ? (
-                  <Spinner animation="border" size="sm" className="mb-1" />
-                ) : (
-                  <FaCreditCard className="mb-1" size={20} />
-                )}
-                {info?.cartao?.valorFmt ? `Cartão de Crédito (${info.cartao.valorFmt})` : "Cartão de Crédito"}
-                <small className="d-block" style={{ fontSize: "0.8em" }}>
-                  {info?.cartao?.ate12x?.valorParcelaFmt
-                    ? `até 12× de ${info.cartao.ate12x.valorParcelaFmt}`
-                    : "até 12×"}
-                </small>
-              </Button>
+              />
             </Col>
 
             {/* ASSINATURA (exibido apenas quando o endpoint sinaliza disponibilidade) */}
             {info?.mensalidades?.disponivel && (
               <Col xs={12}>
-                <Button
+                <BigActionButton
                   variant="outline-secondary"
-                  size="lg"
-                  className="w-100 d-flex flex-column align-items-center justify-content-center"
+                  loading={loading === "ASSINATURA"}
+                  icon={<BsFileEarmarkText size={20} />}
+                  title={`Solicitar ${info.mensalidades.parcelas} mensalidades de ${info.mensalidades.valorParcelaFmt}`}
+                  subtitle="pix/boleto"
                   onClick={handleAssinatura}
                   disabled={!!loading}
-                >
-                  {loading === "ASSINATURA" ? (
-                    <Spinner animation="border" size="sm" className="mb-1" />
-                  ) : (
-                    <BsFileEarmarkText className="mb-1" size={20} />
-                  )}
-                  Solicitar {info.mensalidades.parcelas} mensalidades de {info.mensalidades.valorParcelaFmt} (pix/boleto)
-                  <small className="d-block text-muted" style={{ fontSize: "0.8em" }}>
-                    registraremos sua solicitação e enviaremos as instruções
-                  </small>
-                </Button>
+                />
               </Col>
             )}
           </Row>
@@ -318,7 +346,7 @@ const Pagamento: React.FC = () => {
           <a
             className="btn btn-outline-success"
             href={`https://wa.me/5583986608771?text=${encodeURIComponent(
-              `Olá! Tenho dúvidas sobre o pagamento da minha inscrição #${inscricaoId}.`
+              `Olá! Tenho dúvidas sobre o pagamento da minha inscrição #${validInscricaoId}.`
             )}`}
             target="_blank"
             rel="noreferrer"
