@@ -4,6 +4,9 @@ import { Container, Row, Col, Button, Spinner, Alert } from "react-bootstrap"
 import CourseCard from "../components/CourseCard"
 import axios from "axios"
 import { FaWhatsapp } from "react-icons/fa"
+import { useGallery } from '../hooks/useGalleriesIndex'
+import PhotoGallery from '../components/media/PhotoGallery'
+import VideoGallery from '../components/media/VideoGallery'
 
 interface Course {
   id: string
@@ -33,6 +36,7 @@ const Courses: React.FC = () => {
   const [courses, setCourses] = useState<Course[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
+  const { gallery } = useGallery('estrutura')
 
   useEffect(() => {
     axios
@@ -66,6 +70,19 @@ const Courses: React.FC = () => {
         <FaWhatsapp size={20} className="me-2" />
         Fala com a gente pelo WhatsApp
       </Button>
+
+      <h5 className='mt-5'>Veja nossa estrutura</h5>
+      <PhotoGallery
+        items={gallery.fotos.map(f => ({ src: f.src }))}
+        maxVisible={3}
+        onSeeAll={() => window.location.href = '/estrutura'}
+      />
+      <div className='mt-3' />
+      <VideoGallery
+        items={gallery.videos.map(v => ({ src: v.src }))}
+        maxVisible={1}
+        onSeeAll={() => window.location.href = '/estrutura'}
+      />
 
       {loading && (
         <div className="text-center my-5">
