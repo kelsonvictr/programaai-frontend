@@ -6,7 +6,6 @@ import axios from "axios"
 import { FaWhatsapp } from "react-icons/fa"
 import { useGallery } from '../hooks/useGalleriesIndex'
 import PhotoGallery from '../components/media/PhotoGallery'
-import VideoGallery from '../components/media/VideoGallery'
 
 interface Course {
   id: string
@@ -37,6 +36,8 @@ const Courses: React.FC = () => {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const { gallery } = useGallery('estrutura')
+
+  const latestFotos = gallery.fotos.slice(0, 3)
 
   useEffect(() => {
     axios
@@ -71,18 +72,30 @@ const Courses: React.FC = () => {
         Fala com a gente pelo WhatsApp
       </Button>
 
-      <h5 className='mt-5'>Veja nossa estrutura</h5>
-      <PhotoGallery
-        items={gallery.fotos.map(f => ({ src: f.src }))}
-        maxVisible={3}
-        onSeeAll={() => window.location.href = '/estrutura'}
-      />
-      <div className='mt-3' />
-      <VideoGallery
-        items={gallery.videos.map(v => ({ src: v.src }))}
-        maxVisible={1}
-        onSeeAll={() => window.location.href = '/estrutura'}
-      />
+      {/* Bloco compacto da estrutura */}
+      {latestFotos.length > 0 && (
+        <section className="mb-5">
+          <h5 className="mb-2">Veja nossa estrutura</h5>
+          <p className="text-muted mb-3">
+            Mesão colaborativo, conforto NR17 e café sem fim — o lugar certo pra transformar ideia em código.
+          </p>
+
+          <PhotoGallery
+            items={latestFotos.map(f => ({ src: f.src }))}
+            maxVisible={3}
+            onSeeAll={() => (window.location.href = '/estrutura')}
+          />
+
+          <div className="text-center mt-3">
+            <button
+              className="btn btn-outline-primary btn-sm"
+              onClick={() => (window.location.href = '/estrutura')}
+            >
+              Ver todas as fotos
+            </button>
+          </div>
+        </section>
+      )}
 
       {loading && (
         <div className="text-center my-5">
