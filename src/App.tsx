@@ -9,6 +9,7 @@ import Inscricao from "./pages/Inscricao"
 import CookieBanner from "./components/CookieBanner"
 import Pagamento from "./pages/Pagamento"
 import Admin from "./pages/Admin"
+import Estrutura from "./pages/Estrutura"
 
 const App: React.FC = () => {
   return (
@@ -19,6 +20,7 @@ const App: React.FC = () => {
         <Route path="/cursos/:id" element={<CourseDetails />} />
         <Route path="/inscricao/:id" element={<Inscricao />} />
         <Route path="/pagamento/:inscricaoId" element={<Pagamento />} />
+        <Route path='/estrutura' element={<Estrutura />} />
         <Route
           path="/_galaxy"
           element={

@@ -61,6 +61,16 @@ const NavBar: React.FC = () => {
 
             <Nav.Link
               as={Link}
+              to='/estrutura'
+              className={styles.navLink}
+              onClick={handleNavClick}
+              active={location.pathname === '/estrutura'}
+            >
+              Estrutura
+            </Nav.Link>
+
+            <Nav.Link
+              as={Link}
               to="/cursos"
               className={styles.navLink}
               onClick={handleNavClick}

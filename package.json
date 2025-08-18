@@ -5,10 +5,12 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
+    "prebuild": "node scripts/build-galleries-index.mjs",
     "build": "tsc -b && vite build",
     "lint": "eslint .",
     "preview": "vite preview",
-    "mock": "json-server --watch data/db.json --port 3001"
+    "mock": "json-server --watch data/db.json --port 3001",
+    "galleries:index": "node scripts/build-galleries-index.mjs"
   },
   "dependencies": {
     "axios": "^1.9.0",
