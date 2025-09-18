@@ -11,6 +11,7 @@ import {
 import axios from "axios"
 import { FaLinkedin, FaWhatsapp } from "react-icons/fa"
 import ParcelamentoModal from "../components/ParcelamentoModal"
+import { calcularValores } from "../utils/payment"
 
 interface Course {
   id: string
@@ -133,6 +134,21 @@ const CourseDetails: React.FC = () => {
             {course.obsPrice && <span> ({course.obsPrice})</span>} <br />
             <strong>Formas de Pagamento:</strong> Pix ou Cartão de Crédito (em até 12x)
           </p>
+
+          {/* Destaque dos valores parcelados */}
+          {(() => {
+            const { base, parcela12 } = calcularValores(course.price)
+            return (
+              <div className="mt-3 p-3 bg-light border rounded">
+                <p className="mb-1">
+                  💰 <strong>À vista no PIX:</strong> R$ {base.toFixed(2).replace(".", ",")}
+                </p>
+                <p className="mb-0 text-success fw-bold">
+                  🚀 💳  Ou em até 12x de R$ {parcela12.toFixed(2).replace(".", ",")}
+                </p>
+              </div>
+            )
+          })()}
 
           <Button
             as="a"
