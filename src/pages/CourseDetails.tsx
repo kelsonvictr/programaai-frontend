@@ -157,23 +157,28 @@ const CourseDetails: React.FC = () => {
               <h5 className="mb-3 text-primary fw-bold">
                 🎬 Conheça o curso em vídeo
               </h5>
-              <Card className="border-0 shadow-sm overflow-hidden bg-dark text-white">
+              <Card
+                className="border-0 shadow-sm overflow-hidden bg-dark text-white"
+                style={{ maxWidth: "460px", marginLeft: "auto", marginRight: "auto" }}
+              >
                 <Card.Body className="p-0">
-                  <Ratio aspectRatio="16x9">
+                  <Ratio aspectRatio={16 / 9}>
                     <video
                       src={`/videos-cursos/${course.video}`}
                       controls
                       preload="metadata"
                       poster={course.bannerSite}
                       className="w-100 h-100"
-                      style={{ objectFit: "cover", backgroundColor: "#000" }}
+                      style={{ objectFit: "contain", backgroundColor: "#000" }}
                       playsInline
                     >
                       Seu navegador não suporta a reprodução de vídeo.
                     </video>
                   </Ratio>
                 </Card.Body>
-                <Card.Footer className="bg-dark text-white-50">Descubra a experiência das nossas turmas e os diferenciais da Programa AI antes de se inscrever.</Card.Footer>
+                <Card.Footer className="bg-dark text-white-50">
+                  Veja os highlights do curso em formato vertical, perfeito para sentir a imersão das aulas.
+                </Card.Footer>
               </Card>
             </div>
           )}
