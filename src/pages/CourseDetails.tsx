@@ -6,7 +6,8 @@ import {
   Card,
   Button,
   Alert,
-  Spinner
+  Spinner,
+  Ratio
 } from "react-bootstrap"
 import axios from "axios"
 import { FaLinkedin, FaWhatsapp } from "react-icons/fa"
@@ -30,6 +31,7 @@ interface Course {
   horario: string
   modalidade: string
   bio: string
+  video?: string
   publicoAlvo?: string[]
   oQueVaiAprender?: string[]
   modulos?: string[]
@@ -149,6 +151,32 @@ const CourseDetails: React.FC = () => {
               </div>
             )
           })()}
+
+          {course.video && (
+            <div className="mt-4">
+              <h5 className="mb-3 text-primary fw-bold">
+                🎬 Conheça o curso em vídeo
+              </h5>
+              <Card className="border-0 shadow-sm overflow-hidden bg-dark text-white">
+                <Card.Body className="p-0">
+                  <Ratio aspectRatio="16x9">
+                    <video
+                      src={`/videos-cursos/${course.video}`}
+                      controls
+                      preload="metadata"
+                      poster={course.bannerSite}
+                      className="w-100 h-100"
+                      style={{ objectFit: "cover", backgroundColor: "#000" }}
+                      playsInline
+                    >
+                      Seu navegador não suporta a reprodução de vídeo.
+                    </video>
+                  </Ratio>
+                </Card.Body>
+                <Card.Footer className="bg-dark text-white-50">Descubra a experiência das nossas turmas e os diferenciais da Programa AI antes de se inscrever.</Card.Footer>
+              </Card>
+            </div>
+          )}
 
           <Button
             as="a"
