@@ -162,7 +162,7 @@ const CourseDetails: React.FC = () => {
                 style={{ maxWidth: "460px", marginLeft: "auto", marginRight: "auto" }}
               >
                 <Card.Body className="p-0">
-                  <Ratio aspectRatio={16 / 9}>
+                  <Ratio aspectRatio={100 * (16 / 9)}>
                     <video
                       src={`/videos-cursos/${course.video}`}
                       controls
