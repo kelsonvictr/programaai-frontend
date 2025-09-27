@@ -152,37 +152,6 @@ const CourseDetails: React.FC = () => {
             )
           })()}
 
-          {course.video && (
-            <div className="mt-4">
-              <h5 className="mb-3 text-primary fw-bold">
-                🎬 Conheça o curso em vídeo
-              </h5>
-              <Card
-                className="border-0 shadow-sm overflow-hidden bg-dark text-white"
-                style={{ maxWidth: "460px", marginLeft: "auto", marginRight: "auto" }}
-              >
-                <Card.Body className="p-0">
-                  <Ratio aspectRatio={100 * (16 / 9)}>
-                    <video
-                      src={`/videos-cursos/${course.video}`}
-                      controls
-                      preload="metadata"
-                      poster={course.bannerSite}
-                      className="w-100 h-100"
-                      style={{ objectFit: "contain", backgroundColor: "#000" }}
-                      playsInline
-                    >
-                      Seu navegador não suporta a reprodução de vídeo.
-                    </video>
-                  </Ratio>
-                </Card.Body>
-                <Card.Footer className="bg-dark text-white-50">
-                  Veja os highlights do curso em formato vertical, perfeito para sentir a imersão das aulas.
-                </Card.Footer>
-              </Card>
-            </div>
-          )}
-
           <Button
             as="a"
             href={`https://wa.me/5583986608771?text=${encodeURIComponent(
@@ -213,6 +182,34 @@ const CourseDetails: React.FC = () => {
 
           <h5>Sobre o curso</h5>
           <p>{course.description}</p>
+
+          {course.video && (
+            <div className="mt-4">
+              <Card
+                className="border-0 shadow-sm overflow-hidden bg-dark text-white mx-auto mx-md-0"
+                style={{ maxWidth: "460px" }}
+              >
+                <Card.Body className="p-0">
+                  <Ratio aspectRatio={100 * (16 / 9)}>
+                    <video
+                      src={`/videos-cursos/${course.video}`}
+                      controls
+                      preload="metadata"
+                      poster={course.bannerSite}
+                      className="w-100 h-100"
+                      style={{ objectFit: "contain", backgroundColor: "#000" }}
+                      playsInline
+                    >
+                      Seu navegador não suporta a reprodução de vídeo.
+                    </video>
+                  </Ratio>
+                </Card.Body>
+                <Card.Footer className="bg-dark text-white-50">
+                  <small>🎬 Assista ao vídeo de apresentação do curso</small>
+                </Card.Footer>
+              </Card>
+            </div>
+          )}
 
           {course.publicoAlvo && (
             <>
