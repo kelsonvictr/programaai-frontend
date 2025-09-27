@@ -7,10 +7,11 @@ import {
   Button,
   Alert,
   Spinner,
-  Ratio
+  Ratio,
+  Modal
 } from "react-bootstrap"
 import axios from "axios"
-import { FaLinkedin, FaWhatsapp } from "react-icons/fa"
+import { FaLinkedin, FaWhatsapp, FaPlay } from "react-icons/fa"
 import ParcelamentoModal from "../components/ParcelamentoModal"
 import { calcularValores } from "../utils/payment"
 
@@ -46,6 +47,8 @@ const CourseDetails: React.FC = () => {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const [showParcelamento, setShowParcelamento] = useState(false)
+  const [showVideoModal, setShowVideoModal] = useState(false)
+  const [isDesktop, setIsDesktop] = useState(false)
 
   useEffect(() => {
     if (!id) {
@@ -63,6 +66,26 @@ const CourseDetails: React.FC = () => {
       })
       .finally(() => setLoading(false))
   }, [id, navigate])
+
+  useEffect(() => {
+    if (typeof window === "undefined") return
+
+    const mediaQuery = window.matchMedia("(min-width: 992px)")
+
+    const handleChange = (event: MediaQueryListEvent | MediaQueryList) => {
+      setIsDesktop(event.matches)
+    }
+
+    handleChange(mediaQuery)
+
+    if (typeof mediaQuery.addEventListener === "function") {
+      mediaQuery.addEventListener("change", handleChange)
+      return () => mediaQuery.removeEventListener("change", handleChange)
+    }
+
+    mediaQuery.addListener(handleChange)
+    return () => mediaQuery.removeListener(handleChange)
+  }, [])
 
   if (loading) {
     return (
@@ -184,16 +207,86 @@ const CourseDetails: React.FC = () => {
           <p>{course.description}</p>
 
           {course.video && (
-            <div className="mt-4">
-              <Card
-                className="border-0 shadow-sm overflow-hidden bg-dark text-white mx-auto mx-md-0"
-                style={{ maxWidth: "460px" }}
+            <>
+              <div className="mt-4">
+                <h5 className="mb-3 text-primary fw-bold">
+                  🎬 Conheça o curso em vídeo
+                </h5>
+                {isDesktop ? (
+                  <Card
+                    role="button"
+                    onClick={() => setShowVideoModal(true)}
+                    className="border-0 shadow-sm overflow-hidden bg-dark text-white mx-auto mx-lg-0"
+                    style={{ maxWidth: "320px" }}
+                  >
+                    <div className="position-relative">
+                      <Card.Img
+                        src={course.bannerMobile || course.bannerSite}
+                        alt={`Assista o vídeo do curso ${course.title}`}
+                        style={{ objectFit: "cover", height: "420px" }}
+                      />
+                      <div
+                        className="position-absolute top-50 start-50 translate-middle d-flex align-items-center justify-content-center"
+                        style={{
+                          width: "72px",
+                          height: "72px",
+                          borderRadius: "50%",
+                          background: "rgba(0, 0, 0, 0.65)",
+                          border: "3px solid rgba(255,255,255,0.7)",
+                        }}
+                      >
+                        <FaPlay size={28} color="#fff" style={{ marginLeft: "4px" }} />
+                      </div>
+                    </div>
+                    <Card.Footer className="bg-dark text-white-50">
+                      Se liga no clima do curso e sente como são as aulas da Programa AI.
+                    </Card.Footer>
+                  </Card>
+                ) : (
+                  <Card
+                    className="border-0 shadow-sm overflow-hidden bg-dark text-white mx-auto mx-md-0"
+                    style={{ maxWidth: "460px" }}
+                  >
+                    <Card.Body className="p-0">
+                      <Ratio aspectRatio={100 * (16 / 9)}>
+                        <video
+                          src={`/videos-cursos/${course.video}`}
+                          controls
+                          preload="metadata"
+                          poster={course.bannerSite}
+                          className="w-100 h-100"
+                          style={{ objectFit: "contain", backgroundColor: "#000" }}
+                          playsInline
+                        >
+                          Seu navegador não suporta a reprodução de vídeo.
+                        </video>
+                      </Ratio>
+                    </Card.Body>
+                    <Card.Footer className="bg-dark text-white-50">
+                      Se liga no clima do curso e sente como são as aulas da Programa AI.
+                    </Card.Footer>
+                  </Card>
+                )}
+              </div>
+
+              <Modal
+                show={showVideoModal}
+                onHide={() => setShowVideoModal(false)}
+                centered
+                size="lg"
+                contentClassName="bg-dark text-white border-0"
               >
-                <Card.Body className="p-0">
+                <Modal.Header closeButton closeVariant="white" className="border-0">
+                  <Modal.Title className="fs-6 text-uppercase text-white-50">
+                    🎥 Apresentação do curso
+                  </Modal.Title>
+                </Modal.Header>
+                <Modal.Body className="p-0">
                   <Ratio aspectRatio={100 * (16 / 9)}>
                     <video
                       src={`/videos-cursos/${course.video}`}
                       controls
+                      autoPlay
                       preload="metadata"
                       poster={course.bannerSite}
                       className="w-100 h-100"
@@ -203,12 +296,9 @@ const CourseDetails: React.FC = () => {
                       Seu navegador não suporta a reprodução de vídeo.
                     </video>
                   </Ratio>
-                </Card.Body>
-                <Card.Footer className="bg-dark text-white-50">
-                  <small>🎬 Assista ao vídeo de apresentação do curso</small>
-                </Card.Footer>
-              </Card>
-            </div>
+                </Modal.Body>
+              </Modal>
+            </>
           )}
 
           {course.publicoAlvo && (
