@@ -54,83 +54,14 @@ const CourseDetails: React.FC = () => {
   const [showVideoModal, setShowVideoModal] = useState(false)
   const [isDesktop, setIsDesktop] = useState(false)
 
-  useEffect(() => {
-    if (!id) {
-      navigate("/cursos")
-      return
-    }
-    axios
-      .get<Course>(`${import.meta.env.VITE_API_URL}/cursos`, {
-        params: { id }
-      })
-      .then(resp => setCourse(resp.data))
-      .catch(err => {
-        console.error("Erro ao buscar curso:", err)
-        setError("Não foi possível carregar os detalhes do curso.")
-      })
-      .finally(() => setLoading(false))
-  }, [id, navigate])
-
-  useEffect(() => {
-    if (typeof window === "undefined") return
-
-    const mediaQuery = window.matchMedia("(min-width: 992px)")
-
-    const handleChange = (event: MediaQueryListEvent | MediaQueryList) => {
-      setIsDesktop(event.matches)
-    }
-
-    handleChange(mediaQuery)
-
-    if (typeof mediaQuery.addEventListener === "function") {
-      mediaQuery.addEventListener("change", handleChange)
-      return () => mediaQuery.removeEventListener("change", handleChange)
-    }
-
-    mediaQuery.addListener(handleChange)
-    return () => mediaQuery.removeListener(handleChange)
-  }, [])
-
-  if (loading) {
-    return (
-      <Container className="py-5 text-center">
-        <Spinner animation="border" role="status" />
-      </Container>
-    )
-  }
-
-  if (error) {
-    return (
-      <Container className="py-5">
-        <Alert variant="danger">{error}</Alert>
-        <Button onClick={() => navigate("/cursos")} variant="secondary">
-          Voltar para Cursos
-        </Button>
-      </Container>
-    )
-  }
-
-  if (!course) {
-    return (
-      <Container className="py-5">
-        <Alert variant="warning">Curso não encontrado.</Alert>
-        <Button onClick={() => navigate("/cursos")} variant="secondary">
-          Voltar para Cursos
-        </Button>
-      </Container>
-    )
-  }
-
-  const videoSrc = course.video ? `/videos-cursos/${course.video}` : null
-  const videoPoster = course.bannerMobile || course.bannerSite
-  const videoCaption = "Assista ao nosso vídeo de apresentação do curso."
-  const showCombinedLayout = Boolean(videoSrc && isDesktop)
-  const handleOpenVideo = () => setShowVideoModal(true)
-
-  const canonicalPath = `/cursos/${course.id}`
-  const enrollmentPath = `/inscricao/${course.id}`
+  const canonicalPath = course ? `/cursos/${course.id}` : undefined
+  const enrollmentPath = course ? `/inscricao/${course.id}` : undefined
 
   const structuredData = useMemo(() => {
+    if (!course || !canonicalPath || !enrollmentPath) {
+      return undefined
+    }
+
     const priceNumeric = Number(
       course.price
         .replace(/[^0-9,\.]/g, "")
@@ -211,6 +142,78 @@ const CourseDetails: React.FC = () => {
     return [breadcrumb, courseSchema]
   }, [course, canonicalPath, enrollmentPath])
 
+  useEffect(() => {
+    if (!id) {
+      navigate("/cursos")
+      return
+    }
+    axios
+      .get<Course>(`${import.meta.env.VITE_API_URL}/cursos`, {
+        params: { id }
+      })
+      .then(resp => setCourse(resp.data))
+      .catch(err => {
+        console.error("Erro ao buscar curso:", err)
+        setError("Não foi possível carregar os detalhes do curso.")
+      })
+      .finally(() => setLoading(false))
+  }, [id, navigate])
+
+  useEffect(() => {
+    if (typeof window === "undefined") return
+
+    const mediaQuery = window.matchMedia("(min-width: 992px)")
+
+    const handleChange = (event: MediaQueryListEvent | MediaQueryList) => {
+      setIsDesktop(event.matches)
+    }
+
+    handleChange(mediaQuery)
+
+    if (typeof mediaQuery.addEventListener === "function") {
+      mediaQuery.addEventListener("change", handleChange)
+      return () => mediaQuery.removeEventListener("change", handleChange)
+    }
+
+    mediaQuery.addListener(handleChange)
+    return () => mediaQuery.removeListener(handleChange)
+  }, [])
+
+  if (loading) {
+    return (
+      <Container className="py-5 text-center">
+        <Spinner animation="border" role="status" />
+      </Container>
+    )
+  }
+
+  if (error) {
+    return (
+      <Container className="py-5">
+        <Alert variant="danger">{error}</Alert>
+        <Button onClick={() => navigate("/cursos")} variant="secondary">
+          Voltar para Cursos
+        </Button>
+      </Container>
+    )
+  }
+
+  if (!course) {
+    return (
+      <Container className="py-5">
+        <Alert variant="warning">Curso não encontrado.</Alert>
+        <Button onClick={() => navigate("/cursos")} variant="secondary">
+          Voltar para Cursos
+        </Button>
+      </Container>
+    )
+  }
+
+  const videoSrc = course.video ? `/videos-cursos/${course.video}` : null
+  const videoPoster = course.bannerMobile || course.bannerSite
+  const videoCaption = "Assista ao nosso vídeo de apresentação do curso."
+  const showCombinedLayout = Boolean(videoSrc && isDesktop)
+  const handleOpenVideo = () => setShowVideoModal(true)
   const desktopVideoCard = videoSrc ? (
     <Card
       role="button"
