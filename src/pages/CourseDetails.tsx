@@ -8,7 +8,9 @@ import {
   Alert,
   Spinner,
   Ratio,
-  Modal
+  Modal,
+  Row,
+  Col
 } from "react-bootstrap"
 import axios from "axios"
 import { FaLinkedin, FaWhatsapp, FaPlay } from "react-icons/fa"
@@ -117,6 +119,98 @@ const CourseDetails: React.FC = () => {
     )
   }
 
+  const videoSrc = course.video ? `/videos-cursos/${course.video}` : null
+  const videoPoster = course.bannerMobile || course.bannerSite
+  const videoCaption = "Se liga no clima do curso e sente como são as aulas da Programa AI."
+
+  const desktopVideoCard = videoSrc ? (
+    <Card
+      role="button"
+      onClick={() => setShowVideoModal(true)}
+      className="border-0 shadow-sm overflow-hidden bg-dark text-white"
+      style={{ width: "100%", maxWidth: "360px" }}
+    >
+      <div className="position-relative">
+        <Card.Img
+          src={videoPoster}
+          alt={`Assista o vídeo do curso ${course.title}`}
+          style={{ objectFit: "cover", height: "420px" }}
+        />
+        <div
+          className="position-absolute top-50 start-50 translate-middle d-flex align-items-center justify-content-center"
+          style={{
+            width: "72px",
+            height: "72px",
+            borderRadius: "50%",
+            background: "rgba(0, 0, 0, 0.65)",
+            border: "3px solid rgba(255,255,255,0.7)",
+          }}
+        >
+          <FaPlay size={28} color="#fff" style={{ marginLeft: "4px" }} />
+        </div>
+      </div>
+      <Card.Footer className="bg-dark text-white-50">
+        {videoCaption}
+      </Card.Footer>
+    </Card>
+  ) : null
+
+  const inlineVideoCard = videoSrc ? (
+    <Card
+      className="border-0 shadow-sm overflow-hidden bg-dark text-white mx-auto mx-md-0"
+      style={{ maxWidth: "460px" }}
+    >
+      <Card.Body className="p-0">
+        <Ratio aspectRatio={100 * (16 / 9)}>
+          <video
+            src={videoSrc}
+            controls
+            preload="metadata"
+            poster={videoPoster}
+            className="w-100 h-100"
+            style={{ objectFit: "contain", backgroundColor: "#000" }}
+            playsInline
+          >
+            Seu navegador não suporta a reprodução de vídeo.
+          </video>
+        </Ratio>
+      </Card.Body>
+      <Card.Footer className="bg-dark text-white-50">{videoCaption}</Card.Footer>
+    </Card>
+  ) : null
+
+  const videoModal = videoSrc ? (
+    <Modal
+      show={showVideoModal}
+      onHide={() => setShowVideoModal(false)}
+      centered
+      size="lg"
+      contentClassName="bg-dark text-white border-0"
+    >
+      <Modal.Header closeButton closeVariant="white" className="border-0">
+        <Modal.Title className="fs-6 text-uppercase text-white-50">
+          🎥 Experimente o curso
+        </Modal.Title>
+      </Modal.Header>
+      <Modal.Body className="p-0">
+        <Ratio aspectRatio={100 * (16 / 9)}>
+          <video
+            src={videoSrc}
+            controls
+            autoPlay
+            preload="metadata"
+            poster={videoPoster}
+            className="w-100 h-100"
+            style={{ objectFit: "contain", backgroundColor: "#000" }}
+            playsInline
+          >
+            Seu navegador não suporta a reprodução de vídeo.
+          </video>
+        </Ratio>
+      </Modal.Body>
+    </Modal>
+  ) : null
+
   return (
     <Container className="py-5">
       <Card className="shadow-sm position-relative overflow-hidden">
@@ -204,102 +298,35 @@ const CourseDetails: React.FC = () => {
           <hr />
 
           <h5>Sobre o curso</h5>
-          <p>{course.description}</p>
-
-          {course.video && (
+          {videoSrc && isDesktop ? (
+            <Row className="g-4 align-items-start">
+              <Col lg={7}>
+                <p className="mb-0">{course.description}</p>
+              </Col>
+              <Col lg={5} className="mt-4 mt-lg-0">
+                <div>
+                  <h6 className="text-primary fw-bold mb-3">
+                    🎬 Conheça o curso em vídeo
+                  </h6>
+                  {desktopVideoCard}
+                </div>
+              </Col>
+            </Row>
+          ) : (
             <>
-              <div className="mt-4">
-                <h5 className="mb-3 text-primary fw-bold">
-                  🎬 Conheça o curso em vídeo
-                </h5>
-                {isDesktop ? (
-                  <Card
-                    role="button"
-                    onClick={() => setShowVideoModal(true)}
-                    className="border-0 shadow-sm overflow-hidden bg-dark text-white mx-auto mx-lg-0"
-                    style={{ maxWidth: "320px" }}
-                  >
-                    <div className="position-relative">
-                      <Card.Img
-                        src={course.bannerMobile || course.bannerSite}
-                        alt={`Assista o vídeo do curso ${course.title}`}
-                        style={{ objectFit: "cover", height: "420px" }}
-                      />
-                      <div
-                        className="position-absolute top-50 start-50 translate-middle d-flex align-items-center justify-content-center"
-                        style={{
-                          width: "72px",
-                          height: "72px",
-                          borderRadius: "50%",
-                          background: "rgba(0, 0, 0, 0.65)",
-                          border: "3px solid rgba(255,255,255,0.7)",
-                        }}
-                      >
-                        <FaPlay size={28} color="#fff" style={{ marginLeft: "4px" }} />
-                      </div>
-                    </div>
-                    <Card.Footer className="bg-dark text-white-50">
-                      Se liga no clima do curso e sente como são as aulas da Programa AI.
-                    </Card.Footer>
-                  </Card>
-                ) : (
-                  <Card
-                    className="border-0 shadow-sm overflow-hidden bg-dark text-white mx-auto mx-md-0"
-                    style={{ maxWidth: "460px" }}
-                  >
-                    <Card.Body className="p-0">
-                      <Ratio aspectRatio={100 * (16 / 9)}>
-                        <video
-                          src={`/videos-cursos/${course.video}`}
-                          controls
-                          preload="metadata"
-                          poster={course.bannerSite}
-                          className="w-100 h-100"
-                          style={{ objectFit: "contain", backgroundColor: "#000" }}
-                          playsInline
-                        >
-                          Seu navegador não suporta a reprodução de vídeo.
-                        </video>
-                      </Ratio>
-                    </Card.Body>
-                    <Card.Footer className="bg-dark text-white-50">
-                      Se liga no clima do curso e sente como são as aulas da Programa AI.
-                    </Card.Footer>
-                  </Card>
-                )}
-              </div>
-
-              <Modal
-                show={showVideoModal}
-                onHide={() => setShowVideoModal(false)}
-                centered
-                size="lg"
-                contentClassName="bg-dark text-white border-0"
-              >
-                <Modal.Header closeButton closeVariant="white" className="border-0">
-                  <Modal.Title className="fs-6 text-uppercase text-white-50">
-                    🎥 Apresentação do curso
-                  </Modal.Title>
-                </Modal.Header>
-                <Modal.Body className="p-0">
-                  <Ratio aspectRatio={100 * (16 / 9)}>
-                    <video
-                      src={`/videos-cursos/${course.video}`}
-                      controls
-                      autoPlay
-                      preload="metadata"
-                      poster={course.bannerSite}
-                      className="w-100 h-100"
-                      style={{ objectFit: "contain", backgroundColor: "#000" }}
-                      playsInline
-                    >
-                      Seu navegador não suporta a reprodução de vídeo.
-                    </video>
-                  </Ratio>
-                </Modal.Body>
-              </Modal>
+              <p>{course.description}</p>
+              {videoSrc && (
+                <div className="mt-4">
+                  <h5 className="mb-3 text-primary fw-bold">
+                    🎬 Conheça o curso em vídeo
+                  </h5>
+                  {inlineVideoCard}
+                </div>
+              )}
             </>
           )}
+
+          {videoModal}
 
           {course.publicoAlvo && (
             <>
