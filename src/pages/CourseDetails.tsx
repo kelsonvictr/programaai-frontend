@@ -121,7 +121,7 @@ const CourseDetails: React.FC = () => {
 
   const videoSrc = course.video ? `/videos-cursos/${course.video}` : null
   const videoPoster = course.bannerMobile || course.bannerSite
-  const videoCaption = "Se liga no clima do curso e sente como são as aulas da Programa AI."
+  const videoCaption = "Assita o nosso vídeo de apresentação do curso."
   const showCombinedLayout = Boolean(videoSrc && isDesktop)
   const handleOpenVideo = () => setShowVideoModal(true)
 
@@ -182,7 +182,7 @@ const CourseDetails: React.FC = () => {
             className="text-white text-uppercase small fw-semibold"
             style={{ letterSpacing: "0.08em" }}
           >
-            Preview exclusivo
+            APRESENTAÇÃO DO CURSO
           </span>
           <span className="text-white-50 small">{videoCaption}</span>
         </div>
@@ -353,9 +353,6 @@ const CourseDetails: React.FC = () => {
               </Col>
               <Col lg={5} className="mt-4 mt-lg-0">
                 <div className="d-flex flex-column align-items-lg-end gap-3">
-                  <h6 className="text-primary fw-bold text-lg-end mb-0">
-                    🎬 Conheça o curso em vídeo
-                  </h6>
                   {desktopVideoCard}
                 </div>
               </Col>
