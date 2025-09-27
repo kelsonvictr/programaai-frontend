@@ -231,7 +231,7 @@ const CourseDetails: React.FC = () => {
     >
       <Modal.Header closeButton closeVariant="white" className="border-0">
         <Modal.Title className="fs-6 text-uppercase text-white-50">
-          🎥 Experimente o curso
+          🎥 Apresentação do Curso
         </Modal.Title>
       </Modal.Header>
       <Modal.Body className="p-0">
@@ -379,9 +379,6 @@ const CourseDetails: React.FC = () => {
               <p>{course.description}</p>
               {videoSrc && (
                 <div className="mt-4">
-                  <h5 className="mb-3 text-primary fw-bold">
-                    🎬 Conheça o curso em vídeo
-                  </h5>
                   {inlineVideoCard}
                 </div>
               )}
