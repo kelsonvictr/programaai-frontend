@@ -122,36 +122,78 @@ const CourseDetails: React.FC = () => {
   const videoSrc = course.video ? `/videos-cursos/${course.video}` : null
   const videoPoster = course.bannerMobile || course.bannerSite
   const videoCaption = "Se liga no clima do curso e sente como são as aulas da Programa AI."
+  const showCombinedLayout = Boolean(videoSrc && isDesktop)
+  const handleOpenVideo = () => setShowVideoModal(true)
 
   const desktopVideoCard = videoSrc ? (
     <Card
       role="button"
-      onClick={() => setShowVideoModal(true)}
-      className="border-0 shadow-sm overflow-hidden bg-dark text-white"
-      style={{ width: "100%", maxWidth: "360px" }}
+      tabIndex={0}
+      onClick={handleOpenVideo}
+      onKeyDown={event => {
+        if (event.key === "Enter" || event.key === " ") {
+          event.preventDefault()
+          handleOpenVideo()
+        }
+      }}
+      aria-label="Assistir apresentação do curso"
+      className="border-0 shadow-lg text-white"
+      style={{
+        width: "100%",
+        maxWidth: "380px",
+        borderRadius: "24px",
+        background: "linear-gradient(160deg, #0f172a 0%, #233454 50%, #3b4b75 100%)",
+        cursor: "pointer",
+        transition: "transform 0.2s ease, box-shadow 0.2s ease",
+      }}
     >
-      <div className="position-relative">
-        <Card.Img
-          src={videoPoster}
-          alt={`Assista o vídeo do curso ${course.title}`}
-          style={{ objectFit: "cover", height: "420px" }}
-        />
+      <Card.Body className="p-4 d-flex flex-column gap-3">
         <div
-          className="position-absolute top-50 start-50 translate-middle d-flex align-items-center justify-content-center"
-          style={{
-            width: "72px",
-            height: "72px",
-            borderRadius: "50%",
-            background: "rgba(0, 0, 0, 0.65)",
-            border: "3px solid rgba(255,255,255,0.7)",
-          }}
+          className="position-relative rounded-4 overflow-hidden"
+          style={{ background: "#000", minHeight: "420px" }}
         >
-          <FaPlay size={28} color="#fff" style={{ marginLeft: "4px" }} />
+          <img
+            src={videoPoster}
+            alt={`Assista o vídeo do curso ${course.title}`}
+            className="w-100 h-100"
+            style={{ objectFit: "cover" }}
+          />
+          <div
+            className="position-absolute top-0 start-0 w-100 h-100"
+            style={{
+              background: "linear-gradient(180deg, rgba(15,23,42,0) 40%, rgba(15,23,42,0.85) 100%)",
+            }}
+          />
+          <div
+            className="position-absolute top-50 start-50 translate-middle d-flex align-items-center justify-content-center"
+            style={{
+              width: "84px",
+              height: "84px",
+              borderRadius: "50%",
+              background: "rgba(15, 23, 42, 0.7)",
+              border: "3px solid rgba(255,255,255,0.75)",
+            }}
+          >
+            <FaPlay size={32} color="#fff" style={{ marginLeft: "6px" }} />
+          </div>
         </div>
-      </div>
-      <Card.Footer className="bg-dark text-white-50">
-        {videoCaption}
-      </Card.Footer>
+        <div className="d-flex flex-column gap-2">
+          <span
+            className="text-white text-uppercase small fw-semibold"
+            style={{ letterSpacing: "0.08em" }}
+          >
+            Preview exclusivo
+          </span>
+          <span className="text-white-50 small">{videoCaption}</span>
+        </div>
+        <div className="d-flex align-items-center justify-content-between">
+          <span className="badge bg-warning text-dark text-uppercase fw-semibold">Assistir agora</span>
+          <span className="text-white-50 small d-flex align-items-center gap-2">
+            Clique e veja
+            <FaPlay size={14} className="opacity-75" />
+          </span>
+        </div>
+      </Card.Body>
     </Card>
   ) : null
 
@@ -284,28 +326,34 @@ const CourseDetails: React.FC = () => {
 
           <hr />
 
-          <h5>Professor: {course.professor}</h5>
-          <a
-            href={course.linkedin}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="me-2"
-          >
-            <FaLinkedin size={28} />
-          </a>
-          <p>{course.bio}</p>
-
-          <hr />
-
-          <h5>Sobre o curso</h5>
-          {videoSrc && isDesktop ? (
-            <Row className="g-4 align-items-start">
+          {showCombinedLayout ? (
+            <Row className="g-5 align-items-start">
               <Col lg={7}>
-                <p className="mb-0">{course.description}</p>
+                <div className="d-flex flex-column gap-4 pe-lg-4">
+                  <div>
+                    <h5 className="mb-2">Professor: {course.professor}</h5>
+                    <Button
+                      as="a"
+                      href={course.linkedin}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      variant="outline-primary"
+                      size="sm"
+                      className="rounded-pill d-inline-flex align-items-center gap-2"
+                    >
+                      <FaLinkedin size={16} /> LinkedIn
+                    </Button>
+                    <p className="mt-3 text-secondary">{course.bio}</p>
+                  </div>
+                  <div>
+                    <h5 className="mb-2">Sobre o curso</h5>
+                    <p className="text-secondary mb-0">{course.description}</p>
+                  </div>
+                </div>
               </Col>
               <Col lg={5} className="mt-4 mt-lg-0">
-                <div>
-                  <h6 className="text-primary fw-bold mb-3">
+                <div className="d-flex flex-column align-items-lg-end gap-3">
+                  <h6 className="text-primary fw-bold text-lg-end mb-0">
                     🎬 Conheça o curso em vídeo
                   </h6>
                   {desktopVideoCard}
@@ -314,6 +362,23 @@ const CourseDetails: React.FC = () => {
             </Row>
           ) : (
             <>
+              <h5>Professor: {course.professor}</h5>
+              <Button
+                as="a"
+                href={course.linkedin}
+                target="_blank"
+                rel="noopener noreferrer"
+                variant="outline-primary"
+                size="sm"
+                className="rounded-pill d-inline-flex align-items-center gap-2"
+              >
+                <FaLinkedin size={16} /> LinkedIn
+              </Button>
+              <p className="mt-3">{course.bio}</p>
+
+              <hr />
+
+              <h5>Sobre o curso</h5>
               <p>{course.description}</p>
               {videoSrc && (
                 <div className="mt-4">
