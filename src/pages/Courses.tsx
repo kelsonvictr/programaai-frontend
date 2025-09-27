@@ -1,11 +1,13 @@
 // src/pages/Courses.tsx
-import React, { useState, useEffect } from "react"
+import React, { useState, useEffect, useMemo } from "react"
 import { Container, Row, Col, Button, Spinner, Alert } from "react-bootstrap"
 import CourseCard from "../components/CourseCard"
 import axios from "axios"
 import { FaWhatsapp } from "react-icons/fa"
 import { useGallery } from '../hooks/useGalleriesIndex'
 import PhotoGallery from '../components/media/PhotoGallery'
+import Seo from "../components/Seo"
+import { buildAbsoluteUrl } from "../config/seo"
 
 interface Course {
   id: string
@@ -53,8 +55,29 @@ const Courses: React.FC = () => {
   const activeCourses = courses.filter(c => c.ativo)
   const closedCourses = courses.filter(c => !c.ativo)
 
+  const structuredData = useMemo(() => {
+    if (activeCourses.length === 0) return undefined
+    return {
+      "@context": "https://schema.org",
+      "@type": "ItemList",
+      itemListElement: activeCourses.map((curso, index) => ({
+        "@type": "ListItem",
+        position: index + 1,
+        url: buildAbsoluteUrl(`/cursos/${curso.id}`),
+        name: curso.title,
+        description: curso.description,
+      })),
+    }
+  }, [activeCourses])
+
   return (
     <Container className="py-5">
+      <Seo
+        title="Cursos de Programação Presenciais em João Pessoa | Programa AI"
+        description="Veja todos os cursos presenciais e bootcamps de programação da Programa AI em João Pessoa - PB. Escolha sua trilha e fale com a gente para garantir a vaga."
+        canonical="/cursos"
+        structuredData={structuredData}
+      />
       <h2 className="mb-4">Nossos Cursos</h2>
 
       <Button

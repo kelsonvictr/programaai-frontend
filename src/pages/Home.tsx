@@ -5,6 +5,8 @@ import { Link } from "react-router-dom"
 import { FaWhatsapp } from "react-icons/fa"
 import BannerCarousel from "../components/BannerCarousel"
 import axios from "axios"
+import Seo from "../components/Seo"
+import { buildAbsoluteUrl } from "../config/seo"
 
 interface Course {
   id: string
@@ -65,8 +67,29 @@ const Home: React.FC = () => {
     return [...ativos].sort((a, b) => toNum(b.id) - toNum(a.id)).slice(0, 4)
   }, [courses])
 
+  const structuredData = useMemo(() => {
+    if (novidades.length === 0) return undefined
+    return {
+      "@context": "https://schema.org",
+      "@type": "ItemList",
+      itemListElement: novidades.map((curso, index) => ({
+        "@type": "ListItem",
+        position: index + 1,
+        url: buildAbsoluteUrl(`/cursos/${curso.id}`),
+        name: curso.title,
+        description: curso.description,
+      })),
+    }
+  }, [novidades])
+
   return (
     <>
+      <Seo
+        title="Cursos de Programação Presencial em João Pessoa | Programa AI"
+        description="Cursos presenciais e bootcamps intensivos de programação em João Pessoa (PB). Turmas reduzidas, professores de mercado e muita prática com IA."
+        canonical="/"
+        structuredData={structuredData}
+      />
       <BannerCarousel />
 
       <Container className="py-2">

@@ -1,5 +1,5 @@
 // src/pages/CourseDetails.tsx
-import React, { useState, useEffect } from "react"
+import React, { useState, useEffect, useMemo } from "react"
 import { useParams, useNavigate, Link } from "react-router-dom"
 import {
   Container,
@@ -16,6 +16,8 @@ import axios from "axios"
 import { FaLinkedin, FaWhatsapp, FaPlay } from "react-icons/fa"
 import ParcelamentoModal from "../components/ParcelamentoModal"
 import { calcularValores } from "../utils/payment"
+import Seo from "../components/Seo"
+import { buildAbsoluteUrl, SITE_URL } from "../config/seo"
 
 interface Course {
   id: string
@@ -121,9 +123,93 @@ const CourseDetails: React.FC = () => {
 
   const videoSrc = course.video ? `/videos-cursos/${course.video}` : null
   const videoPoster = course.bannerMobile || course.bannerSite
-  const videoCaption = "Assita o nosso vídeo de apresentação do curso."
+  const videoCaption = "Assista ao nosso vídeo de apresentação do curso."
   const showCombinedLayout = Boolean(videoSrc && isDesktop)
   const handleOpenVideo = () => setShowVideoModal(true)
+
+  const canonicalPath = `/cursos/${course.id}`
+  const enrollmentPath = `/inscricao/${course.id}`
+
+  const structuredData = useMemo(() => {
+    const priceNumeric = Number(
+      course.price
+        .replace(/[^0-9,\.]/g, "")
+        .replace(/\./g, "")
+        .replace(/,/, ".")
+    )
+
+    const firstDate = course.datas?.[0]
+    const isoDate = firstDate
+      ? (() => {
+          const [day, month, year] = firstDate.split("/")
+          if (!day || !month || !year) return undefined
+          return `${year}-${month.padStart(2, "0")}-${day.padStart(2, "0")}`
+        })()
+      : undefined
+
+    const courseSchema = {
+      "@context": "https://schema.org",
+      "@type": "Course",
+      name: course.title,
+      description: course.description,
+      provider: {
+        "@type": "EducationalOrganization",
+        name: "Programa AI",
+        sameAs: SITE_URL,
+      },
+      inLanguage: "pt-BR",
+      courseMode: course.modalidade,
+      timeRequired: course.duration,
+      offers: {
+        "@type": "Offer",
+        priceCurrency: "BRL",
+        price: Number.isFinite(priceNumeric) ? priceNumeric.toFixed(2) : undefined,
+        availability: course.ativo ? "https://schema.org/InStock" : "https://schema.org/SoldOut",
+        url: buildAbsoluteUrl(enrollmentPath),
+      },
+      ...(isoDate
+        ? {
+            hasCourseInstance: {
+              "@type": "CourseInstance",
+              name: `${course.title} - Turma ${course.datas[0]}`,
+              startDate: isoDate,
+              location: {
+                "@type": "Place",
+                name: "Programa AI",
+                address: "Av. Pres. Epitácio Pessoa, João Pessoa - PB",
+              },
+            },
+          }
+        : {}),
+    }
+
+    const breadcrumb = {
+      "@context": "https://schema.org",
+      "@type": "BreadcrumbList",
+      itemListElement: [
+        {
+          "@type": "ListItem",
+          position: 1,
+          name: "Início",
+          item: buildAbsoluteUrl("/"),
+        },
+        {
+          "@type": "ListItem",
+          position: 2,
+          name: "Cursos",
+          item: buildAbsoluteUrl("/cursos"),
+        },
+        {
+          "@type": "ListItem",
+          position: 3,
+          name: course.title,
+          item: buildAbsoluteUrl(canonicalPath),
+        },
+      ],
+    }
+
+    return [breadcrumb, courseSchema]
+  }, [course, canonicalPath, enrollmentPath])
 
   const desktopVideoCard = videoSrc ? (
     <Card
@@ -254,7 +340,16 @@ const CourseDetails: React.FC = () => {
   ) : null
 
   return (
-    <Container className="py-5">
+    <>
+      <Seo
+        title={`${course.title} | Curso presencial em João Pessoa | Programa AI`}
+        description={course.description}
+        canonical={canonicalPath}
+        image={buildAbsoluteUrl(course.bannerSite || course.imageUrl)}
+        ogType="article"
+        structuredData={structuredData}
+      />
+      <Container className="py-5">
       <Card className="shadow-sm position-relative overflow-hidden">
         {/* Ribbon de Vagas Encerradas */}
         {!course.ativo && (
@@ -465,12 +560,13 @@ const CourseDetails: React.FC = () => {
         </Card.Body>
       </Card>
 
-      <ParcelamentoModal
-        show={showParcelamento}
-        onHide={() => setShowParcelamento(false)}
-        valor={parseFloat(course.price.replace("R$", "").replace(",", "."))}
-      />
-    </Container>
+        <ParcelamentoModal
+          show={showParcelamento}
+          onHide={() => setShowParcelamento(false)}
+          valor={parseFloat(course.price.replace("R$", "").replace(",", "."))}
+        />
+      </Container>
+    </>
   )
 }
 
