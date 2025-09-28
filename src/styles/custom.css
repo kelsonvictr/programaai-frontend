@@ -137,7 +137,7 @@ a.nav-link {
     display: flex;
     align-items: center;
     gap: 0.75rem;
-    animation: courseGalleryScroll 22s linear infinite;
+    animation: courseGalleryScroll 15s linear infinite;
     will-change: transform;
   }
 
@@ -146,19 +146,14 @@ a.nav-link {
     justify-content: center;
   }
 
-  .course-gallery-wrapper:hover .course-gallery-marquee,
-  .course-gallery-wrapper:focus-within .course-gallery-marquee {
-    animation-play-state: paused;
-  }
-
   .course-gallery-thumb {
     border: none;
     padding: 0;
     background: none;
     border-radius: 12px;
     overflow: hidden;
-    width: 148px;
-    height: 96px;
+    width: 208px;
+    height: 128px;
     flex: 0 0 auto;
     box-shadow: 0 10px 20px rgba(15, 23, 42, 0.15);
     transition: transform 0.25s ease, box-shadow 0.25s ease;
@@ -188,8 +183,8 @@ a.nav-link {
 
   @media (max-width: 576px) {
     .course-gallery-thumb {
-      width: 112px;
-      height: 72px;
+      width: 150px;
+      height: 92px;
     }
   }
   
