@@ -19,6 +19,7 @@ import { calcularValores } from "../utils/payment"
 import Seo from "../components/Seo"
 import { buildAbsoluteUrl, SITE_URL } from "../config/seo"
 import Typewriter from "../components/Typewriter"
+import CourseGallery from "../components/CourseGallery"
 
 const COURSE_TYPEWRITER_PHRASES = [
   "Presencial ao vivo em João Pessoa",
@@ -440,6 +441,8 @@ const CourseDetails: React.FC = () => {
           >
             <FaWhatsapp className="me-2" /> Fala com a gente pelo WhatsApp
           </Button>
+
+          <CourseGallery />
 
           <hr />
 

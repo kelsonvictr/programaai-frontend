@@ -4,6 +4,7 @@ import { join } from 'path'
 const ROOT = process.cwd()
 const PUBLIC = join(ROOT, 'public')
 const BASE = join(PUBLIC, 'galerias')
+const COURSE_DETAIL_DIR = join(PUBLIC, 'galeria-course-details')
 
 // formatos suportados (evitamos .heic e .mov no site)
 const IMAGE_EXTS = ['.jpg', '.jpeg', '.png', '.webp', '.avif']
@@ -44,6 +45,18 @@ const buildGallery = async slug => {
   }
 }
 
+const buildCourseDetailsGallery = async () => {
+  const fotos = await listFiles(COURSE_DETAIL_DIR, IMAGE_EXTS)
+  const payload = {
+    generatedAt: new Date().toISOString(),
+    photos: fotos.map(f => ({ src: f.file, size: f.size, mtime: f.mtime })),
+  }
+
+  const out = join(PUBLIC, 'course-details-gallery.json')
+  await writeFile(out, JSON.stringify(payload, null, 2), 'utf8')
+  console.log(`course-details-gallery.json gerado com ${payload.photos.length} fotos`)
+}
+
 const run = async () => {
   let slugs = []
   try {
@@ -66,6 +79,8 @@ const run = async () => {
   const out = join(PUBLIC, 'galleries-index.json')
   await writeFile(out, JSON.stringify(payload, null, 2), 'utf8')
   console.log(`galleries-index.json gerado com ${slugs.length} galerias`)
+
+  await buildCourseDetailsGallery()
 }
 
 run().catch(err => {
