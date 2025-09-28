@@ -3,25 +3,20 @@ import { Modal } from "react-bootstrap"
 
 const MAX_IMAGE_INDEX = 100
 
-const checkImageExists = (src: string): Promise<boolean> => {
-  return new Promise(resolve => {
-    const img = new Image()
-    const cleanup = () => {
-      img.onload = null
-      img.onerror = null
-    }
-    img.onload = () => {
-      cleanup()
-      resolve(true)
-    }
-    img.onerror = () => {
-      cleanup()
-      resolve(false)
-    }
-    img.decoding = "async"
-    img.loading = "eager"
-    img.src = src
-  })
+const checkImageExists = async (src: string, signal?: AbortSignal): Promise<boolean> => {
+  try {
+    const res = await fetch(src, {
+      method: "HEAD",
+      cache: "no-store",
+      signal,
+    })
+    if (res.ok) return true
+    if ([301, 302, 307, 308].includes(res.status)) return true
+    return false
+  } catch (error) {
+    console.warn("Erro ao verificar imagem da galeria", error)
+    return false
+  }
 }
 
 const loadSequentialPhotos = async (signal?: AbortSignal): Promise<string[]> => {
@@ -31,7 +26,7 @@ const loadSequentialPhotos = async (signal?: AbortSignal): Promise<string[]> => 
   for (let i = 1; i <= MAX_IMAGE_INDEX; i++) {
     if (signal?.aborted) break
     const candidate = `${base}${i}.jpg`
-    const exists = await checkImageExists(candidate)
+    const exists = await checkImageExists(candidate, signal)
     if (signal?.aborted) break
     if (!exists) break
     found.push(candidate)

@@ -147,7 +147,8 @@ a.nav-link {
     border-radius: 14px;
     overflow: hidden;
     width: 100%;
-    aspect-ratio: 4 / 3;
+    aspect-ratio: 16 / 10;
+    min-height: 160px;
     position: relative;
     box-shadow: 0 12px 28px rgba(15, 23, 42, 0.18);
     animation: galleryFade 700ms ease;
@@ -181,6 +182,12 @@ a.nav-link {
     to {
       opacity: 1;
       transform: translateY(0);
+    }
+  }
+
+  @media (min-width: 992px) {
+    .course-gallery-card {
+      min-height: 220px;
     }
   }
   
