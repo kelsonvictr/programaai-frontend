@@ -1,43 +1,29 @@
 import { useEffect, useMemo, useState } from "react"
 import { Modal } from "react-bootstrap"
+interface GalleryPhoto {
+  src: string
+}
 
-const MAX_IMAGE_INDEX = 100
+interface GalleryResponse {
+  photos?: GalleryPhoto[]
+}
 
-const checkImageExists = async (src: string, signal?: AbortSignal): Promise<boolean> => {
+const loadPhotosFromJson = async (signal?: AbortSignal): Promise<string[]> => {
   try {
-    const res = await fetch(src, {
-      method: "HEAD",
+    const response = await fetch(`${import.meta.env.BASE_URL}course-details-gallery.json`, {
       cache: "no-store",
       signal,
     })
-    if (res.ok) return true
-    if ([301, 302, 307, 308].includes(res.status)) return true
-    return false
+    if (!response.ok) return []
+    const payload = (await response.json()) as GalleryResponse
+    return (payload.photos ?? [])
+      .map(photo => photo.src)
+      .filter(Boolean)
   } catch (error) {
-    console.warn("Erro ao verificar imagem da galeria", error)
-    return false
+    if ((error as Error).name === "AbortError") return []
+    console.warn("Falha ao carregar galeria do curso", error)
+    return []
   }
-}
-
-const loadSequentialPhotos = async (signal?: AbortSignal): Promise<string[]> => {
-  const base = `${import.meta.env.BASE_URL}galeria-course-details/`
-  const found: string[] = []
-
-  const fetchPhoto = async (index: number): Promise<void> => {
-    if (signal?.aborted) return
-    if (index > MAX_IMAGE_INDEX) return
-
-    const candidate = `${base}${index}.jpg`
-    const exists = await checkImageExists(candidate, signal)
-    if (signal?.aborted) return
-    if (!exists) return
-
-    found.push(candidate)
-    await fetchPhoto(index + 1)
-  }
-
-  await fetchPhoto(1)
-  return found.reverse()
 }
 
 const CourseGallery = () => {
@@ -50,7 +36,7 @@ const CourseGallery = () => {
     const controller = new AbortController()
     let cancelled = false
 
-    loadSequentialPhotos(controller.signal).then(found => {
+    loadPhotosFromJson(controller.signal).then(found => {
       if (!cancelled) {
         setPhotos(found)
         setStartIndex(0)
