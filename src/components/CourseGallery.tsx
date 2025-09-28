@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react"
+import { useEffect, useMemo, useRef, useState } from "react"
 import { Modal } from "react-bootstrap"
 
 const MAX_IMAGE_INDEX = 100
@@ -43,6 +43,7 @@ const loadSequentialPhotos = async (signal?: AbortSignal): Promise<string[]> => 
 const CourseGallery = () => {
   const [photos, setPhotos] = useState<string[]>([])
   const [activeIndex, setActiveIndex] = useState<number | null>(null)
+  const marqueeRef = useRef<HTMLDivElement | null>(null)
 
   useEffect(() => {
     const controller = new AbortController()
@@ -61,19 +62,65 @@ const CourseGallery = () => {
   }, [])
 
   const marqueeItems = useMemo(() => {
-    if (photos.length === 0) return []
-    if (photos.length === 1) return photos
-    return [...photos, ...photos]
+    return photos
   }, [photos])
 
   if (photos.length === 0) {
     return null
   }
 
+  useEffect(() => {
+    if (photos.length <= 1) {
+      const marquee = marqueeRef.current
+      if (marquee) marquee.style.transform = "translateX(0)"
+      return
+    }
+
+    const marquee = marqueeRef.current
+    if (!marquee) return
+
+    let position = 0
+    let animationFrame = 0
+    let lastTime = performance.now()
+    const speedPxPerSecond = 180
+
+    const getGap = () => {
+      const styles = window.getComputedStyle(marquee)
+      const gap = parseFloat(styles.columnGap || styles.gap || "0")
+      return Number.isFinite(gap) ? gap : 0
+    }
+
+    const step = (now: number) => {
+      const delta = now - lastTime
+      lastTime = now
+      position += (speedPxPerSecond * delta) / 1000
+
+      let loopSafety = 0
+      let firstChild = marquee.firstElementChild as HTMLElement | null
+      const gap = getGap()
+      while (firstChild && loopSafety < 50) {
+        const childWidth = firstChild.offsetWidth + gap
+        if (childWidth === 0 || position < childWidth) break
+        position -= childWidth
+        marquee.appendChild(firstChild)
+        firstChild = marquee.firstElementChild as HTMLElement | null
+        loopSafety += 1
+      }
+
+      marquee.style.transform = `translateX(-${position}px)`
+      animationFrame = requestAnimationFrame(step)
+    }
+
+    animationFrame = requestAnimationFrame(step)
+
+    return () => cancelAnimationFrame(animationFrame)
+  }, [photos])
+
   return (
     <div className="course-gallery-wrapper mt-4">
       <div className="course-gallery-track">
         <div
+          ref={marqueeRef}
           className={`course-gallery-marquee ${photos.length <= 1 ? "course-gallery-marquee--static" : ""}`}
         >
           {marqueeItems.map((src, index) => (
