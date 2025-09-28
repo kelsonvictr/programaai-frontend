@@ -137,8 +137,8 @@ a.nav-link {
     display: flex;
     align-items: center;
     gap: 1.25rem;
+    animation: courseGalleryScroll 8s linear infinite;
     will-change: transform;
-    transform: translateX(0);
   }
 
   .course-gallery-marquee.course-gallery-marquee--static {
@@ -172,7 +172,14 @@ a.nav-link {
     box-shadow: 0 18px 30px rgba(15, 23, 42, 0.25);
   }
 
-/* animation handled via JS */
+  @keyframes courseGalleryScroll {
+    0% {
+      transform: translateX(0);
+    }
+    100% {
+      transform: translateX(-50%);
+    }
+  }
 
   @media (max-width: 576px) {
     .course-gallery-thumb {
