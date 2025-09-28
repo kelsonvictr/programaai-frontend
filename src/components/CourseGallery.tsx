@@ -2,7 +2,6 @@ import { useEffect, useMemo, useState } from "react"
 import { Modal } from "react-bootstrap"
 
 const MAX_IMAGE_INDEX = 100
-const EXTENSIONS = ["jpg", "jpeg", "png", "webp", "avif"]
 
 const checkImageExists = (src: string): Promise<boolean> => {
   return new Promise(resolve => {
@@ -29,25 +28,16 @@ const loadSequentialPhotos = async (signal?: AbortSignal): Promise<string[]> => 
   const base = `${import.meta.env.BASE_URL}galeria-course-details/`
   const found: string[] = []
 
-  for (let i = MAX_IMAGE_INDEX; i >= 1; i--) {
+  for (let i = 1; i <= MAX_IMAGE_INDEX; i++) {
     if (signal?.aborted) break
-
-    let matched = false
-    for (const ext of EXTENSIONS) {
-      const candidate = `${base}${i}.${ext}`
-      const exists = await checkImageExists(candidate)
-      if (signal?.aborted) break
-      if (exists) {
-        found.push(candidate)
-        matched = true
-        break
-      }
-    }
-
-    if (!matched) continue
+    const candidate = `${base}${i}.jpg`
+    const exists = await checkImageExists(candidate)
+    if (signal?.aborted) break
+    if (!exists) break
+    found.push(candidate)
   }
 
-  return found
+  return found.reverse()
 }
 
 const CourseGallery = () => {
