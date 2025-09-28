@@ -18,6 +18,16 @@ import ParcelamentoModal from "../components/ParcelamentoModal"
 import { calcularValores } from "../utils/payment"
 import Seo from "../components/Seo"
 import { buildAbsoluteUrl, SITE_URL } from "../config/seo"
+import Typewriter from "../components/Typewriter"
+
+const COURSE_TYPEWRITER_PHRASES = [
+  "Presencial ao vivo em João Pessoa",
+  "Suporte direto de Professores e Monitores",
+  "Mentoria durante e após o curso",
+  "Networking com a comunidade local",
+  "Práticas reais de mercado",
+  "Professores atuantes na indústria",
+]
 
 interface Course {
   id: string
@@ -383,6 +393,10 @@ const CourseDetails: React.FC = () => {
 
         <Card.Body>
           <Card.Title as="h2">{course.title}</Card.Title>
+          <div className="course-typewriter-banner">
+            <span className="course-typewriter-badge">Experiência imersiva</span>
+            <Typewriter phrases={COURSE_TYPEWRITER_PHRASES} />
+          </div>
 
           <p className="text-muted">
             <strong>Modalidade:</strong> {course.modalidade} <br />

@@ -58,4 +58,64 @@ a.nav-link {
     border-color: var(--color-primary);
     box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
   }
+
+.typewriter {
+    position: relative;
+    font-family: "JetBrains Mono", "Fira Code", monospace;
+    font-size: 1rem;
+    font-weight: 500;
+    color: #1f4fff;
+    background: linear-gradient(120deg, #00d4ff 0%, #6c4bff 50%, #ff7ad9 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+  }
+
+  .typewriter-caret {
+    width: 2px;
+    height: 1.25em;
+    background: currentColor;
+    opacity: 0.85;
+    animation: caretBlink 1s steps(2, start) infinite;
+  }
+
+  @keyframes caretBlink {
+    to {
+      opacity: 0;
+    }
+  }
+
+  .course-typewriter-banner {
+    margin-top: 0.5rem;
+    padding: 0.65rem 1rem;
+    border-radius: 999px;
+    background: rgba(15, 23, 42, 0.08);
+    border: 1px solid rgba(99, 102, 241, 0.25);
+    backdrop-filter: blur(6px);
+    display: inline-flex;
+    align-items: center;
+    gap: 0.75rem;
+    flex-wrap: wrap;
+  }
+
+  .course-typewriter-badge {
+    font-size: 0.68rem;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    font-weight: 600;
+    color: #0f172a;
+    background: linear-gradient(135deg, #fde68a 0%, #fcd34d 50%, #f59e0b 100%);
+    border-radius: 999px;
+    padding: 0.25rem 0.75rem;
+  }
+
+  @media (max-width: 576px) {
+    .course-typewriter-banner {
+      width: 100%;
+      justify-content: center;
+      text-align: center;
+    }
+  }
   
