@@ -27,6 +27,11 @@ const COURSE_TYPEWRITER_PHRASES = [
   "Networking com a comunidade local",
   "Práticas reais de mercado",
   "Professores atuantes na indústria",
+  "Desafios reais usando as stacks do mercado",
+  "Soft skills trabalhadas junto com o código",
+  "Comunidade ativa e eventos presenciais",
+  "Aulas gravadas para rever depois",
+  "Turmas reduzidas para aprender com foco",
 ]
 
 interface Course {
