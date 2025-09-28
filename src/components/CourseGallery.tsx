@@ -23,15 +23,20 @@ const loadSequentialPhotos = async (signal?: AbortSignal): Promise<string[]> => 
   const base = `${import.meta.env.BASE_URL}galeria-course-details/`
   const found: string[] = []
 
-  for (let i = 1; i <= MAX_IMAGE_INDEX; i++) {
-    if (signal?.aborted) break
-    const candidate = `${base}${i}.jpg`
+  const fetchPhoto = async (index: number): Promise<void> => {
+    if (signal?.aborted) return
+    if (index > MAX_IMAGE_INDEX) return
+
+    const candidate = `${base}${index}.jpg`
     const exists = await checkImageExists(candidate, signal)
-    if (signal?.aborted) break
-    if (!exists) break
+    if (signal?.aborted) return
+    if (!exists) return
+
     found.push(candidate)
+    await fetchPhoto(index + 1)
   }
 
+  await fetchPhoto(1)
   return found.reverse()
 }
 
