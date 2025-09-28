@@ -43,6 +43,8 @@ const loadSequentialPhotos = async (signal?: AbortSignal): Promise<string[]> => 
 const CourseGallery = () => {
   const [photos, setPhotos] = useState<string[]>([])
   const [activeIndex, setActiveIndex] = useState<number | null>(null)
+  const [isDesktop, setIsDesktop] = useState(false)
+  const [startIndex, setStartIndex] = useState(0)
 
   useEffect(() => {
     const controller = new AbortController()
@@ -51,6 +53,7 @@ const CourseGallery = () => {
     loadSequentialPhotos(controller.signal).then(found => {
       if (!cancelled) {
         setPhotos(found)
+        setStartIndex(0)
       }
     })
 
@@ -60,11 +63,53 @@ const CourseGallery = () => {
     }
   }, [])
 
+  useEffect(() => {
+    if (typeof window === "undefined") return
+
+    const mq = window.matchMedia("(min-width: 992px)")
+    const update = (event: MediaQueryListEvent | MediaQueryList) => {
+      setIsDesktop(event.matches)
+    }
+
+    update(mq)
+
+    if (typeof mq.addEventListener === "function") {
+      mq.addEventListener("change", update)
+      return () => mq.removeEventListener("change", update)
+    }
+
+    mq.addListener(update)
+    return () => mq.removeListener(update)
+  }, [])
+
+  useEffect(() => {
+    if (photos.length === 0) return
+    const maxVisible = isDesktop ? 6 : 3
+    if (photos.length <= maxVisible) {
+      setStartIndex(0)
+      return
+    }
+
+    const interval = setInterval(() => {
+      setStartIndex(prev => (prev + 1) % photos.length)
+    }, 3500)
+
+    return () => clearInterval(interval)
+  }, [photos, isDesktop])
+
   const marqueeItems = useMemo(() => {
     if (photos.length === 0) return []
-    if (photos.length === 1) return photos
-    return [...photos, ...photos]
-  }, [photos])
+
+    const maxVisible = isDesktop ? 6 : 3
+    if (photos.length <= maxVisible) return [...photos]
+
+    const result: string[] = []
+    for (let i = 0; i < maxVisible; i++) {
+      const index = (startIndex + i) % photos.length
+      result.push(photos[index])
+    }
+    return result
+  }, [photos, isDesktop, startIndex])
 
   if (photos.length === 0) {
     return null
@@ -72,21 +117,20 @@ const CourseGallery = () => {
 
   return (
     <div className="course-gallery-wrapper mt-4">
-      <div className="course-gallery-track">
-        <div
-          className={`course-gallery-marquee ${photos.length <= 1 ? "course-gallery-marquee--static" : ""}`}
-        >
-          {marqueeItems.map((src, index) => (
+      <div className="course-gallery-grid">
+        {marqueeItems.map(src => {
+          const absoluteIndex = photos.indexOf(src)
+          return (
             <button
-              key={`${src}-${index}`}
+              key={src}
               type="button"
-              className="course-gallery-thumb"
-              onClick={() => setActiveIndex(index % photos.length)}
+              className="course-gallery-card"
+              onClick={() => setActiveIndex(absoluteIndex === -1 ? 0 : absoluteIndex)}
             >
               <img src={src} alt="Ambiente e bastidores da Programa AI" loading="lazy" decoding="async" />
             </button>
-          ))}
-        </div>
+          )
+        })}
       </div>
 
       <Modal
