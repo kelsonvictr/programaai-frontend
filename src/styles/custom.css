@@ -137,7 +137,7 @@ a.nav-link {
     display: flex;
     align-items: center;
     gap: 1.25rem;
-    animation: courseGalleryScroll 12s linear infinite;
+    animation: courseGalleryScroll 8s linear infinite;
     will-change: transform;
   }
 
@@ -152,8 +152,8 @@ a.nav-link {
     background: none;
     border-radius: 12px;
     overflow: hidden;
-    width: 268px;
-    height: 168px;
+    width: 280px;
+    height: 175px;
     flex: 0 0 auto;
     box-shadow: 0 10px 20px rgba(15, 23, 42, 0.15);
     transition: transform 0.25s ease, box-shadow 0.25s ease;
@@ -183,8 +183,8 @@ a.nav-link {
 
   @media (max-width: 576px) {
     .course-gallery-thumb {
-      width: 200px;
-      height: 124px;
+      width: 210px;
+      height: 130px;
     }
   }
   

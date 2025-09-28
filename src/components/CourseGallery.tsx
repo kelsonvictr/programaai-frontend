@@ -1,27 +1,53 @@
 import { useEffect, useMemo, useState } from "react"
 import { Modal } from "react-bootstrap"
 
-interface GalleryPhoto {
-  src: string
-  size?: number
-  mtime?: number
+const MAX_IMAGE_INDEX = 100
+const EXTENSIONS = ["jpg", "jpeg", "png", "webp", "avif"]
+
+const checkImageExists = (src: string): Promise<boolean> => {
+  return new Promise(resolve => {
+    const img = new Image()
+    const cleanup = () => {
+      img.onload = null
+      img.onerror = null
+    }
+    img.onload = () => {
+      cleanup()
+      resolve(true)
+    }
+    img.onerror = () => {
+      cleanup()
+      resolve(false)
+    }
+    img.decoding = "async"
+    img.loading = "eager"
+    img.src = src
+  })
 }
 
-interface GalleryPayload {
-  photos?: GalleryPhoto[]
-}
+const loadSequentialPhotos = async (signal?: AbortSignal): Promise<string[]> => {
+  const base = `${import.meta.env.BASE_URL}galeria-course-details/`
+  const found: string[] = []
 
-const fetchGallery = async (signal?: AbortSignal): Promise<string[]> => {
-  try {
-    const response = await fetch(`${import.meta.env.BASE_URL}course-details-gallery.json`, { signal })
-    if (!response.ok) return []
-    const payload = (await response.json()) as GalleryPayload
-    return (payload.photos ?? []).map(photo => photo.src)
-  } catch (error) {
-    if ((error as Error).name === "AbortError") return []
-    console.warn("Falha ao carregar galeria do curso", error)
-    return []
+  for (let i = MAX_IMAGE_INDEX; i >= 1; i--) {
+    if (signal?.aborted) break
+
+    let matched = false
+    for (const ext of EXTENSIONS) {
+      const candidate = `${base}${i}.${ext}`
+      const exists = await checkImageExists(candidate)
+      if (signal?.aborted) break
+      if (exists) {
+        found.push(candidate)
+        matched = true
+        break
+      }
+    }
+
+    if (!matched) continue
   }
+
+  return found
 }
 
 const CourseGallery = () => {
@@ -30,8 +56,18 @@ const CourseGallery = () => {
 
   useEffect(() => {
     const controller = new AbortController()
-    fetchGallery(controller.signal).then(found => setPhotos(found))
-    return () => controller.abort()
+    let cancelled = false
+
+    loadSequentialPhotos(controller.signal).then(found => {
+      if (!cancelled) {
+        setPhotos(found)
+      }
+    })
+
+    return () => {
+      cancelled = true
+      controller.abort()
+    }
   }, [])
 
   const marqueeItems = useMemo(() => {
@@ -57,12 +93,7 @@ const CourseGallery = () => {
               className="course-gallery-thumb"
               onClick={() => setActiveIndex(index % photos.length)}
             >
-              <img
-                src={encodeURI(src)}
-                alt="Ambiente e bastidores da Programa AI"
-                loading="lazy"
-                decoding="async"
-              />
+              <img src={src} alt="Ambiente e bastidores da Programa AI" loading="lazy" decoding="async" />
             </button>
           ))}
         </div>
