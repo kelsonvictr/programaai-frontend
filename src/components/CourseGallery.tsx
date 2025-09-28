@@ -57,7 +57,12 @@ const CourseGallery = () => {
               className="course-gallery-thumb"
               onClick={() => setActiveIndex(index % photos.length)}
             >
-              <img src={src} alt="Ambiente e bastidores da Programa AI" loading="lazy" />
+              <img
+                src={encodeURI(src)}
+                alt="Ambiente e bastidores da Programa AI"
+                loading="lazy"
+                decoding="async"
+              />
             </button>
           ))}
         </div>
