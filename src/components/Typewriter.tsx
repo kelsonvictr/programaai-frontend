@@ -19,6 +19,7 @@ const Typewriter = ({
   const [currentIndex, setCurrentIndex] = useState(0)
   const [subIndex, setSubIndex] = useState(0)
   const [isDeleting, setIsDeleting] = useState(false)
+  const [maxLength, setMaxLength] = useState(0)
 
   useEffect(() => {
     if (safePhrases.length === 0) return
@@ -45,13 +46,19 @@ const Typewriter = ({
     setCurrentIndex(0)
     setSubIndex(0)
     setIsDeleting(false)
+    const lengths = safePhrases.map(p => p.length)
+    setMaxLength(lengths.length ? Math.max(...lengths) : 0)
   }, [safePhrases])
 
   const currentPhrase = safePhrases[currentIndex] ?? ""
   const displayText = currentPhrase.substring(0, subIndex)
 
   return (
-    <span className={`typewriter ${className}`} aria-live="polite">
+    <span
+      className={`typewriter ${className}`}
+      aria-live="polite"
+      style={{ minWidth: maxLength ? `${maxLength + 2}ch` : undefined, display: "inline-flex" }}
+    >
       {displayText}
       <span className="typewriter-caret" aria-hidden="true" />
     </span>
