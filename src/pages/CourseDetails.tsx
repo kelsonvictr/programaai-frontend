@@ -465,8 +465,9 @@ const CourseDetails: React.FC = () => {
               <h6 className="fw-semibold mb-2">Tire suas dúvidas em minutos</h6>
               <ul className="mb-0">
                 <li><FaCheckCircle className="me-2 text-success" /> Atendimento direto com os professores</li>
+                <li><FaCheckCircle className="me-2 text-success" /> Ver a possibilidade de guardar a vaga (pré-inscrição)</li>
                 <li><FaCheckCircle className="me-2 text-success" /> Confirmação de vagas e formas de pagamento</li>
-                <li><FaCheckCircle className="me-2 text-success" /> Receba o material de apresentação na hora</li>
+                <li><FaCheckCircle className="me-2 text-success" /> Receba a apresentação sobre o curso em tempo real</li>
               </ul>
             </div>
             <Button
