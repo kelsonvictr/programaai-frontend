@@ -64,7 +64,7 @@ a.nav-link {
     font-family: "JetBrains Mono", "Fira Code", monospace;
     font-size: 0.95rem;
     font-weight: 500;
-    color: #253659;
+    color: inherit;
     display: inline-flex;
     align-items: center;
     gap: 0.35rem;
@@ -107,6 +107,9 @@ a.nav-link {
   .course-typewriter-text {
     font-size: 0.95rem;
     color: #1a2b4c;
+    background: linear-gradient(120deg, #00d4ff 0%, #6c4bff 50%, #ff7ad9 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
   }
 
   @media (max-width: 576px) {
@@ -124,6 +127,85 @@ a.nav-link {
 
     .course-typewriter-title {
       font-size: 0.7rem;
+    }
+  }
+
+  .course-back-link {
+    font-weight: 600;
+    color: var(--color-primary);
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+  }
+
+  .course-back-link:hover,
+  .course-back-link:focus {
+    color: var(--color-primary-dark);
+  }
+
+  .course-whatsapp-highlight {
+    margin-top: 1.25rem;
+    padding: 1.15rem 1.5rem;
+    border-radius: 18px;
+    background: linear-gradient(135deg, rgba(34, 197, 94, 0.1) 0%, rgba(16, 185, 129, 0.12) 100%);
+    border: 1px solid rgba(16, 185, 129, 0.25);
+    display: flex;
+    gap: 1.25rem;
+    align-items: center;
+    flex-wrap: wrap;
+  }
+
+  .course-whatsapp-highlight ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: grid;
+    gap: 0.35rem;
+  }
+
+  .course-location-card {
+    border: 1px solid rgba(15, 23, 42, 0.12);
+    border-radius: 20px;
+    background: #f8fafc;
+    padding: 1.5rem;
+  }
+
+  .course-location-image {
+    border-radius: 16px;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    min-height: 220px;
+    box-shadow: 0 12px 24px rgba(15, 23, 42, 0.15);
+  }
+
+  .course-location-list {
+    list-style: none;
+    padding: 0;
+    margin: 0 0 1rem;
+    display: grid;
+    gap: 0.4rem;
+  }
+
+  .course-location-list li {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.5rem;
+    color: #1e293b;
+  }
+
+  .course-bottom-cta {
+    min-width: 220px;
+  }
+
+  @media (max-width: 576px) {
+    .course-whatsapp-highlight {
+      flex-direction: column;
+      align-items: flex-start;
+    }
+
+    .course-location-image {
+      min-height: 180px;
     }
   }
 

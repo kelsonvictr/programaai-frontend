@@ -13,7 +13,14 @@ import {
   Col
 } from "react-bootstrap"
 import axios from "axios"
-import { FaLinkedin, FaWhatsapp, FaPlay } from "react-icons/fa"
+import {
+  FaLinkedin,
+  FaWhatsapp,
+  FaPlay,
+  FaArrowLeft,
+  FaMapMarkerAlt,
+  FaCheckCircle
+} from "react-icons/fa"
 import ParcelamentoModal from "../components/ParcelamentoModal"
 import { calcularValores } from "../utils/payment"
 import Seo from "../components/Seo"
@@ -34,6 +41,11 @@ const COURSE_TYPEWRITER_PHRASES = [
   "Aulas gravadas para rever depois",
   "Turmas reduzidas para aprender com foco",
 ]
+
+const WHATSAPP_MESSAGE =
+  "Oi prof. Kelson, venho do site da programa AI, poderia me esclarecer algumas dúvidas?"
+const WHATSAPP_LINK = `https://wa.me/5583986608771?text=${encodeURIComponent(WHATSAPP_MESSAGE)}`
+const LOCATION_IMAGE = "/galeria-course-details/14.jpg"
 
 interface Course {
   id: string
@@ -369,7 +381,26 @@ const CourseDetails: React.FC = () => {
         structuredData={structuredData}
       />
       <Container className="py-5">
-      <Card className="shadow-sm position-relative overflow-hidden">
+        <div className="d-flex flex-wrap align-items-center justify-content-between gap-2 mb-3">
+          <Link
+            to="/cursos"
+            className="course-back-link px-0 d-inline-flex align-items-center gap-2"
+          >
+            <FaArrowLeft /> Ver todos os cursos
+          </Link>
+          <Button
+            as="a"
+            href={WHATSAPP_LINK}
+            target="_blank"
+            rel="noopener noreferrer"
+            variant="success"
+            className="d-inline-flex align-items-center gap-2 course-whatsapp-top"
+          >
+            <FaWhatsapp /> Quero falar agora
+          </Button>
+        </div>
+
+        <Card className="shadow-sm position-relative overflow-hidden">
         {/* Ribbon de Vagas Encerradas */}
         {!course.ativo && (
           <div
@@ -429,18 +460,26 @@ const CourseDetails: React.FC = () => {
             )
           })()}
 
-          <Button
-            as="a"
-            href={`https://wa.me/5583986608771?text=${encodeURIComponent(
-              "Oi prof. Kelson, venho do site da programa AI, poderia me esclarecer algumas dúvidas?"
-            )}`}
-            target="_blank"
-            rel="noopener noreferrer"
-            variant="success"
-            className="mb-3"
-          >
-            <FaWhatsapp className="me-2" /> Fala com a gente pelo WhatsApp
-          </Button>
+          <div className="course-whatsapp-highlight">
+            <div>
+              <h6 className="fw-semibold mb-2">Tire suas dúvidas em minutos</h6>
+              <ul className="mb-0">
+                <li><FaCheckCircle className="me-2 text-success" /> Atendimento direto com os professores</li>
+                <li><FaCheckCircle className="me-2 text-success" /> Confirmação de vagas e formas de pagamento</li>
+                <li><FaCheckCircle className="me-2 text-success" /> Receba o material de apresentação na hora</li>
+              </ul>
+            </div>
+            <Button
+              as="a"
+              href={WHATSAPP_LINK}
+              target="_blank"
+              rel="noopener noreferrer"
+              variant="success"
+              className="d-inline-flex align-items-center gap-2 flex-shrink-0"
+            >
+              <FaWhatsapp /> Conversar no WhatsApp
+            </Button>
+          </div>
 
           <CourseGallery />
 
@@ -504,6 +543,60 @@ const CourseDetails: React.FC = () => {
               )}
             </>
           )}
+
+          <section className="course-location-card mt-4">
+            <Row className="g-3 align-items-center">
+              <Col md={5}>
+                <img
+                  src={LOCATION_IMAGE}
+                  alt="Espaço físico da Programa AI"
+                  className="course-location-image"
+                  loading="lazy"
+                />
+              </Col>
+              <Col md={7}>
+                <h6 className="text-primary fw-bold mb-2">Onde acontecem as aulas</h6>
+                <p className="mb-3">
+                  Empresarial Eldorado — Av. Epitácio Pessoa, 1133, Sala 104. Ambiente climatizado,
+                  cadeiras ergonômicas NR17, projetor multimídia e café à vontade para manter o ritmo
+                  nas práticas presenciais.
+                </p>
+                <ul className="course-location-list">
+                  <li>
+                    <FaMapMarkerAlt className="text-danger me-2" /> Localização central, fácil acesso e estacionamento próximo
+                  </li>
+                  <li>
+                    <FaCheckCircle className="text-success me-2" /> Mesão colaborativo para pair programming e mentorias individuais
+                  </li>
+                  <li>
+                    <FaCheckCircle className="text-success me-2" /> Coffee station liberado durante as aulas
+                  </li>
+                </ul>
+                <div className="d-flex flex-wrap gap-2">
+                  <Button
+                    as="a"
+                    href="https://www.google.com/maps/place/Empresarial+Eldorado/@-7.119502,-34.8602648,17z"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    variant="outline-primary"
+                    className="d-inline-flex align-items-center gap-2"
+                  >
+                    <FaMapMarkerAlt /> Ver rota no Google Maps
+                  </Button>
+                  <Button
+                    as="a"
+                    href={WHATSAPP_LINK}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    variant="success"
+                    className="d-inline-flex align-items-center gap-2"
+                  >
+                    <FaWhatsapp /> Agendar visita guiada
+                  </Button>
+                </div>
+              </Col>
+            </Row>
+          </section>
 
           {videoModal}
 
@@ -580,6 +673,21 @@ const CourseDetails: React.FC = () => {
                   🚫 Vagas Encerradas! Fique de olho nas próximas turmas! 
                 </Alert>
               )}
+            </div>
+            <div className="course-bottom-cta d-flex flex-column gap-2">
+              <span className="fw-semibold text-primary">
+                Prefere conversar antes de se inscrever?
+              </span>
+              <Button
+                as="a"
+                href={WHATSAPP_LINK}
+                target="_blank"
+                rel="noopener noreferrer"
+                variant="outline-success"
+                className="d-inline-flex align-items-center gap-2"
+              >
+                <FaWhatsapp /> Falar com a Programa AI
+              </Button>
             </div>
           </div>
         </Card.Body>
