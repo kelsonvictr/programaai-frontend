@@ -400,8 +400,8 @@ const CourseDetails: React.FC = () => {
         <Card.Body>
           <Card.Title as="h2">{course.title}</Card.Title>
           <div className="course-typewriter-banner">
-            <span className="course-typewriter-badge">Experiência imersiva</span>
-            <Typewriter phrases={COURSE_TYPEWRITER_PHRASES} />
+            <span className="course-typewriter-title">Experiência Imersiva e Presencial</span>
+            <Typewriter phrases={COURSE_TYPEWRITER_PHRASES} className="course-typewriter-text" />
           </div>
 
           <p className="text-muted">
