@@ -591,7 +591,7 @@ const CourseDetails: React.FC = () => {
                     variant="success"
                     className="d-inline-flex align-items-center gap-2"
                   >
-                    <FaWhatsapp /> Agendar visita guiada
+                    <FaWhatsapp /> Falar com o prof. no Whastapp
                   </Button>
                 </div>
               </Col>
