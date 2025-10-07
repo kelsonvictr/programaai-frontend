@@ -1,7 +1,8 @@
 import { useEffect, useState, type ChangeEvent, type FormEvent } from "react"
-import { Container, Row, Col, Card, Form, Button, Alert, Spinner } from "react-bootstrap"
+import { Container, Row, Col, Card, Form, Button, Alert, Spinner, Modal } from "react-bootstrap"
 import { useSearchParams } from "react-router-dom"
 import api from "../api/axios"
+import CourseGallery from "../components/CourseGallery"
 
 const CURSOS_DISPONIVEIS = [
   "Curso Presencial Programação Fullstack",
@@ -46,8 +47,10 @@ const ListaEspera = () => {
   const [telefone, setTelefone] = useState(formatarTelefone("55"))
   const [email, setEmail] = useState("")
   const [comoConheceu, setComoConheceu] = useState("")
-  const [mensagem, setMensagem] = useState<{ tipo: "sucesso" | "erro"; texto: string } | null>(null)
+  const [mensagemErro, setMensagemErro] = useState<string | null>(null)
   const [submetendo, setSubmetendo] = useState(false)
+  const [showModalSucesso, setShowModalSucesso] = useState(false)
+  const handleFecharModalSucesso = () => setShowModalSucesso(false)
 
   useEffect(() => {
     if (cursoBloqueado) {
@@ -74,27 +77,27 @@ const ListaEspera = () => {
 
   const validarFormulario = () => {
     if (!nome.trim()) {
-      setMensagem({ tipo: "erro", texto: "Informe seu nome completo." })
+      setMensagemErro("Informe seu nome completo.")
       return false
     }
     if (!email.trim()) {
-      setMensagem({ tipo: "erro", texto: "Informe um e-mail válido." })
+      setMensagemErro("Informe um e-mail válido.")
       return false
     }
     if (!telefone.trim() || telefone.trim().length < 8) {
-      setMensagem({ tipo: "erro", texto: "Informe um telefone válido." })
+      setMensagemErro("Informe um telefone válido.")
       return false
     }
     if (!curso.trim()) {
-      setMensagem({ tipo: "erro", texto: "Escolha o curso de interesse." })
+      setMensagemErro("Escolha o curso de interesse.")
       return false
     }
     if (cursoSelecionadoEhOutro && !cursoOutro.trim()) {
-      setMensagem({ tipo: "erro", texto: "Especifique qual curso você procura." })
+      setMensagemErro("Especifique qual curso você procura.")
       return false
     }
     if (!comoConheceu.trim()) {
-      setMensagem({ tipo: "erro", texto: "Conte pra gente como conheceu o curso." })
+      setMensagemErro("Conte pra gente como conheceu o curso.")
       return false
     }
     return true
@@ -102,7 +105,7 @@ const ListaEspera = () => {
 
   const handleSubmit = async (evento: FormEvent<HTMLFormElement>) => {
     evento.preventDefault()
-    setMensagem(null)
+    setMensagemErro(null)
     if (!validarFormulario()) return
 
     const cursoParaEnvio =
@@ -121,16 +124,10 @@ const ListaEspera = () => {
     try {
       setSubmetendo(true)
       await api.post("/lista-espera", payload)
-      setMensagem({
-        tipo: "sucesso",
-        texto: "Cadastro recebido! Você será avisado assim que abrirmos novas vagas."
-      })
+      setShowModalSucesso(true)
       limparFormulario()
     } catch (erro) {
-      setMensagem({
-        tipo: "erro",
-        texto: "Não foi possível enviar seus dados agora. Tente novamente em instantes."
-      })
+      setMensagemErro("Não foi possível enviar seus dados agora. Tente novamente em instantes.")
       console.error("Erro ao enviar lista de espera:", erro)
     } finally {
       setSubmetendo(false)
@@ -155,13 +152,20 @@ const ListaEspera = () => {
                   Ao se cadastrar, você garante prioridade para ser avisado sobre novas turmas e novidades exclusivas.
                 </Alert>
 
-                {mensagem && (
+                <div className="mb-4">
+                  <h5 className="text-center text-uppercase text-muted small mb-3">
+                    Conheça um pouco da nossa estrutura
+                  </h5>
+                  <CourseGallery />
+                </div>
+
+                {mensagemErro && (
                   <Alert
-                    variant={mensagem.tipo === "sucesso" ? "success" : "danger"}
-                    onClose={() => setMensagem(null)}
+                    variant="danger"
+                    onClose={() => setMensagemErro(null)}
                     dismissible
                   >
-                    {mensagem.texto}
+                    {mensagemErro}
                   </Alert>
                 )}
 
@@ -276,6 +280,34 @@ const ListaEspera = () => {
                     </Button>
                   </div>
                 </Form>
+
+                <Modal
+                  show={showModalSucesso}
+                  onHide={handleFecharModalSucesso}
+                  centered
+                  backdrop="static"
+                  keyboard={false}
+                >
+                  <Modal.Header closeButton className="border-0 pb-0">
+                    <Modal.Title className="fw-bold">
+                      🎉 Cadastro confirmado!
+                    </Modal.Title>
+                  </Modal.Header>
+                  <Modal.Body className="pt-3">
+                    <p className="mb-3">
+                      Recebemos seus dados e nossa equipe vai entrar em contato o mais breve possível
+                      para compartilhar todas as novidades da próxima turma.
+                    </p>
+                    <p className="mb-0 fw-semibold text-success">
+                      Você acabou de garantir prioridade na abertura das vagas! 💚
+                    </p>
+                  </Modal.Body>
+                  <Modal.Footer className="border-0 pt-0">
+                    <Button variant="primary" onClick={handleFecharModalSucesso}>
+                      Voltar para o site
+                    </Button>
+                  </Modal.Footer>
+                </Modal>
               </Card.Body>
             </Card>
           </Col>
