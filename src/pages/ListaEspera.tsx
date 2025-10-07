@@ -1,7 +1,6 @@
-import { useEffect, useState, type InputHTMLAttributes, type Ref } from "react"
+import { useEffect, useState, type ChangeEvent, type FormEvent } from "react"
 import { Container, Row, Col, Card, Form, Button, Alert, Spinner } from "react-bootstrap"
 import { useSearchParams } from "react-router-dom"
-import InputMask from "react-input-mask"
 import api from "../api/axios"
 
 const CURSOS_DISPONIVEIS = [
@@ -17,8 +16,21 @@ const CURSOS_DISPONIVEIS = [
   "Outros"
 ] as const
 
-type MaskInputProps = InputHTMLAttributes<HTMLInputElement> & {
-  ref?: Ref<HTMLInputElement>
+const formatarTelefone = (valor: string) => {
+  const numeros = valor.replace(/\D/g, "").slice(0, 13)
+  if (!numeros) return ""
+
+  const codigoPais = numeros.slice(0, 2)
+  const ddd = numeros.slice(2, 4)
+  const parte1 = numeros.slice(4, 9)
+  const parte2 = numeros.slice(9, 13)
+
+  let resultado = `+${codigoPais}`
+  if (ddd) resultado += ` ${ddd}`
+  if (parte1) resultado += ` ${parte1}`
+  if (parte2) resultado += `-${parte2}`
+
+  return resultado
 }
 
 const ListaEspera = () => {
@@ -31,7 +43,7 @@ const ListaEspera = () => {
     cursoBloqueado ? "Curso Presencial Programação Fullstack" : ""
   )
   const [cursoOutro, setCursoOutro] = useState("")
-  const [telefone, setTelefone] = useState("+55 ")
+  const [telefone, setTelefone] = useState(formatarTelefone("55"))
   const [email, setEmail] = useState("")
   const [comoConheceu, setComoConheceu] = useState("")
   const [mensagem, setMensagem] = useState<{ tipo: "sucesso" | "erro"; texto: string } | null>(null)
@@ -43,12 +55,18 @@ const ListaEspera = () => {
     }
   }, [cursoBloqueado])
 
+  const handleTelefoneChange = (evento: ChangeEvent<HTMLInputElement>) => {
+    const valor = evento.target.value
+    const formatado = formatarTelefone(valor)
+    setTelefone(formatado)
+  }
+
   const cursoSelecionadoEhOutro = curso === "Outros"
 
   const limparFormulario = () => {
     setNome("")
     setEmail("")
-    setTelefone("+55 ")
+    setTelefone(formatarTelefone("55"))
     setComoConheceu("")
     setCursoOutro("")
     setCurso(cursoBloqueado ? "Curso Presencial Programação Fullstack" : "")
@@ -82,7 +100,7 @@ const ListaEspera = () => {
     return true
   }
 
-  const handleSubmit = async (evento: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (evento: FormEvent<HTMLFormElement>) => {
     evento.preventDefault()
     setMensagem(null)
     if (!validarFormulario()) return
@@ -198,25 +216,13 @@ const ListaEspera = () => {
 
                   <Form.Group className="mb-3">
                     <Form.Label>Telefone (WhatsApp)</Form.Label>
-                    <InputMask
-                      mask="+99 99 99999-9999"
-                      maskChar=""
+                    <Form.Control
+                      type="tel"
+                      placeholder="+55 83 98888-8888"
                       value={telefone}
-                      onChange={evento => setTelefone(evento.target.value)}
-                    >
-                      {(inputProps: MaskInputProps) => {
-                        const { size: _ignoredSize, ref: inputRef, ...rest } = inputProps
-                        return (
-                          <Form.Control
-                            type="tel"
-                            placeholder="+55 83 98888-8888"
-                            ref={inputRef as Ref<HTMLInputElement>}
-                            {...rest}
-                            required
-                          />
-                        )
-                      }}
-                    </InputMask>
+                      onChange={handleTelefoneChange}
+                      required
+                    />
                     <Form.Text className="text-muted">
                       Você pode ajustar o código do país e DDD, se necessário.
                     </Form.Text>
