@@ -79,6 +79,16 @@ const NavBar: React.FC = () => {
               Cursos
             </Nav.Link>
 
+            <Nav.Link
+              as={Link}
+              to="/lista-espera"
+              className={styles.navLink}
+              onClick={handleNavClick}
+              active={location.pathname === "/lista-espera"}
+            >
+              Lista de Espera
+            </Nav.Link>
+
             {/* LinkedIn */}
             <Nav.Link
               href="https://www.linkedin.com/company/programaaidev"
