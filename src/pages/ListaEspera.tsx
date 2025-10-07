@@ -1,4 +1,4 @@
-import { useEffect, useState, type InputHTMLAttributes } from "react"
+import { useEffect, useState, type InputHTMLAttributes, type Ref } from "react"
 import { Container, Row, Col, Card, Form, Button, Alert, Spinner } from "react-bootstrap"
 import { useSearchParams } from "react-router-dom"
 import InputMask from "react-input-mask"
@@ -16,6 +16,10 @@ const CURSOS_DISPONIVEIS = [
   "IA",
   "Outros"
 ] as const
+
+type MaskInputProps = InputHTMLAttributes<HTMLInputElement> & {
+  ref?: Ref<HTMLInputElement>
+}
 
 const ListaEspera = () => {
   const [searchParams] = useSearchParams()
@@ -200,14 +204,18 @@ const ListaEspera = () => {
                       value={telefone}
                       onChange={evento => setTelefone(evento.target.value)}
                     >
-                      {(inputProps: InputHTMLAttributes<HTMLInputElement>) => (
-                        <Form.Control
-                          type="tel"
-                          placeholder="+55 83 98888-8888"
-                          {...inputProps}
-                          required
-                        />
-                      )}
+                      {(inputProps: MaskInputProps) => {
+                        const { size: _ignoredSize, ref: inputRef, ...rest } = inputProps
+                        return (
+                          <Form.Control
+                            type="tel"
+                            placeholder="+55 83 98888-8888"
+                            ref={inputRef as Ref<HTMLInputElement>}
+                            {...rest}
+                            required
+                          />
+                        )
+                      }}
                     </InputMask>
                     <Form.Text className="text-muted">
                       Você pode ajustar o código do país e DDD, se necessário.
