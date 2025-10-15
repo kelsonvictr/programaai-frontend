@@ -231,7 +231,7 @@ export default function Admin() {
       }
       setCopiedPaymentId(id)
       if (copyFeedbackTimeout.current) clearTimeout(copyFeedbackTimeout.current)
-      copyFeedbackTimeout.current = window.setTimeout(() => {
+      copyFeedbackTimeout.current = setTimeout(() => {
         setCopiedPaymentId(current => (current === id ? null : current))
       }, 2000)
     } catch (err) {
