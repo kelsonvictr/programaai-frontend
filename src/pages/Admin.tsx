@@ -722,9 +722,10 @@ export default function Admin() {
                           </InputGroup>
                         </td>
 
-                        <td className="text-center" style={{ minWidth: 150 }}>
-                          <ButtonGroup size="sm">
+                        <td className="text-center" style={{ minWidth: 190 }}>
+                          <Dropdown as={ButtonGroup} size="sm" align="end">
                             <Button
+                              type="button"
                               variant={copiedPaymentId === i.id ? 'success' : 'outline-secondary'}
                               title={
                                 copiedPaymentId === i.id
@@ -735,35 +736,45 @@ export default function Admin() {
                             >
                               {copiedPaymentId === i.id ? <ClipboardCheck /> : <Clipboard />}
                             </Button>
-                            <Dropdown align="end">
-                              <Dropdown.Toggle
-                                variant="outline-secondary"
-                                id={`detalhes-${i.id}`}
-                                title="Ver mais detalhes"
-                                size="sm"
+                            <Dropdown.Toggle
+                              split
+                              variant="outline-secondary"
+                              id={`detalhes-${i.id}`}
+                              title="Ver mais detalhes"
+                            />
+                            <Dropdown.Menu>
+                              <Dropdown.Header>Atalhos</Dropdown.Header>
+                              <Dropdown.Item
+                                as="button"
+                                type="button"
+                                onClick={() => copyPaymentLink(i.id)}
                               >
-                                <ThreeDots />
-                              </Dropdown.Toggle>
-                              <Dropdown.Menu>
-                                <Dropdown.Header>Informações adicionais</Dropdown.Header>
-                                <Dropdown.ItemText>
-                                  <strong>Onde estuda:</strong> {i.ondeEstuda || '—'}
-                                </Dropdown.ItemText>
-                                <Dropdown.ItemText>
-                                  <strong>Cupom:</strong> {i.cupom || '—'}
-                                </Dropdown.ItemText>
-                                {i.asaasPaymentLinkUrl && (
-                                  <>
-                                    <Dropdown.Divider />
-                                    <Dropdown.ItemText>
-                                      <strong>Link Asaas:</strong>
-                                      <div className="text-break">{i.asaasPaymentLinkUrl}</div>
-                                    </Dropdown.ItemText>
-                                  </>
-                                )}
-                              </Dropdown.Menu>
-                            </Dropdown>
-                          </ButtonGroup>
+                                Copiar link de pagamento
+                              </Dropdown.Item>
+                              <Dropdown.ItemText>
+                                <small className="text-muted">
+                                  {pagamentoLink(i.id).replace('https://', '')}
+                                </small>
+                              </Dropdown.ItemText>
+                              <Dropdown.Divider />
+                              <Dropdown.Header>Informações adicionais</Dropdown.Header>
+                              <Dropdown.ItemText>
+                                <strong>Onde estuda:</strong> {i.ondeEstuda || '—'}
+                              </Dropdown.ItemText>
+                              <Dropdown.ItemText>
+                                <strong>Cupom:</strong> {i.cupom || '—'}
+                              </Dropdown.ItemText>
+                              {i.asaasPaymentLinkUrl && (
+                                <>
+                                  <Dropdown.Divider />
+                                  <Dropdown.ItemText>
+                                    <strong>Link Asaas:</strong>
+                                    <div className="text-break">{i.asaasPaymentLinkUrl}</div>
+                                  </Dropdown.ItemText>
+                                </>
+                              )}
+                            </Dropdown.Menu>
+                          </Dropdown>
                         </td>
 
                         <td className="text-center">
