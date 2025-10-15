@@ -1,4 +1,5 @@
 import { useState, useEffect, useMemo } from 'react'
+import type { CSSProperties } from 'react'
 import axios from 'axios'
 import { auth } from '../firebase'
 import { signInWithEmailAndPassword, onAuthStateChanged, signOut, type User } from 'firebase/auth'
@@ -13,8 +14,7 @@ import {
   InputGroup,
   Row,
   Col,
-  Card,
-  Nav
+  Card
 } from 'react-bootstrap'
 import { Check2 } from 'react-bootstrap-icons'
 
@@ -178,6 +178,20 @@ export default function Admin() {
   const money = (v?: number | null) =>
     typeof v === 'number' && !Number.isNaN(v) ? `R$ ${v.toFixed(2)}` : '-'
   const keyBusy = (id: string, field: string) => `${id}:${field}`
+  const chipStyle = (isActive: boolean): CSSProperties => ({
+    borderRadius: 999,
+    border: `1px solid ${isActive ? '#0d6efd' : '#dee2e6'}`,
+    backgroundColor: isActive ? '#0d6efd' : '#f8f9fa',
+    color: isActive ? '#fff' : '#212529',
+    boxShadow: isActive ? '0 6px 18px rgba(13, 110, 253, 0.25)' : '0 2px 8px rgba(15, 23, 42, 0.08)',
+    display: 'inline-flex',
+    alignItems: 'center',
+    gap: '0.5rem',
+    padding: '0.45rem 1rem',
+    cursor: 'pointer',
+    transition: 'all 0.2s ease',
+    fontWeight: 600
+  })
 
   // atualização otimista local de qualquer campo (dentro de um curso)
   const setLocalField = <K extends keyof Inscricao>(id: string, field: K, value: Inscricao[K]) => {
@@ -378,27 +392,56 @@ export default function Admin() {
       </Row>
 
       {hasCursos && (
-        <Nav
-          variant="pills"
-          activeKey={activeCurso}
-          onSelect={key => key && setActiveCurso(key)}
-          className="flex-wrap gap-2 mb-4"
+        <div
+          className="d-flex flex-wrap align-items-center gap-3 mb-4"
+          role="tablist"
+          aria-label="Cursos disponíveis"
         >
-          <Nav.Item>
-            <Nav.Link eventKey={ALL_CURSO_KEY} className="d-flex align-items-center gap-2 px-3 py-2">
-              <span>Todos</span>
-              <Badge bg="secondary">{globalResumo.totalInscritos}</Badge>
-            </Nav.Link>
-          </Nav.Item>
-          {cursoEntries.map(([curso, group]) => (
-            <Nav.Item key={curso}>
-              <Nav.Link eventKey={curso} className="d-flex align-items-center gap-2 px-3 py-2">
-                <span>{curso}</span>
-                <Badge bg="primary">{group.totalInscritos}</Badge>
-              </Nav.Link>
-            </Nav.Item>
-          ))}
-        </Nav>
+          <button
+            type="button"
+            onClick={() => setActiveCurso(ALL_CURSO_KEY)}
+            style={chipStyle(activeCurso === ALL_CURSO_KEY)}
+            role="tab"
+            aria-selected={activeCurso === ALL_CURSO_KEY}
+          >
+            <span
+              className="text-start"
+              style={{ flex: '1 1 auto', minWidth: 0, whiteSpace: 'normal' }}
+            >
+              Todos
+            </span>
+            <Badge
+              bg={activeCurso === ALL_CURSO_KEY ? 'light' : 'secondary'}
+              text={activeCurso === ALL_CURSO_KEY ? 'dark' : undefined}
+            >
+              {globalResumo.totalInscritos}
+            </Badge>
+          </button>
+          {cursoEntries.map(([curso, group]) => {
+            const isActive = activeCurso === curso
+            return (
+              <button
+                key={curso}
+                type="button"
+                onClick={() => setActiveCurso(curso)}
+                style={chipStyle(isActive)}
+                title={curso}
+                role="tab"
+                aria-selected={isActive}
+              >
+                <span
+                  className="text-start"
+                  style={{ flex: '1 1 auto', minWidth: 0, whiteSpace: 'normal' }}
+                >
+                  {curso}
+                </span>
+                <Badge bg={isActive ? 'light' : 'secondary'} text={isActive ? 'dark' : undefined}>
+                  {group.totalInscritos}
+                </Badge>
+              </button>
+            )
+          })}
+        </div>
       )}
 
       {error && (
