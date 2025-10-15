@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo } from 'react'
+import { useState, useEffect, useMemo, useRef } from 'react'
 import type { CSSProperties } from 'react'
 import axios from 'axios'
 import { auth } from '../firebase'
@@ -14,9 +14,11 @@ import {
   InputGroup,
   Row,
   Col,
-  Card
+  Card,
+  Dropdown,
+  ButtonGroup
 } from 'react-bootstrap'
-import { Check2 } from 'react-bootstrap-icons'
+import { Check2, Clipboard, ClipboardCheck, Whatsapp, ThreeDots } from 'react-bootstrap-icons'
 
 const API_BASE = import.meta.env.VITE_ADMIN_API as string
 const ENDPOINT = `${API_BASE}/galaxy/inscricoes-por-curso`
@@ -71,6 +73,8 @@ export default function Admin() {
 
   // loading por toggle/atualização (chaves: "id:field")
   const [busy, setBusy] = useState<Record<string, boolean>>({})
+  const [copiedPaymentId, setCopiedPaymentId] = useState<string | null>(null)
+  const copyFeedbackTimeout = useRef<ReturnType<typeof setTimeout> | null>(null)
 
   const ALL_CURSO_KEY = '__all__'
   const [activeCurso, setActiveCurso] = useState<string>(ALL_CURSO_KEY)
@@ -104,6 +108,15 @@ export default function Admin() {
       setActiveCurso(cursoEntries[0][0])
     }
   }, [cursoEntries, cursos, activeCurso])
+
+  useEffect(
+    () => () => {
+      if (copyFeedbackTimeout.current) {
+        clearTimeout(copyFeedbackTimeout.current)
+      }
+    },
+    []
+  )
 
   useEffect(() => {
     onAuthStateChanged(auth, async u => {
@@ -192,6 +205,40 @@ export default function Admin() {
     transition: 'all 0.2s ease',
     fontWeight: 600
   })
+  const pagamentoLink = (id: string) => `https://www.programaai.dev/pagamento/${id}`
+  const buildWhatsappUrl = (value?: string | null) => {
+    if (!value) return null
+    const digits = value.replace(/\D/g, '')
+    if (!digits) return null
+    const normalized = digits.startsWith('55') ? digits : `55${digits}`
+    return `https://wa.me/${normalized}`
+  }
+  const copyPaymentLink = async (id: string) => {
+    const link = pagamentoLink(id)
+    try {
+      if (navigator?.clipboard?.writeText) {
+        await navigator.clipboard.writeText(link)
+      } else {
+        const textarea = document.createElement('textarea')
+        textarea.value = link
+        textarea.setAttribute('readonly', '')
+        textarea.style.position = 'absolute'
+        textarea.style.left = '-9999px'
+        document.body.appendChild(textarea)
+        textarea.select()
+        document.execCommand('copy')
+        document.body.removeChild(textarea)
+      }
+      setCopiedPaymentId(id)
+      if (copyFeedbackTimeout.current) clearTimeout(copyFeedbackTimeout.current)
+      copyFeedbackTimeout.current = window.setTimeout(() => {
+        setCopiedPaymentId(current => (current === id ? null : current))
+      }, 2000)
+    } catch (err) {
+      console.error(err)
+      alert(`Não foi possível copiar automaticamente. Link: ${link}`)
+    }
+  }
 
   // atualização otimista local de qualquer campo (dentro de um curso)
   const setLocalField = <K extends keyof Inscricao>(id: string, field: K, value: Inscricao[K]) => {
@@ -471,16 +518,14 @@ export default function Admin() {
           </Card.Header>
           <Card.Body className="p-0">
             <div className="table-responsive">
-              <Table striped hover className="mb-0 align-middle" style={{ minWidth: 1300 }}>
+              <Table striped hover size="sm" className="mb-0 align-middle" style={{ minWidth: 1100 }}>
                 <thead style={{ position: 'sticky', top: 0, zIndex: 1 }} className="bg-light text-muted">
                   <tr style={{ whiteSpace: 'nowrap' }}>
                     <th>Data/Hora</th>
                     <th>Nome</th>
                     <th>Email</th>
                     <th>WhatsApp</th>
-                    <th>Onde Estuda</th>
                     <th className="text-end">Valor</th>
-                    <th>Cupom</th>
                     <th className="text-center">
                       <div className="d-flex flex-column align-items-center">
                         <span>Pago</span>
@@ -503,6 +548,7 @@ export default function Admin() {
                     </th>
                     <th className="text-end">Valor Líquido Final</th>
                     <th>Observações</th>
+                    <th className="text-center">Atalhos</th>
                     <th className="text-center">Ações</th>
                   </tr>
                 </thead>
@@ -520,6 +566,7 @@ export default function Admin() {
 
                     const vl = typeof i.valorLiquidoFinal === 'number' ? i.valorLiquidoFinal : null
                     const obs = i.observacoes ?? ''
+                    const whatsappUrl = buildWhatsappUrl(i.whatsapp)
 
                     return (
                       <tr key={i.id}>
@@ -528,10 +575,24 @@ export default function Admin() {
                         </td>
                         <td>{i.nomeCompleto}</td>
                         <td>{i.email}</td>
-                        <td>{i.whatsapp || '-'}</td>
-                        <td>{i.ondeEstuda || '-'}</td>
+                        <td>
+                          <div className="d-flex align-items-center gap-2">
+                            <span>{i.whatsapp || '-'}</span>
+                            {whatsappUrl && (
+                              <Button
+                                variant="outline-success"
+                                size="sm"
+                                href={whatsappUrl}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                title="Abrir conversa no WhatsApp"
+                              >
+                                <Whatsapp />
+                              </Button>
+                            )}
+                          </div>
+                        </td>
                         <td className="text-end">{money(i.valorCurso)}</td>
-                        <td>{i.cupom || '-'}</td>
 
                         <td className="text-center">
                           <div className="d-inline-flex align-items-center gap-2">
@@ -659,6 +720,50 @@ export default function Admin() {
                               </InputGroup.Text>
                             )}
                           </InputGroup>
+                        </td>
+
+                        <td className="text-center" style={{ minWidth: 150 }}>
+                          <ButtonGroup size="sm">
+                            <Button
+                              variant={copiedPaymentId === i.id ? 'success' : 'outline-secondary'}
+                              title={
+                                copiedPaymentId === i.id
+                                  ? 'Link copiado!'
+                                  : 'Copiar link de pagamento'
+                              }
+                              onClick={() => copyPaymentLink(i.id)}
+                            >
+                              {copiedPaymentId === i.id ? <ClipboardCheck /> : <Clipboard />}
+                            </Button>
+                            <Dropdown align="end">
+                              <Dropdown.Toggle
+                                variant="outline-secondary"
+                                id={`detalhes-${i.id}`}
+                                title="Ver mais detalhes"
+                                size="sm"
+                              >
+                                <ThreeDots />
+                              </Dropdown.Toggle>
+                              <Dropdown.Menu>
+                                <Dropdown.Header>Informações adicionais</Dropdown.Header>
+                                <Dropdown.ItemText>
+                                  <strong>Onde estuda:</strong> {i.ondeEstuda || '—'}
+                                </Dropdown.ItemText>
+                                <Dropdown.ItemText>
+                                  <strong>Cupom:</strong> {i.cupom || '—'}
+                                </Dropdown.ItemText>
+                                {i.asaasPaymentLinkUrl && (
+                                  <>
+                                    <Dropdown.Divider />
+                                    <Dropdown.ItemText>
+                                      <strong>Link Asaas:</strong>
+                                      <div className="text-break">{i.asaasPaymentLinkUrl}</div>
+                                    </Dropdown.ItemText>
+                                  </>
+                                )}
+                              </Dropdown.Menu>
+                            </Dropdown>
+                          </ButtonGroup>
                         </td>
 
                         <td className="text-center">
