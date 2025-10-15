@@ -18,7 +18,7 @@ import {
   Dropdown,
   ButtonGroup
 } from 'react-bootstrap'
-import { Check2, Clipboard, ClipboardCheck, Whatsapp, ThreeDots } from 'react-bootstrap-icons'
+import { Check2, Clipboard, ClipboardCheck, Whatsapp } from 'react-bootstrap-icons'
 
 const API_BASE = import.meta.env.VITE_ADMIN_API as string
 const ENDPOINT = `${API_BASE}/galaxy/inscricoes-por-curso`
