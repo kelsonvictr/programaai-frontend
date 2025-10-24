@@ -1,5 +1,10 @@
 {
   "defaultDurationSeconds": 20,
   "_comment": "Adicione os arquivos de imagem na pasta public/tv-banners e liste-os em items abaixo.",
-  "items": []
+  "items": [
+    {
+      "src": "/tv-banners/TV-SALA-PROGZERO-LISTA-DE-ESPERA.png",
+      "alt": "Programa Zero - Lista de Espera"
+    }
+  ]
 }
