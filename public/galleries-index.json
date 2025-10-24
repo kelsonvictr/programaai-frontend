@@ -1,0 +1,56 @@
+{
+  "generatedAt": "2025-10-24T19:33:45.908Z",
+  "galleries": {
+    "estrutura": {
+      "fotos": [
+        {
+          "src": "/galerias/estrutura/fotos/IMG_4475.jpg",
+          "mtime": 1755528752000,
+          "size": 3004704
+        },
+        {
+          "src": "/galerias/estrutura/fotos/IMG_4483.jpg",
+          "mtime": 1755528752000,
+          "size": 2633932
+        },
+        {
+          "src": "/galerias/estrutura/fotos/IMG_4486.jpg",
+          "mtime": 1755528752000,
+          "size": 2239570
+        },
+        {
+          "src": "/galerias/estrutura/fotos/IMG_4488.jpg",
+          "mtime": 1755528752000,
+          "size": 3305321
+        },
+        {
+          "src": "/galerias/estrutura/fotos/IMG_4492.jpg",
+          "mtime": 1755528752000,
+          "size": 3217977
+        }
+      ],
+      "videos": [
+        {
+          "src": "/galerias/estrutura/videos/IMG_4465.mp4",
+          "mtime": 1755528768000,
+          "size": 91739
+        },
+        {
+          "src": "/galerias/estrutura/videos/IMG_4469.mp4",
+          "mtime": 1755528768000,
+          "size": 829788
+        },
+        {
+          "src": "/galerias/estrutura/videos/IMG_4471.mp4",
+          "mtime": 1755528768000,
+          "size": 123090
+        },
+        {
+          "src": "/galerias/estrutura/videos/IMG_4473.mp4",
+          "mtime": 1755528768000,
+          "size": 669144
+        }
+      ]
+    }
+  }
+}
