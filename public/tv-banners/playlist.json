@@ -5,6 +5,14 @@
     {
       "src": "/tv-banners/TV-SALA-PROGZERO-LISTA-DE-ESPERA.png",
       "alt": "Programa Zero - Lista de Espera"
+    },
+    {
+      "src": "/tv-banners/tv-banner-site-go-developer.png",
+      "alt": "Go Developer"
+    },
+    {
+      "src": "/tv-banners/tv-fullstack-turma-05.png",
+      "alt": "Fullstack - Turma 05"
     }
   ]
 }
