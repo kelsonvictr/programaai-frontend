@@ -7,12 +7,24 @@
       "alt": "Programa Zero - Lista de Espera"
     },
     {
+      "src": "/tv-banners/tv-banner-site-fullstack.png",
+      "alt": "Site Fullstack"
+    },
+    {
       "src": "/tv-banners/tv-banner-site-go-developer.png",
       "alt": "Go Developer"
     },
     {
       "src": "/tv-banners/tv-fullstack-turma-05.png",
       "alt": "Fullstack - Turma 05"
+    },
+    {
+      "src": "/tv-banners/tv-devs-turma-05.png",
+      "alt": "Devs - Turma 05"
+    },
+    {
+      "src": "/tv-banners/tv-wuldson-em-breve.png",
+      "alt": "Wuldson - Em Breve"
     }
   ]
 }
