@@ -170,10 +170,6 @@ const TvBanners = () => {
   return (
     <div style={pageStyle}>
       <img src={currentItem.src} alt={currentItem.alt ?? ''} style={imageStyle} />
-      <div style={infoStyle}>
-        Próxima em{' '}
-        {`${currentItem.durationSeconds ?? defaultDuration}`}s • Banners: {playlist.length}
-      </div>
     </div>
   )
 }
