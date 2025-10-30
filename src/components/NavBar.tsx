@@ -89,10 +89,6 @@ const NavBar: React.FC = () => {
               Lista de Espera
             </Nav.Link>
 
-            <Nav.Link href="/tvsala" className={styles.navLink} target="_blank" rel="noopener noreferrer">
-              TV Banners
-            </Nav.Link>
-
             {/* LinkedIn */}
             <Nav.Link
               href="https://www.linkedin.com/company/programaaidev"
