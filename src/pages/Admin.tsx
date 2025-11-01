@@ -18,12 +18,13 @@ import {
   Dropdown,
   ButtonGroup
 } from 'react-bootstrap'
-import { Check2, Clipboard, ClipboardCheck, Whatsapp } from 'react-bootstrap-icons'
+import { Check2, Clipboard, ClipboardCheck, Whatsapp, FileEarmarkPdf } from 'react-bootstrap-icons'
 
 const API_BASE = import.meta.env.VITE_ADMIN_API as string
 const ENDPOINT = `${API_BASE}/galaxy/inscricoes-por-curso`
 const TOGGLE_ENDPOINT = `${API_BASE}/galaxy/inscricoes/toggle`
 const UPDATE_ENDPOINT = `${API_BASE}/galaxy/inscricoes/update`
+const CONTRATO_ENDPOINT = (id: string) => `${API_BASE}/galaxy/inscricoes/${id}/contrato`
 
 type Inscricao = {
   id: string
@@ -185,6 +186,38 @@ export default function Admin() {
   const deletar = async (id: string) => {
     void id
     alert('Excluir ainda não disponível nesta API')
+  }
+
+  const gerarContrato = async (id: string) => {
+    if (!token) return
+    const bkey = keyBusy(id, 'contrato')
+
+    setBusy(s => ({ ...s, [bkey]: true }))
+    setError(null)
+
+    try {
+      const { data } = await axios.get(CONTRATO_ENDPOINT(id), {
+        headers: { Authorization: `Bearer ${token}` }
+      })
+
+      if (data?.ok && typeof data.url === 'string') {
+        const opened = window.open(data.url, '_blank', 'noopener,noreferrer')
+        if (!opened) {
+          window.location.assign(data.url)
+        }
+      } else {
+        alert('Não foi possível gerar o contrato.')
+      }
+    } catch (err) {
+      console.error(err)
+      alert('Falha ao gerar contrato.')
+    } finally {
+      setBusy(s => {
+        const { [bkey]: removed, ...rest } = s
+        void removed
+        return rest
+      })
+    }
   }
 
   // helpers
@@ -559,6 +592,7 @@ export default function Admin() {
                     const remotoKey = keyBusy(i.id, 'remoto')
                     const vlKey = keyBusy(i.id, 'valorLiquidoFinal')
                     const obsKey = keyBusy(i.id, 'observacoes')
+                    const contratoKey = keyBusy(i.id, 'contrato')
 
                     const pagoChecked = !!i.pago
                     const grupoChecked = !!i.grupoWhatsapp
@@ -724,6 +758,20 @@ export default function Admin() {
 
                         <td className="text-center" style={{ minWidth: 190 }}>
                           <Dropdown as={ButtonGroup} size="sm" align="end">
+                            <Button
+                              type="button"
+                              variant="outline-secondary"
+                              title="Gerar contrato em PDF"
+                              aria-label="Gerar contrato em PDF"
+                              disabled={!!busy[contratoKey]}
+                              onClick={() => gerarContrato(i.id)}
+                            >
+                              {busy[contratoKey] ? (
+                                <Spinner size="sm" animation="border" />
+                              ) : (
+                                <FileEarmarkPdf />
+                              )}
+                            </Button>
                             <Button
                               type="button"
                               variant={copiedPaymentId === i.id ? 'success' : 'outline-secondary'}
