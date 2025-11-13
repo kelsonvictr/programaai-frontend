@@ -25,6 +25,17 @@ const ENDPOINT = `${API_BASE}/galaxy/inscricoes-por-curso`
 const TOGGLE_ENDPOINT = `${API_BASE}/galaxy/inscricoes/toggle`
 const UPDATE_ENDPOINT = `${API_BASE}/galaxy/inscricoes/update`
 const CONTRATO_ENDPOINT = (id: string) => `${API_BASE}/galaxy/inscricoes/${id}/contrato`
+const MONTHLY_SLOTS = 6
+const FULLSTACK_KEYWORD = 'fullstack'
+
+type PaymentMode = 'one-time' | 'monthly'
+type MonthlyPaymentStatus = 'ok' | 'late'
+
+type MonthlyPaymentSlot = {
+  index: number
+  amount?: number | null
+  status?: MonthlyPaymentStatus | null
+}
 
 type Inscricao = {
   id: string
@@ -45,6 +56,9 @@ type Inscricao = {
 
   valorLiquidoFinal?: number | null
   observacoes?: string | null
+  paymentMode?: PaymentMode | null
+  monthlyPayments?: MonthlyPaymentSlot[] | null
+  valorPrevisto?: number | null
 }
 
 type CursoGroup = {
@@ -60,7 +74,12 @@ type ApiResp = {
   cursos: Record<string, CursoGroup>
 }
 
-type EditableField = 'valorLiquidoFinal' | 'observacoes'
+type EditableField =
+  | 'valorLiquidoFinal'
+  | 'observacoes'
+  | 'paymentMode'
+  | 'monthlyPayments'
+  | 'valorPrevisto'
 
 export default function Admin() {
   const [user, setUser] = useState<User | null>(null)
@@ -167,9 +186,20 @@ export default function Admin() {
         const listaOrdenada = [...(group.inscricoes || [])].sort(
           (a, b) => new Date(b.dataInscricao).getTime() - new Date(a.dataInscricao).getTime()
         )
+        const totalInscritos = listaOrdenada.length
+        const qtdeRemoto = listaOrdenada.filter(i => i.remoto === true).length
+        const qtdePresencial = totalInscritos - qtdeRemoto
+        const totalValorLiquido = listaOrdenada.reduce(
+          (acc, inscricao) => acc + getEffectiveValorLiquido(curso, inscricao),
+          0
+        )
         normalized[curso] = {
           ...group,
-          inscricoes: listaOrdenada
+          inscricoes: listaOrdenada,
+          totalInscritos,
+          qtdeRemoto,
+          qtdePresencial,
+          totalValorLiquido
         }
       })
 
@@ -223,6 +253,49 @@ export default function Admin() {
   // helpers
   const money = (v?: number | null) =>
     typeof v === 'number' && !Number.isNaN(v) ? `R$ ${v.toFixed(2)}` : '-'
+  const isFullstackCourse = (nome?: string | null) =>
+    typeof nome === 'string' && nome.toLowerCase().includes(FULLSTACK_KEYWORD)
+  const getPaymentMode = (inscricao: Inscricao): PaymentMode =>
+    inscricao.paymentMode === 'monthly' ? 'monthly' : 'one-time'
+  const usesMonthlyPayments = (cursoNome: string, inscricao: Inscricao) =>
+    isFullstackCourse(cursoNome) && getPaymentMode(inscricao) === 'monthly'
+  const ensureMonthlyPayments = (list?: MonthlyPaymentSlot[] | null): MonthlyPaymentSlot[] => {
+    const base = Array.from({ length: MONTHLY_SLOTS }, (_, index) => ({
+      index,
+      amount: null,
+      status: null
+    }))
+    if (!Array.isArray(list)) return base
+    return base.map(slot => {
+      const existing = list.find(item => item && typeof item.index === 'number' && item.index === slot.index)
+      if (!existing) return slot
+      const rawAmount =
+        typeof existing.amount === 'number'
+          ? existing.amount
+          : typeof existing.amount === 'string'
+            ? Number(existing.amount)
+            : null
+      const amountValue =
+        typeof rawAmount === 'number' && Number.isFinite(rawAmount) ? rawAmount : null
+      return {
+        index: slot.index,
+        amount: amountValue,
+        status: existing.status ?? null
+      }
+    })
+  }
+  const sumMonthlyPayments = (list?: MonthlyPaymentSlot[] | null) =>
+    ensureMonthlyPayments(list).reduce((acc, slot) => {
+      const amount = typeof slot.amount === 'number' && !Number.isNaN(slot.amount) ? slot.amount : 0
+      return acc + amount
+    }, 0)
+  const getEffectiveValorLiquido = (cursoNome: string, inscricao: Inscricao) => {
+    if (usesMonthlyPayments(cursoNome, inscricao)) {
+      return sumMonthlyPayments(inscricao.monthlyPayments)
+    }
+    const valor = inscricao.valorLiquidoFinal
+    return typeof valor === 'number' && !Number.isNaN(valor) ? valor : 0
+  }
   const keyBusy = (id: string, field: string) => `${id}:${field}`
   const chipStyle = (isActive: boolean): CSSProperties => ({
     borderRadius: 999,
@@ -273,18 +346,22 @@ export default function Admin() {
     }
   }
 
-  // atualização otimista local de qualquer campo (dentro de um curso)
-  const setLocalField = <K extends keyof Inscricao>(id: string, field: K, value: Inscricao[K]) => {
+  const updateInscricao = (id: string, updater: (inscricao: Inscricao) => Inscricao) => {
     setCursos(prev => {
       const novo: typeof prev = {}
       for (const [curso, group] of Object.entries(prev)) {
         novo[curso] = {
           ...group,
-          inscricoes: group.inscricoes.map(i => (i.id === id ? { ...i, [field]: value } : i))
+          inscricoes: group.inscricoes.map(i => (i.id === id ? updater(i) : i))
         }
       }
       return novo
     })
+  }
+
+  // atualização otimista local de qualquer campo (dentro de um curso)
+  const setLocalField = <K extends keyof Inscricao>(id: string, field: K, value: Inscricao[K]) => {
+    updateInscricao(id, inscricao => ({ ...inscricao, [field]: value }))
   }
 
   // recalc totais (quando mexer em valorLiquidoFinal ou remoto, por exemplo)
@@ -295,15 +372,85 @@ export default function Admin() {
         const totalInscritos = group.inscricoes.length
         const qtdeRemoto = group.inscricoes.filter(i => i.remoto === true).length
         const qtdePresencial = totalInscritos - qtdeRemoto
-        const totalValorLiquido = group.inscricoes.reduce((acc, i) => {
-          const v = i.valorLiquidoFinal
-          if (typeof v === 'number' && !Number.isNaN(v)) return acc + v
-          return acc
-        }, 0)
+        const totalValorLiquido = group.inscricoes.reduce(
+          (acc, i) => acc + getEffectiveValorLiquido(curso, i),
+          0
+        )
         novo[curso] = { ...group, totalInscritos, qtdeRemoto, qtdePresencial, totalValorLiquido }
       }
       return novo
     })
+  }
+
+  const handlePaymentModeChange = (inscricao: Inscricao, mode: PaymentMode) => {
+    updateInscricao(inscricao.id, current => {
+      if (mode === 'monthly') {
+        const normalized = ensureMonthlyPayments(current.monthlyPayments)
+        return {
+          ...current,
+          paymentMode: mode,
+          monthlyPayments: normalized,
+          valorLiquidoFinal: sumMonthlyPayments(normalized)
+        }
+      }
+      return { ...current, paymentMode: mode }
+    })
+    recomputeAggregates()
+  }
+
+  const handleMonthlyAmountChange = (inscricao: Inscricao, slotIndex: number, value: string) => {
+    const parsed = value === '' ? null : Number(value)
+    const amount = parsed === null || Number.isNaN(parsed) ? null : parsed
+    updateInscricao(inscricao.id, current => {
+      const normalized = ensureMonthlyPayments(current.monthlyPayments)
+      const updated = normalized.map(slot =>
+        slot.index === slotIndex ? { ...slot, amount } : slot
+      )
+      return {
+        ...current,
+        monthlyPayments: updated,
+        valorLiquidoFinal: sumMonthlyPayments(updated)
+      }
+    })
+    recomputeAggregates()
+  }
+
+  const handleMonthlyStatusChange = (
+    inscricao: Inscricao,
+    slotIndex: number,
+    status: MonthlyPaymentStatus
+  ) => {
+    updateInscricao(inscricao.id, current => {
+      const normalized = ensureMonthlyPayments(current.monthlyPayments)
+      const updated = normalized.map(slot =>
+        slot.index === slotIndex ? { ...slot, status } : slot
+      )
+      return {
+        ...current,
+        monthlyPayments: updated
+      }
+    })
+  }
+
+  const handleValorPrevistoChange = (inscricao: Inscricao, value: string) => {
+    const parsed = value === '' ? null : Number(value)
+    const safeValue = parsed === null || Number.isNaN(parsed) ? null : parsed
+    setLocalField(inscricao.id, 'valorPrevisto', safeValue)
+  }
+
+  const handleMonthlySave = async (inscricao: Inscricao) => {
+    if (!token) return
+    const mode = getPaymentMode(inscricao)
+    const normalized = ensureMonthlyPayments(inscricao.monthlyPayments)
+    const totalMensalidades = sumMonthlyPayments(normalized)
+    await updateField(inscricao.id, 'paymentMode', mode)
+    await updateField(inscricao.id, 'monthlyPayments', normalized)
+    if (mode === 'monthly') {
+      await updateField(inscricao.id, 'valorPrevisto', inscricao.valorPrevisto ?? null)
+      await updateField(inscricao.id, 'valorLiquidoFinal', totalMensalidades)
+    } else {
+      await updateField(inscricao.id, 'valorPrevisto', null)
+    }
   }
 
   // TOGGLE (pago/grupoWhatsapp/remoto)
@@ -559,6 +706,7 @@ export default function Admin() {
                     <th>Email</th>
                     <th>WhatsApp</th>
                     <th className="text-end">Valor</th>
+                    <th style={{ minWidth: 260 }}>Pagamento</th>
                     <th className="text-center">
                       <div className="d-flex flex-column align-items-center">
                         <span>Pago</span>
@@ -593,14 +741,27 @@ export default function Admin() {
                     const vlKey = keyBusy(i.id, 'valorLiquidoFinal')
                     const obsKey = keyBusy(i.id, 'observacoes')
                     const contratoKey = keyBusy(i.id, 'contrato')
+                    const paymentModeBusyKey = keyBusy(i.id, 'paymentMode')
+                    const monthlyBusy = [
+                      keyBusy(i.id, 'monthlyPayments'),
+                      keyBusy(i.id, 'valorPrevisto'),
+                      paymentModeBusyKey,
+                      vlKey
+                    ].some(key => busy[key])
 
                     const pagoChecked = !!i.pago
                     const grupoChecked = !!i.grupoWhatsapp
                     const remotoChecked = !!i.remoto
 
                     const vl = typeof i.valorLiquidoFinal === 'number' ? i.valorLiquidoFinal : null
+                    const valorPrevisto = typeof i.valorPrevisto === 'number' ? i.valorPrevisto : null
                     const obs = i.observacoes ?? ''
                     const whatsappUrl = buildWhatsappUrl(i.whatsapp)
+                    const isFullstack = isFullstackCourse(i.curso || curso)
+                    const paymentMode = getPaymentMode(i)
+                    const normalizedMonthlyPayments = ensureMonthlyPayments(i.monthlyPayments)
+                    const showMonthlyDetails = isFullstack && paymentMode === 'monthly'
+                    const monthlyTotal = sumMonthlyPayments(normalizedMonthlyPayments)
 
                     return (
                       <tr key={i.id}>
@@ -627,6 +788,125 @@ export default function Admin() {
                           </div>
                         </td>
                         <td className="text-end">{money(i.valorCurso)}</td>
+                        <td className="align-top" style={{ minWidth: 260 }}>
+                          {isFullstack ? (
+                            <div className="d-flex flex-column gap-2">
+                              <div>
+                                <div className="fw-semibold small mb-1">Forma de pagamento</div>
+                                <div className="d-flex flex-column gap-1">
+                                  <Form.Check
+                                    type="radio"
+                                    id={`pagamento-unico-${i.id}`}
+                                    label="Pagamento único"
+                                    name={`payment-mode-${i.id}`}
+                                    checked={paymentMode === 'one-time'}
+                                    onChange={() => handlePaymentModeChange(i, 'one-time')}
+                                    inline={false}
+                                  />
+                                  <Form.Check
+                                    type="radio"
+                                    id={`pagamento-mensal-${i.id}`}
+                                    label="Mensalidades (6x)"
+                                    name={`payment-mode-${i.id}`}
+                                    checked={paymentMode === 'monthly'}
+                                    onChange={() => handlePaymentModeChange(i, 'monthly')}
+                                    inline={false}
+                                  />
+                                </div>
+                              </div>
+
+                              {showMonthlyDetails && (
+                                <>
+                                  <div className="d-flex flex-wrap gap-2">
+                                    {normalizedMonthlyPayments.map(slot => (
+                                      <div
+                                        key={slot.index}
+                                        className="border rounded p-2 flex-grow-1"
+                                        style={{ minWidth: 150, maxWidth: '48%' }}
+                                      >
+                                        <div className="d-flex justify-content-between align-items-center mb-2">
+                                          <strong className="small mb-0">
+                                            Mensalidade {slot.index + 1}
+                                          </strong>
+                                          <div className="d-flex gap-1">
+                                            <Button
+                                              type="button"
+                                              variant={
+                                                slot.status === 'ok' ? 'success' : 'outline-success'
+                                              }
+                                              size="sm"
+                                              onClick={() => handleMonthlyStatusChange(i, slot.index, 'ok')}
+                                              title="Em dia"
+                                            >
+                                              ✓
+                                            </Button>
+                                            <Button
+                                              type="button"
+                                              variant={
+                                                slot.status === 'late' ? 'danger' : 'outline-danger'
+                                              }
+                                              size="sm"
+                                              onClick={() => handleMonthlyStatusChange(i, slot.index, 'late')}
+                                              title="Em atraso"
+                                            >
+                                              !
+                                            </Button>
+                                          </div>
+                                        </div>
+                                        <Form.Control
+                                          size="sm"
+                                          type="number"
+                                          min={0}
+                                          step="0.01"
+                                          value={slot.amount ?? ''}
+                                          placeholder="R$ 0,00"
+                                          onChange={e =>
+                                            handleMonthlyAmountChange(i, slot.index, e.target.value)
+                                          }
+                                        />
+                                      </div>
+                                    ))}
+                                  </div>
+
+                                  <div>
+                                    <Form.Label className="small mb-1">Valor previsto</Form.Label>
+                                    <InputGroup size="sm">
+                                      <InputGroup.Text>R$</InputGroup.Text>
+                                      <Form.Control
+                                        type="number"
+                                        min={0}
+                                        step="0.01"
+                                        value={valorPrevisto ?? ''}
+                                        onChange={e => handleValorPrevistoChange(i, e.target.value)}
+                                      />
+                                    </InputGroup>
+                                  </div>
+                                </>
+                              )}
+
+                              <div className="d-flex flex-column gap-1">
+                                <small className="text-muted">
+                                  {showMonthlyDetails
+                                    ? `Recebido até agora: ${money(monthlyTotal)}`
+                                    : 'Controle padrão de pagamento único'}
+                                </small>
+                                <Button
+                                  type="button"
+                                  variant="primary"
+                                  size="sm"
+                                  onClick={() => void handleMonthlySave(i)}
+                                  disabled={monthlyBusy}
+                                >
+                                  {monthlyBusy ? <Spinner size="sm" animation="border" /> : 'Salvar pagamentos'}
+                                </Button>
+                              </div>
+                            </div>
+                          ) : (
+                            <Badge bg="secondary" pill>
+                              Pagamento único
+                            </Badge>
+                          )}
+                        </td>
 
                         <td className="text-center">
                           <div className="d-inline-flex align-items-center gap-2">
@@ -671,56 +951,66 @@ export default function Admin() {
                         </td>
 
                         <td className="text-end" style={{ minWidth: 220 }}>
-                          <InputGroup size="sm">
-                            <InputGroup.Text>R$</InputGroup.Text>
-                            <Form.Control
-                              type="number"
-                              step="0.01"
-                              min="0"
-                              value={vl ?? ''}
-                              placeholder="0,00"
-                              disabled={!!busy[vlKey]}
-                              onChange={e => {
-                                const raw = e.target.value
-                                const numericValue = raw === '' ? null : Number(raw)
-                                const safeValue =
-                                  typeof numericValue === 'number' && Number.isNaN(numericValue)
-                                    ? null
-                                    : numericValue
-                                setLocalField(i.id, 'valorLiquidoFinal', safeValue)
-                                recomputeAggregates()
-                              }}
-                              onBlur={e => {
-                                const raw = e.target.value
-                                const numericValue = raw === '' ? null : Number(raw)
-                                const safeValue =
-                                  typeof numericValue === 'number' && Number.isNaN(numericValue)
-                                    ? null
-                                    : numericValue
-                                updateField(i.id, 'valorLiquidoFinal', safeValue)
-                              }}
-                            />
-                            <Button
-                              variant="outline-secondary"
-                              size="sm"
-                              disabled={!!busy[vlKey]}
-                              onClick={() =>
-                                updateField(
-                                  i.id,
-                                  'valorLiquidoFinal',
-                                  getLocalFieldValue(i.id, 'valorLiquidoFinal')
-                                )
-                              }
-                              title="Salvar valor"
-                            >
-                              <Check2 />
-                            </Button>
-                            {busy[vlKey] && (
-                              <InputGroup.Text>
-                                <Spinner size="sm" animation="border" />
-                              </InputGroup.Text>
-                            )}
-                          </InputGroup>
+                          {showMonthlyDetails ? (
+                            <div className="text-start">
+                              <div className="small text-muted mb-1">Valor líquido (mensalidades)</div>
+                              <div className="d-flex align-items-center gap-2">
+                                <strong>{money(monthlyTotal)}</strong>
+                                {busy[vlKey] && <Spinner size="sm" animation="border" />}
+                              </div>
+                            </div>
+                          ) : (
+                            <InputGroup size="sm">
+                              <InputGroup.Text>R$</InputGroup.Text>
+                              <Form.Control
+                                type="number"
+                                step="0.01"
+                                min="0"
+                                value={vl ?? ''}
+                                placeholder="0,00"
+                                disabled={!!busy[vlKey]}
+                                onChange={e => {
+                                  const raw = e.target.value
+                                  const numericValue = raw === '' ? null : Number(raw)
+                                  const safeValue =
+                                    typeof numericValue === 'number' && Number.isNaN(numericValue)
+                                      ? null
+                                      : numericValue
+                                  setLocalField(i.id, 'valorLiquidoFinal', safeValue)
+                                  recomputeAggregates()
+                                }}
+                                onBlur={e => {
+                                  const raw = e.target.value
+                                  const numericValue = raw === '' ? null : Number(raw)
+                                  const safeValue =
+                                    typeof numericValue === 'number' && Number.isNaN(numericValue)
+                                      ? null
+                                      : numericValue
+                                  updateField(i.id, 'valorLiquidoFinal', safeValue)
+                                }}
+                              />
+                              <Button
+                                variant="outline-secondary"
+                                size="sm"
+                                disabled={!!busy[vlKey]}
+                                onClick={() =>
+                                  updateField(
+                                    i.id,
+                                    'valorLiquidoFinal',
+                                    getLocalFieldValue(i.id, 'valorLiquidoFinal')
+                                  )
+                                }
+                                title="Salvar valor"
+                              >
+                                <Check2 />
+                              </Button>
+                              {busy[vlKey] && (
+                                <InputGroup.Text>
+                                  <Spinner size="sm" animation="border" />
+                                </InputGroup.Text>
+                              )}
+                            </InputGroup>
+                          )}
                         </td>
 
                         <td style={{ minWidth: 260 }}>
