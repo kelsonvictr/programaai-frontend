@@ -19,6 +19,7 @@ import {
   ButtonGroup
 } from 'react-bootstrap'
 import { Check2, Clipboard, ClipboardCheck, Whatsapp, FileEarmarkPdf } from 'react-bootstrap-icons'
+import GalaxyCalendar from '../components/GalaxyCalendar'
 
 const API_BASE = import.meta.env.VITE_ADMIN_API as string
 const ENDPOINT = `${API_BASE}/galaxy/inscricoes-por-curso`
@@ -98,6 +99,7 @@ export default function Admin() {
 
   const ALL_CURSO_KEY = '__all__'
   const [activeCurso, setActiveCurso] = useState<string>(ALL_CURSO_KEY)
+  const [activeView, setActiveView] = useState<'inscricoes' | 'calendario'>('inscricoes')
 
   const cursoEntries = useMemo(
     () => Object.entries(cursos).sort(([a], [b]) => a.localeCompare(b, 'pt-BR')),
@@ -582,163 +584,199 @@ export default function Admin() {
           </Button>
         </div>
       </div>
-
-      <Row className="g-3 mb-4">
-        <Col xs={12} md={3}>
-          <Card className="h-100 shadow-sm border-0">
-            <Card.Body>
-              <Card.Title className="text-uppercase text-muted fs-6 mb-1">Inscrições</Card.Title>
-              <h3 className="fw-semibold mb-0">{globalResumo.totalInscritos}</h3>
-            </Card.Body>
-          </Card>
-        </Col>
-        <Col xs={12} md={3}>
-          <Card className="h-100 shadow-sm border-0">
-            <Card.Body>
-              <Card.Title className="text-uppercase text-muted fs-6 mb-1">Remoto</Card.Title>
-              <h3 className="fw-semibold mb-0">{globalResumo.qtdeRemoto}</h3>
-            </Card.Body>
-          </Card>
-        </Col>
-        <Col xs={12} md={3}>
-          <Card className="h-100 shadow-sm border-0">
-            <Card.Body>
-              <Card.Title className="text-uppercase text-muted fs-6 mb-1">Presencial</Card.Title>
-              <h3 className="fw-semibold mb-0">{globalResumo.qtdePresencial}</h3>
-            </Card.Body>
-          </Card>
-        </Col>
-        <Col xs={12} md={3}>
-          <Card className="h-100 shadow-sm border-0">
-            <Card.Body>
-              <Card.Title className="text-uppercase text-muted fs-6 mb-1">Valor Líquido</Card.Title>
-              <h3 className="fw-semibold mb-0">{money(globalResumo.totalValorLiquido)}</h3>
-            </Card.Body>
-          </Card>
-        </Col>
-      </Row>
-
-      {hasCursos && (
-        <div
-          className="d-flex flex-wrap align-items-center gap-3 mb-4"
-          role="tablist"
-          aria-label="Cursos disponíveis"
-        >
-          <button
-            type="button"
-            onClick={() => setActiveCurso(ALL_CURSO_KEY)}
-            style={chipStyle(activeCurso === ALL_CURSO_KEY)}
-            role="tab"
-            aria-selected={activeCurso === ALL_CURSO_KEY}
+      <div className="mb-3">
+        <ButtonGroup size="sm">
+          <Button
+            variant={activeView === 'inscricoes' ? 'primary' : 'outline-primary'}
+            onClick={() => setActiveView('inscricoes')}
           >
-            <span
-              className="text-start"
-              style={{ flex: '1 1 auto', minWidth: 0, whiteSpace: 'normal' }}
+            Inscrições
+          </Button>
+          <Button
+            variant={activeView === 'calendario' ? 'primary' : 'outline-primary'}
+            onClick={() => setActiveView('calendario')}
+          >
+            Calendário
+          </Button>
+        </ButtonGroup>
+      </div>
+
+      {activeView === 'inscricoes' && (
+        <>
+          <Row className="g-3 mb-4">
+            <Col xs={12} md={3}>
+              <Card className="h-100 shadow-sm border-0">
+                <Card.Body>
+                  <Card.Title className="text-uppercase text-muted fs-6 mb-1">
+                    Inscrições
+                  </Card.Title>
+                  <h3 className="fw-semibold mb-0">{globalResumo.totalInscritos}</h3>
+                </Card.Body>
+              </Card>
+            </Col>
+            <Col xs={12} md={3}>
+              <Card className="h-100 shadow-sm border-0">
+                <Card.Body>
+                  <Card.Title className="text-uppercase text-muted fs-6 mb-1">Remoto</Card.Title>
+                  <h3 className="fw-semibold mb-0">{globalResumo.qtdeRemoto}</h3>
+                </Card.Body>
+              </Card>
+            </Col>
+            <Col xs={12} md={3}>
+              <Card className="h-100 shadow-sm border-0">
+                <Card.Body>
+                  <Card.Title className="text-uppercase text-muted fs-6 mb-1">
+                    Presencial
+                  </Card.Title>
+                  <h3 className="fw-semibold mb-0">{globalResumo.qtdePresencial}</h3>
+                </Card.Body>
+              </Card>
+            </Col>
+            <Col xs={12} md={3}>
+              <Card className="h-100 shadow-sm border-0">
+                <Card.Body>
+                  <Card.Title className="text-uppercase text-muted fs-6 mb-1">
+                    Valor Líquido
+                  </Card.Title>
+                  <h3 className="fw-semibold mb-0">{money(globalResumo.totalValorLiquido)}</h3>
+                </Card.Body>
+              </Card>
+            </Col>
+          </Row>
+
+          {hasCursos && (
+            <div
+              className="d-flex flex-wrap align-items-center gap-3 mb-4"
+              role="tablist"
+              aria-label="Cursos disponíveis"
             >
-              Todos
-            </span>
-            <Badge
-              bg={activeCurso === ALL_CURSO_KEY ? 'light' : 'secondary'}
-              text={activeCurso === ALL_CURSO_KEY ? 'dark' : undefined}
-            >
-              {globalResumo.totalInscritos}
-            </Badge>
-          </button>
-          {cursoEntries.map(([curso, group]) => {
-            const isActive = activeCurso === curso
-            return (
               <button
-                key={curso}
                 type="button"
-                onClick={() => setActiveCurso(curso)}
-                style={chipStyle(isActive)}
-                title={curso}
+                onClick={() => setActiveCurso(ALL_CURSO_KEY)}
+                style={chipStyle(activeCurso === ALL_CURSO_KEY)}
                 role="tab"
-                aria-selected={isActive}
+                aria-selected={activeCurso === ALL_CURSO_KEY}
               >
                 <span
                   className="text-start"
                   style={{ flex: '1 1 auto', minWidth: 0, whiteSpace: 'normal' }}
                 >
-                  {curso}
+                  Todos
                 </span>
-                <Badge bg={isActive ? 'light' : 'secondary'} text={isActive ? 'dark' : undefined}>
-                  {group.totalInscritos}
+                <Badge
+                  bg={activeCurso === ALL_CURSO_KEY ? 'light' : 'secondary'}
+                  text={activeCurso === ALL_CURSO_KEY ? 'dark' : undefined}
+                >
+                  {globalResumo.totalInscritos}
                 </Badge>
               </button>
-            )
-          })}
-        </div>
-      )}
-
-      {error && (
-        <Alert variant="danger" className="mb-4">
-          {error}
-        </Alert>
-      )}
-
-      {cursosParaRender.map(([curso, group]) => (
-        <Card key={curso} className="shadow-sm border-0 mb-4">
-          <Card.Header className="bg-white py-3">
-            <div className="d-flex flex-wrap align-items-center gap-3">
-              <h4 className="mb-0">{curso}</h4>
-              <Badge bg="dark" pill>
-                Total: {group.totalInscritos}
-              </Badge>
-              <Badge bg="primary" pill>
-                Remoto: {group.qtdeRemoto}
-              </Badge>
-              <Badge bg="secondary" pill>
-                Presencial: {group.qtdePresencial}
-              </Badge>
-              <Badge bg="success" pill>
-                Líquido: {money(group.totalValorLiquido)}
-              </Badge>
+              {cursoEntries.map(([curso, group]) => {
+                const isActive = activeCurso === curso
+                return (
+                  <button
+                    key={curso}
+                    type="button"
+                    onClick={() => setActiveCurso(curso)}
+                    style={chipStyle(isActive)}
+                    title={curso}
+                    role="tab"
+                    aria-selected={isActive}
+                  >
+                    <span
+                      className="text-start"
+                      style={{ flex: '1 1 auto', minWidth: 0, whiteSpace: 'normal' }}
+                    >
+                      {curso}
+                    </span>
+                    <Badge
+                      bg={isActive ? 'light' : 'secondary'}
+                      text={isActive ? 'dark' : undefined}
+                    >
+                      {group.totalInscritos}
+                    </Badge>
+                  </button>
+                )
+              })}
             </div>
-          </Card.Header>
-          <Card.Body className="p-0">
-            <div className="table-responsive">
-              <Table striped hover size="sm" className="mb-0 align-middle" style={{ minWidth: 1100 }}>
-                <thead style={{ position: 'sticky', top: 0, zIndex: 1 }} className="bg-light text-muted">
-                  <tr style={{ whiteSpace: 'nowrap' }}>
-                    <th>Data/Hora</th>
-                    <th>Nome</th>
-                    <th>Email</th>
-                    <th>WhatsApp</th>
-                    <th className="text-end">Valor</th>
-                    <th style={{ minWidth: 260 }}>Pagamento</th>
-                    <th className="text-center">
-                      <div className="d-flex flex-column align-items-center">
-                        <span>Pago</span>
-                        <Badge bg="success">✓</Badge>
-                      </div>
-                    </th>
-                    <th className="text-center">
-                      <div className="d-flex flex-column align-items-center">
-                        <span>Grupo</span>
-                        <Badge bg="info">WA</Badge>
-                      </div>
-                    </th>
-                    <th className="text-center">
-                      <div className="d-flex flex-column align-items-center">
-                        <span>Remoto</span>
-                        <Badge bg="warning" text="dark">
-                          R
-                        </Badge>
-                      </div>
-                    </th>
-                    <th className="text-end">Valor Líquido Final</th>
-                    <th>Observações</th>
-                    <th className="text-center">Atalhos</th>
-                    <th className="text-center">Ações</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {group.inscricoes.map(i => {
-                    const pagoKey = keyBusy(i.id, 'pago')
-                    const grupoKey = keyBusy(i.id, 'grupoWhatsapp')
-                    const remotoKey = keyBusy(i.id, 'remoto')
-                    const vlKey = keyBusy(i.id, 'valorLiquidoFinal')
+          )}
+
+          {error && (
+            <Alert variant="danger" className="mb-4">
+              {error}
+            </Alert>
+          )}
+
+          {cursosParaRender.map(([curso, group]) => (
+            <Card key={curso} className="shadow-sm border-0 mb-4">
+              <Card.Header className="bg-white py-3">
+                <div className="d-flex flex-wrap align-items-center gap-3">
+                  <h4 className="mb-0">{curso}</h4>
+                  <Badge bg="dark" pill>
+                    Total: {group.totalInscritos}
+                  </Badge>
+                  <Badge bg="primary" pill>
+                    Remoto: {group.qtdeRemoto}
+                  </Badge>
+                  <Badge bg="secondary" pill>
+                    Presencial: {group.qtdePresencial}
+                  </Badge>
+                  <Badge bg="success" pill>
+                    Líquido: {money(group.totalValorLiquido)}
+                  </Badge>
+                </div>
+              </Card.Header>
+              <Card.Body className="p-0">
+                <div className="table-responsive">
+                  <Table
+                    striped
+                    hover
+                    size="sm"
+                    className="mb-0 align-middle"
+                    style={{ minWidth: 1100 }}
+                  >
+                    <thead
+                      style={{ position: 'sticky', top: 0, zIndex: 1 }}
+                      className="bg-light text-muted"
+                    >
+                      <tr style={{ whiteSpace: 'nowrap' }}>
+                        <th>Data/Hora</th>
+                        <th>Nome</th>
+                        <th>Email</th>
+                        <th>WhatsApp</th>
+                        <th className="text-end">Valor</th>
+                        <th style={{ minWidth: 260 }}>Pagamento</th>
+                        <th className="text-center">
+                          <div className="d-flex flex-column align-items-center">
+                            <span>Pago</span>
+                            <Badge bg="success">✓</Badge>
+                          </div>
+                        </th>
+                        <th className="text-center">
+                          <div className="d-flex flex-column align-items-center">
+                            <span>Grupo</span>
+                            <Badge bg="info">WA</Badge>
+                          </div>
+                        </th>
+                        <th className="text-center">
+                          <div className="d-flex flex-column align-items-center">
+                            <span>Remoto</span>
+                            <Badge bg="warning" text="dark">
+                              R
+                            </Badge>
+                          </div>
+                        </th>
+                        <th className="text-end">Valor Líquido Final</th>
+                        <th>Observações</th>
+                        <th className="text-center">Atalhos</th>
+                        <th className="text-center">Ações</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {group.inscricoes.map(i => {
+                        const pagoKey = keyBusy(i.id, 'pago')
+                        const grupoKey = keyBusy(i.id, 'grupoWhatsapp')
+                        const remotoKey = keyBusy(i.id, 'remoto')
+                        const vlKey = keyBusy(i.id, 'valorLiquidoFinal')
                     const obsKey = keyBusy(i.id, 'observacoes')
                     const contratoKey = keyBusy(i.id, 'contrato')
                     const paymentModeBusyKey = keyBusy(i.id, 'paymentMode')
@@ -1134,16 +1172,22 @@ export default function Admin() {
             </div>
           </Card.Body>
         </Card>
-      ))}
+          ))}
 
-      {!hasCursos && !loading && (
-        <Alert variant="info">Nenhuma inscrição encontrada.</Alert>
+          {!hasCursos && !loading && (
+            <Alert variant="info">Nenhuma inscrição encontrada.</Alert>
+          )}
+
+          {loading && (
+            <div className="d-flex justify-content-center">
+              <Spinner animation="border" />
+            </div>
+          )}
+        </>
       )}
 
-      {loading && (
-        <div className="d-flex justify-content-center">
-          <Spinner animation="border" />
-        </div>
+      {activeView === 'calendario' && (
+        <GalaxyCalendar apiBase={API_BASE} token={token} />
       )}
     </Container>
   )
