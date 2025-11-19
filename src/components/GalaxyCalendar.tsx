@@ -42,6 +42,26 @@ type Holiday = {
   name: string
 }
 
+// cálculo da Páscoa (calendário gregoriano, rito ocidental)
+const getEasterDate = (year: number): { monthIndex: number; day: number } => {
+  const a = year % 19
+  const b = Math.floor(year / 100)
+  const c = year % 100
+  const d = Math.floor(b / 4)
+  const e = b % 4
+  const f = Math.floor((b + 8) / 25)
+  const g = Math.floor((b - f + 1) / 3)
+  const h = (19 * a + b - d - g + 15) % 30
+  const i = Math.floor(c / 4)
+  const k = c % 4
+  const l = (32 + 2 * e + 2 * i - h - k) % 7
+  const m = Math.floor((a + 11 * h + 22 * l) / 451)
+  const month = Math.floor((h + l - 7 * m + 114) / 31) // 3=março, 4=abril
+  const day = ((h + l - 7 * m + 114) % 31) + 1
+  // monthIndex baseado em 0
+  return { monthIndex: month - 1, day }
+}
+
 const getFixedBrazilHolidays = (year: number): Holiday[] => [
   { date: buildDateKey(year, 0, 1), name: 'Confraternização Universal' },
   { date: buildDateKey(year, 3, 21), name: 'Tiradentes' },
@@ -109,7 +129,34 @@ export default function GalaxyCalendar(props: GalaxyCalendarProps) {
 
   const holidaysByDate = useMemo(() => {
     const year = currentMonth.getFullYear()
-    const list = [...getFixedBrazilHolidays(year), ...getJoaoPessoaHolidays(year)]
+    const easter = getEasterDate(year)
+    const easterDate = new Date(year, easter.monthIndex, easter.day)
+    const carnivalTuesday = new Date(easterDate)
+    carnivalTuesday.setDate(carnivalTuesday.getDate() - 47)
+    const carnivalMonday = new Date(easterDate)
+    carnivalMonday.setDate(carnivalMonday.getDate() - 48)
+
+    const list: Holiday[] = [
+      ...getFixedBrazilHolidays(year),
+      { date: buildDateKey(year, easter.monthIndex, easter.day), name: 'Páscoa' },
+      {
+        date: buildDateKey(
+          carnivalMonday.getFullYear(),
+          carnivalMonday.getMonth(),
+          carnivalMonday.getDate()
+        ),
+        name: 'Carnaval (segunda-feira)'
+      },
+      {
+        date: buildDateKey(
+          carnivalTuesday.getFullYear(),
+          carnivalTuesday.getMonth(),
+          carnivalTuesday.getDate()
+        ),
+        name: 'Carnaval'
+      },
+      ...getJoaoPessoaHolidays(year)
+    ]
     const map: Record<string, string> = {}
     for (const h of list) {
       map[h.date] = h.name
