@@ -49,6 +49,7 @@ export default function GalaxyCalendar(props: GalaxyCalendarProps) {
   const [selectedCursoId, setSelectedCursoId] = useState<string | null>(null)
   const [cursoNome, setCursoNome] = useState('')
   const [cursoCor, setCursoCor] = useState('#0d6efd')
+  const [manualDate, setManualDate] = useState('')
 
   const [currentMonth, setCurrentMonth] = useState(() => {
     const now = new Date()
@@ -88,6 +89,9 @@ export default function GalaxyCalendar(props: GalaxyCalendarProps) {
     const cells: Array<number | null> = []
     for (let i = 0; i < offset; i++) cells.push(null)
     for (let day = 1; day <= daysInMonth; day++) cells.push(day)
+
+    // completa a última linha para sempre ter 7 colunas
+    while (cells.length % 7 !== 0) cells.push(null)
 
     const weeks: Array<Array<number | null>> = []
     for (let i = 0; i < cells.length; i += 7) {
@@ -218,6 +222,13 @@ export default function GalaxyCalendar(props: GalaxyCalendarProps) {
   const month = currentMonth.getMonth()
   const headerLabel = monthFormatter.format(currentMonth)
 
+  const selectedCurso = selectedCursoId ? cursosById[selectedCursoId] : null
+  const eventosCursoSelecionado = useMemo(() => {
+    if (!selectedCursoId) return []
+    const list = eventos.filter(ev => ev.cursoId === selectedCursoId)
+    return [...list].sort((a, b) => (a.data < b.data ? -1 : a.data > b.data ? 1 : 0))
+  }, [eventos, selectedCursoId])
+
   return (
     <Row className="g-3">
       <Col xs={12} md={8}>
@@ -320,28 +331,24 @@ export default function GalaxyCalendar(props: GalaxyCalendarProps) {
                           <div className="d-flex justify-content-between align-items-start mb-1">
                             <span className="fw-semibold small">{day}</span>
                           </div>
-                          <div className="d-flex flex-wrap gap-1">
+                          <div className="d-flex flex-wrap gap-1 align-items-center">
                             {listaEventos.slice(0, 3).map(ev => {
                               const curso = cursosById[ev.cursoId]
                               const cor = curso?.cor || '#0d6efd'
                               return (
-                                <Badge
+                                <span
                                   key={ev.id}
-                                  pill
-                                  bg="light"
-                                  text="dark"
                                   style={{
+                                    width: 10,
+                                    height: 10,
+                                    borderRadius: '999px',
                                     backgroundColor: cor,
-                                    borderColor: 'transparent',
-                                    color: '#fff',
-                                    maxWidth: '100%',
-                                    overflow: 'hidden',
-                                    textOverflow: 'ellipsis',
-                                    whiteSpace: 'nowrap'
+                                    border: '1px solid rgba(15, 23, 42, 0.3)'
                                   }}
+                                  title={curso?.nome || 'Curso'}
                                 >
-                                  {curso?.nome || 'Curso'}
-                                </Badge>
+                                  {' '}
+                                </span>
                               )
                             })}
                             {listaEventos.length > 3 && (
@@ -357,6 +364,57 @@ export default function GalaxyCalendar(props: GalaxyCalendarProps) {
                 ))}
               </div>
             </div>
+
+            {selectedCurso && (
+              <div className="mt-3">
+                <Card className="border-0 shadow-sm">
+                  <Card.Body>
+                    <Card.Title className="fs-6 mb-2">
+                      Datas do curso selecionado
+                    </Card.Title>
+                    {eventosCursoSelecionado.length === 0 && (
+                      <div className="text-muted small">
+                        Nenhuma data marcada ainda para <strong>{selectedCurso.nome}</strong>.
+                      </div>
+                    )}
+                    {eventosCursoSelecionado.length > 0 && (
+                      <ul className="list-unstyled mb-0 small">
+                        {eventosCursoSelecionado.map(ev => {
+                          const [yy, mm, dd] = ev.data.split('-')
+                          const dateLabel = `${dd}/${mm}/${yy}`
+                          return (
+                            <li
+                              key={ev.id}
+                              className="d-flex align-items-center justify-content-between py-1 border-bottom"
+                            >
+                              <div className="d-flex align-items-center gap-2">
+                                <span
+                                  style={{
+                                    width: 10,
+                                    height: 10,
+                                    borderRadius: '999px',
+                                    backgroundColor: selectedCurso.cor,
+                                    border: '1px solid rgba(15, 23, 42, 0.3)'
+                                  }}
+                                />
+                                <span>{dateLabel}</span>
+                              </div>
+                              <Button
+                                variant="outline-danger"
+                                size="sm"
+                                onClick={() => toggleEvento(selectedCurso.id, ev.data)}
+                              >
+                                ×
+                              </Button>
+                            </li>
+                          )
+                        })}
+                      </ul>
+                    )}
+                  </Card.Body>
+                </Card>
+              </div>
+            )}
           </Card.Body>
         </Card>
       </Col>
@@ -402,8 +460,40 @@ export default function GalaxyCalendar(props: GalaxyCalendarProps) {
             )}
 
             <div className="mb-2 text-muted small">
-              Clique em um curso para deixá-lo ativo e marque as datas no calendário.
+              Clique em um curso para deixá-lo ativo e marque as datas no calendário ou cadastre uma data específica abaixo.
             </div>
+
+            {selectedCurso && (
+              <div className="mb-3">
+                <Form
+                  onSubmit={e => {
+                    e.preventDefault()
+                    if (!manualDate || !selectedCurso.id) return
+                    void toggleEvento(selectedCurso.id, manualDate)
+                  }}
+                >
+                  <Form.Label className="small mb-1">
+                    Adicionar data para <strong>{selectedCurso.nome}</strong>
+                  </Form.Label>
+                  <div className="d-flex align-items-center gap-2">
+                    <Form.Control
+                      type="date"
+                      value={manualDate}
+                      onChange={e => setManualDate(e.target.value)}
+                      style={{ maxWidth: 180 }}
+                    />
+                    <Button
+                      type="submit"
+                      variant="outline-primary"
+                      size="sm"
+                      disabled={saving || !manualDate}
+                    >
+                      {saving ? <Spinner size="sm" animation="border" /> : 'Adicionar data'}
+                    </Button>
+                  </div>
+                </Form>
+              </div>
+            )}
 
             <div className="d-flex flex-column gap-2">
               {cursos.map(curso => {
@@ -467,4 +557,3 @@ export default function GalaxyCalendar(props: GalaxyCalendarProps) {
     </Row>
   )
 }
-
