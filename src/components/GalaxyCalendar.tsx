@@ -37,6 +37,34 @@ const buildDateKey = (year: number, month: number, day: number) => {
   return `${year}-${m}-${d}`
 }
 
+type Holiday = {
+  date: string
+  name: string
+}
+
+const getFixedBrazilHolidays = (year: number): Holiday[] => [
+  { date: buildDateKey(year, 0, 1), name: 'Confraternização Universal' },
+  { date: buildDateKey(year, 3, 21), name: 'Tiradentes' },
+  { date: buildDateKey(year, 4, 1), name: 'Dia do Trabalhador' },
+  { date: buildDateKey(year, 8, 7), name: 'Independência do Brasil' },
+  { date: buildDateKey(year, 9, 12), name: 'Nossa Senhora Aparecida' },
+  { date: buildDateKey(year, 10, 2), name: 'Finados' },
+  { date: buildDateKey(year, 10, 15), name: 'Proclamação da República' },
+  { date: buildDateKey(year, 10, 20), name: 'Dia da Consciência Negra' },
+  { date: buildDateKey(year, 11, 25), name: 'Natal' }
+]
+
+const getJoaoPessoaHolidays = (year: number): Holiday[] => [
+  {
+    date: buildDateKey(year, 7, 5),
+    name: 'Aniversário de João Pessoa / Nossa Senhora das Neves'
+  },
+  {
+    date: buildDateKey(year, 5, 24),
+    name: 'São João (João Pessoa)'
+  }
+]
+
 export default function GalaxyCalendar(props: GalaxyCalendarProps) {
   const { apiBase, token } = props
 
@@ -59,6 +87,7 @@ export default function GalaxyCalendar(props: GalaxyCalendarProps) {
   const CALENDARIO_ENDPOINT = `${apiBase}/galaxy/calendario`
   const CALENDARIO_CURSO_ENDPOINT = `${apiBase}/galaxy/calendario/curso`
   const CALENDARIO_EVENTO_TOGGLE_ENDPOINT = `${apiBase}/galaxy/calendario/evento/toggle`
+  const CALENDARIO_CURSO_DELETE_ENDPOINT = `${apiBase}/galaxy/calendario/curso/delete`
 
   const cursosById = useMemo(() => {
     const map: Record<string, CalendarioCurso> = {}
@@ -77,6 +106,16 @@ export default function GalaxyCalendar(props: GalaxyCalendarProps) {
     }
     return map
   }, [eventos])
+
+  const holidaysByDate = useMemo(() => {
+    const year = currentMonth.getFullYear()
+    const list = [...getFixedBrazilHolidays(year), ...getJoaoPessoaHolidays(year)]
+    const map: Record<string, string> = {}
+    for (const h of list) {
+      map[h.date] = h.name
+    }
+    return map
+  }, [currentMonth])
 
   const calendarMatrix = useMemo(() => {
     const year = currentMonth.getFullYear()
@@ -158,6 +197,41 @@ export default function GalaxyCalendar(props: GalaxyCalendarProps) {
     } catch (err) {
       console.error(err)
       setError('Erro ao salvar curso')
+    } finally {
+      setSaving(false)
+    }
+  }
+
+  const handleRemoverCurso = async (curso: CalendarioCurso) => {
+    if (!token) return
+    const confirmado = window.confirm(
+      `Remover o curso "${curso.nome}" e todas as datas associadas?`
+    )
+    if (!confirmado) return
+
+    setSaving(true)
+    setError(null)
+    try {
+      await axios.post(
+        CALENDARIO_CURSO_DELETE_ENDPOINT,
+        { id: curso.id },
+        { headers: { Authorization: `Bearer ${token}` } }
+      )
+
+      setCursos(prev => prev.filter(c => c.id !== curso.id))
+      setEventos(prev => prev.filter(ev => ev.cursoId !== curso.id))
+
+      setManualDate('')
+      setSelectedCursoId(prev => {
+        if (prev === curso.id) {
+          const remaining = cursos.filter(c => c.id !== curso.id)
+          return remaining.length ? remaining[0].id : null
+        }
+        return prev
+      })
+    } catch (err) {
+      console.error(err)
+      setError('Erro ao remover curso')
     } finally {
       setSaving(false)
     }
@@ -305,15 +379,18 @@ export default function GalaxyCalendar(props: GalaxyCalendarProps) {
                       const dateKey = buildDateKey(year, month, day)
                       const listaEventos = eventosPorData[dateKey] || []
                       const hasEventos = listaEventos.length > 0
+                      const holidayName = holidaysByDate[dateKey]
                       const hasSelectedCurso =
                         selectedCursoId &&
                         listaEventos.some(ev => ev.cursoId === selectedCursoId)
 
-                      const cellBg = hasSelectedCurso
-                        ? 'rgba(13, 110, 253, 0.06)'
-                        : hasEventos
-                          ? 'rgba(13, 110, 253, 0.03)'
-                          : '#ffffff'
+                      const cellBg = holidayName
+                        ? 'rgba(220, 53, 69, 0.06)'
+                        : hasSelectedCurso
+                          ? 'rgba(13, 110, 253, 0.06)'
+                          : hasEventos
+                            ? 'rgba(13, 110, 253, 0.03)'
+                            : '#ffffff'
 
                       return (
                         <button
@@ -331,6 +408,11 @@ export default function GalaxyCalendar(props: GalaxyCalendarProps) {
                           <div className="d-flex justify-content-between align-items-start mb-1">
                             <span className="fw-semibold small">{day}</span>
                           </div>
+                          {holidayName && (
+                            <div className="small text-danger mb-1" style={{ fontSize: '0.7rem' }}>
+                              {holidayName}
+                            </div>
+                          )}
                           <div className="d-flex flex-wrap gap-1 align-items-center">
                             {listaEventos.slice(0, 3).map(ev => {
                               const curso = cursosById[ev.cursoId]
@@ -503,7 +585,7 @@ export default function GalaxyCalendar(props: GalaxyCalendarProps) {
                   <button
                     key={curso.id}
                     type="button"
-                    className="d-flex align-items-center justify-content-between border rounded py-2 px-3 text-start bg-white"
+                    className="border rounded py-2 px-3 text-start bg-white"
                     style={{
                       boxShadow: isActive
                         ? '0 6px 18px rgba(13, 110, 253, 0.2)'
@@ -512,28 +594,44 @@ export default function GalaxyCalendar(props: GalaxyCalendarProps) {
                     }}
                     onClick={() => setSelectedCursoId(curso.id)}
                   >
-                    <div className="d-flex align-items-center gap-2">
-                      <span
-                        style={{
-                          width: 14,
-                          height: 14,
-                          borderRadius: '999px',
-                          backgroundColor: curso.cor,
-                          border: '1px solid rgba(15, 23, 42, 0.12)'
-                        }}
-                      />
-                      <div>
-                        <div className="fw-semibold small">{curso.nome}</div>
-                        <div className="text-muted small">
-                          {countEventos === 0
-                            ? 'Nenhuma data marcada'
-                            : `${countEventos} dia${countEventos > 1 ? 's' : ''} marcado${
-                                countEventos > 1 ? 's' : ''
-                              }`}
+                    <div className="d-flex align-items-center justify-content-between gap-2">
+                      <div className="d-flex align-items-center gap-2">
+                        <span
+                          style={{
+                            width: 14,
+                            height: 14,
+                            borderRadius: '999px',
+                            backgroundColor: curso.cor,
+                            border: '1px solid rgba(15, 23, 42, 0.12)'
+                          }}
+                        />
+                        <div>
+                          <div className="fw-semibold small">{curso.nome}</div>
+                          <div className="text-muted small">
+                            {countEventos === 0
+                              ? 'Nenhuma data marcada'
+                              : `${countEventos} dia${countEventos > 1 ? 's' : ''} marcado${
+                                  countEventos > 1 ? 's' : ''
+                                }`}
+                          </div>
                         </div>
                       </div>
+                      <div className="d-flex align-items-center gap-2">
+                        {isActive && <Badge bg="primary">Ativo</Badge>}
+                        <Button
+                          type="button"
+                          variant="outline-danger"
+                          size="sm"
+                          onClick={e => {
+                            e.stopPropagation()
+                            void handleRemoverCurso(curso)
+                          }}
+                          title="Remover curso"
+                        >
+                          🗑️
+                        </Button>
+                      </div>
                     </div>
-                    {isActive && <Badge bg="primary">Ativo</Badge>}
                   </button>
                 )
               })}
