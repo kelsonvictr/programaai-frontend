@@ -23,6 +23,7 @@ import GalaxyCalendar from '../components/GalaxyCalendar'
 
 const API_BASE = import.meta.env.VITE_ADMIN_API as string
 const ENDPOINT = `${API_BASE}/galaxy/inscricoes-por-curso`
+const WAITLIST_ENDPOINT = `${API_BASE}/galaxy/lista-espera`
 const TOGGLE_ENDPOINT = `${API_BASE}/galaxy/inscricoes/toggle`
 const UPDATE_ENDPOINT = `${API_BASE}/galaxy/inscricoes/update`
 const CONTRATO_ENDPOINT = (id: string) => `${API_BASE}/galaxy/inscricoes/${id}/contrato`
@@ -62,6 +63,16 @@ type Inscricao = {
   valorPrevisto?: number | null
 }
 
+type WaitlistEntry = {
+  id: string
+  nome: string
+  email: string
+  telefone?: string
+  curso: string
+  criadoEm: string
+  comoConheceu?: string
+}
+
 type CursoGroup = {
   inscricoes: Inscricao[]
   totalInscritos: number
@@ -73,6 +84,16 @@ type CursoGroup = {
 type ApiResp = {
   total: number
   cursos: Record<string, CursoGroup>
+}
+
+type WaitlistCursoGroup = {
+  itens: WaitlistEntry[]
+  total: number
+}
+
+type WaitlistApiResp = {
+  total: number
+  cursos: Record<string, WaitlistCursoGroup & { ultimoCriadoEm?: string }>
 }
 
 type EditableField =
@@ -99,7 +120,12 @@ export default function Admin() {
 
   const ALL_CURSO_KEY = '__all__'
   const [activeCurso, setActiveCurso] = useState<string>(ALL_CURSO_KEY)
-  const [activeView, setActiveView] = useState<'inscricoes' | 'calendario'>('inscricoes')
+  const [activeView, setActiveView] = useState<'inscricoes' | 'calendario' | 'lista-espera'>(
+    'inscricoes'
+  )
+
+  const [waitlistCursos, setWaitlistCursos] = useState<Record<string, WaitlistCursoGroup>>({})
+  const [activeWaitlistCurso, setActiveWaitlistCurso] = useState<string>(ALL_CURSO_KEY)
 
   const cursoEntries = useMemo(
     () => Object.entries(cursos).sort(([a], [b]) => a.localeCompare(b, 'pt-BR')),
@@ -120,6 +146,22 @@ export default function Admin() {
     [cursoEntries]
   )
 
+  const waitlistCursoEntries = useMemo(
+    () => Object.entries(waitlistCursos).sort(([a], [b]) => a.localeCompare(b, 'pt-BR')),
+    [waitlistCursos]
+  )
+
+  const waitlistResumo = useMemo(
+    () =>
+      waitlistCursoEntries.reduce(
+        (acc, [, group]) => ({
+          total: acc.total + group.total
+        }),
+        { total: 0 }
+      ),
+    [waitlistCursoEntries]
+  )
+
   useEffect(() => {
     if (!cursoEntries.length) {
       setActiveCurso(ALL_CURSO_KEY)
@@ -130,6 +172,17 @@ export default function Admin() {
       setActiveCurso(cursoEntries[0][0])
     }
   }, [cursoEntries, cursos, activeCurso])
+
+  useEffect(() => {
+    if (!waitlistCursoEntries.length) {
+      setActiveWaitlistCurso(ALL_CURSO_KEY)
+      return
+    }
+
+    if (activeWaitlistCurso !== ALL_CURSO_KEY && !waitlistCursos[activeWaitlistCurso]) {
+      setActiveWaitlistCurso(waitlistCursoEntries[0][0])
+    }
+  }, [waitlistCursoEntries, waitlistCursos, activeWaitlistCurso])
 
   useEffect(
     () => () => {
@@ -169,9 +222,11 @@ export default function Admin() {
   const logout = async () => {
     await signOut(auth)
     setCursos({})
+    setWaitlistCursos({})
     setToken('')
     setLastUpdated(null)
     setActiveCurso(ALL_CURSO_KEY)
+    setActiveWaitlistCurso(ALL_CURSO_KEY)
   }
 
   const fetchInscricoes = async (jwt: string) => {
@@ -210,6 +265,41 @@ export default function Admin() {
     } catch (err) {
       console.error(err)
       setError('Erro ao carregar inscrições')
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  const fetchWaitlist = async (jwt: string) => {
+    setLoading(true)
+    setError(null)
+    try {
+      const { data } = await axios.get<WaitlistApiResp>(WAITLIST_ENDPOINT, {
+        headers: { Authorization: `Bearer ${jwt}` }
+      })
+
+      const normalized: Record<string, WaitlistCursoGroup> = {}
+      Object.entries(data.cursos || {}).forEach(([curso, group]) => {
+        const itensOrdenados = [...(group.itens || [])].sort((a, b) => {
+          const da = new Date(a.criadoEm).getTime()
+          const db = new Date(b.criadoEm).getTime()
+          if (Number.isNaN(da) && Number.isNaN(db)) return 0
+          if (Number.isNaN(da)) return 1
+          if (Number.isNaN(db)) return -1
+          return db - da
+        })
+
+        normalized[curso] = {
+          itens: itensOrdenados,
+          total: itensOrdenados.length
+        }
+      })
+
+      setWaitlistCursos(normalized)
+      setLastUpdated(new Date())
+    } catch (err) {
+      console.error(err)
+      setError('Erro ao carregar lista de espera')
     } finally {
       setLoading(false)
     }
@@ -540,8 +630,13 @@ export default function Admin() {
     activeCurso === ALL_CURSO_KEY
       ? cursoEntries
       : cursoEntries.filter(([curso]) => curso === activeCurso)
+  const waitlistCursosParaRender =
+    activeWaitlistCurso === ALL_CURSO_KEY
+      ? waitlistCursoEntries
+      : waitlistCursoEntries.filter(([curso]) => curso === activeWaitlistCurso)
   const ultimaAtualizacaoLabel = lastUpdated ? lastUpdated.toLocaleString('pt-BR') : '—'
   const hasCursos = cursoEntries.length > 0
+  const waitlistHasCursos = waitlistCursoEntries.length > 0
 
   if (!user) {
     return (
@@ -574,7 +669,15 @@ export default function Admin() {
           <Button
             variant="outline-secondary"
             size="sm"
-            onClick={() => fetchInscricoes(token)}
+            onClick={() => {
+              if (activeView === 'lista-espera') {
+                if (token) {
+                  void fetchWaitlist(token)
+                }
+              } else {
+                fetchInscricoes(token)
+              }
+            }}
             disabled={loading}
           >
             {loading ? <Spinner size="sm" animation="border" /> : 'Atualizar'}
@@ -591,6 +694,17 @@ export default function Admin() {
             onClick={() => setActiveView('inscricoes')}
           >
             Inscrições
+          </Button>
+          <Button
+            variant={activeView === 'lista-espera' ? 'primary' : 'outline-primary'}
+            onClick={() => {
+              setActiveView('lista-espera')
+              if (token) {
+                void fetchWaitlist(token)
+              }
+            }}
+          >
+            Lista de espera
           </Button>
           <Button
             variant={activeView === 'calendario' ? 'primary' : 'outline-primary'}
@@ -1176,6 +1290,134 @@ export default function Admin() {
 
           {!hasCursos && !loading && (
             <Alert variant="info">Nenhuma inscrição encontrada.</Alert>
+          )}
+
+          {loading && (
+            <div className="d-flex justify-content-center">
+              <Spinner animation="border" />
+            </div>
+          )}
+        </>
+      )}
+
+      {activeView === 'lista-espera' && (
+        <>
+          {waitlistHasCursos && (
+            <div
+              className="d-flex flex-wrap align-items-center gap-3 mb-4"
+              role="tablist"
+              aria-label="Cursos com lista de espera"
+            >
+              <button
+                type="button"
+                onClick={() => setActiveWaitlistCurso(ALL_CURSO_KEY)}
+                style={chipStyle(activeWaitlistCurso === ALL_CURSO_KEY)}
+                role="tab"
+                aria-selected={activeWaitlistCurso === ALL_CURSO_KEY}
+              >
+                <span
+                  className="text-start"
+                  style={{ flex: '1 1 auto', minWidth: 0, whiteSpace: 'normal' }}
+                >
+                  Todos
+                </span>
+                <Badge
+                  bg={activeWaitlistCurso === ALL_CURSO_KEY ? 'light' : 'secondary'}
+                  text={activeWaitlistCurso === ALL_CURSO_KEY ? 'dark' : undefined}
+                >
+                  {waitlistResumo.total}
+                </Badge>
+              </button>
+              {waitlistCursoEntries.map(([curso, group]) => {
+                const isActive = activeWaitlistCurso === curso
+                return (
+                  <button
+                    key={curso}
+                    type="button"
+                    onClick={() => setActiveWaitlistCurso(curso)}
+                    style={chipStyle(isActive)}
+                    title={curso}
+                    role="tab"
+                    aria-selected={isActive}
+                  >
+                    <span
+                      className="text-start"
+                      style={{ flex: '1 1 auto', minWidth: 0, whiteSpace: 'normal' }}
+                    >
+                      {curso}
+                    </span>
+                    <Badge
+                      bg={isActive ? 'light' : 'secondary'}
+                      text={isActive ? 'dark' : undefined}
+                    >
+                      {group.total}
+                    </Badge>
+                  </button>
+                )
+              })}
+            </div>
+          )}
+
+          {error && (
+            <Alert variant="danger" className="mb-4">
+              {error}
+            </Alert>
+          )}
+
+          {waitlistCursosParaRender.map(([curso, group]) => (
+            <Card key={curso} className="shadow-sm border-0 mb-4">
+              <Card.Header className="bg-white py-3">
+                <div className="d-flex flex-wrap align-items-center gap-3">
+                  <h4 className="mb-0">{curso}</h4>
+                  <Badge bg="dark" pill>
+                    Total na lista de espera: {group.total}
+                  </Badge>
+                </div>
+              </Card.Header>
+              <Card.Body className="p-0">
+                <div className="table-responsive">
+                  <Table
+                    striped
+                    hover
+                    size="sm"
+                    className="mb-0 align-middle"
+                    style={{ minWidth: 720 }}
+                  >
+                    <thead
+                      style={{ position: 'sticky', top: 0, zIndex: 1 }}
+                      className="bg-light text-muted"
+                    >
+                      <tr style={{ whiteSpace: 'nowrap' }}>
+                        <th>Data/Hora</th>
+                        <th>Nome</th>
+                        <th>Email</th>
+                        <th>Telefone</th>
+                        <th>Como conheceu</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {group.itens.map(item => (
+                        <tr key={item.id || `${curso}-${item.email}-${item.criadoEm}`}>
+                          <td style={{ whiteSpace: 'nowrap' }}>
+                            {item.criadoEm
+                              ? new Date(item.criadoEm).toLocaleString('pt-BR')
+                              : '-'}
+                          </td>
+                          <td>{item.nome || '-'}</td>
+                          <td>{item.email || '-'}</td>
+                          <td>{item.telefone || '-'}</td>
+                          <td>{item.comoConheceu || '-'}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </Table>
+                </div>
+              </Card.Body>
+            </Card>
+          ))}
+
+          {!waitlistHasCursos && !loading && (
+            <Alert variant="info">Nenhuma pessoa na lista de espera.</Alert>
           )}
 
           {loading && (
