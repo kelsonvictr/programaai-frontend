@@ -30,6 +30,7 @@ const UPDATE_ENDPOINT = `${API_BASE}/galaxy/inscricoes/update`
 const CONTRATO_ENDPOINT = (id: string) => `${API_BASE}/galaxy/inscricoes/${id}/contrato`
 const AGENDAMENTO_ENDPOINT = `${API_BASE}/galaxy/agendamento-pagamento`
 const AGENDAMENTO_CANCEL_ENDPOINT = `${API_BASE}/galaxy/agendamento-pagamento/cancelar`
+const AGENDAMENTO_SEND_ENDPOINT = `${API_BASE}/galaxy/agendamento-pagamento/enviar-lembrete`
 const MONTHLY_SLOTS = 6
 const FULLSTACK_KEYWORD = 'fullstack'
 
@@ -145,6 +146,7 @@ export default function Admin() {
   const [agendamentoDate, setAgendamentoDate] = useState('')
   const [agendamentoBusy, setAgendamentoBusy] = useState(false)
   const [agendamentoError, setAgendamentoError] = useState<string | null>(null)
+  const [agendamentoSuccess, setAgendamentoSuccess] = useState<string | null>(null)
 
   const cursoEntries = useMemo(
     () => Object.entries(cursos).sort(([a], [b]) => a.localeCompare(b, 'pt-BR')),
@@ -370,6 +372,7 @@ export default function Admin() {
 
   const openAgendamentoModal = async (inscricao: Inscricao) => {
     setAgendamentoError(null)
+    setAgendamentoSuccess(null)
     setAgendamentoInscricao(inscricao)
     setAgendamentoModalOpen(true)
     setAgendamentoBusy(true)
@@ -395,6 +398,7 @@ export default function Admin() {
   const saveAgendamento = async () => {
     if (!agendamentoInscricao) return
     setAgendamentoError(null)
+    setAgendamentoSuccess(null)
     setAgendamentoBusy(true)
     try {
       const { data } = await axios.post<{ ok: boolean; agendamento?: AgendamentoPagamento }>(
@@ -418,6 +422,7 @@ export default function Admin() {
   const cancelAgendamento = async () => {
     if (!agendamentoInscricao) return
     setAgendamentoError(null)
+    setAgendamentoSuccess(null)
     setAgendamentoBusy(true)
     try {
       await axios.post(
@@ -439,6 +444,28 @@ export default function Admin() {
         setAgendamentoError(err.response?.data?.detail || err.response?.data?.error || err.message)
       } else if (err instanceof Error) setAgendamentoError(err.message)
       else setAgendamentoError('Erro ao cancelar agendamento')
+    } finally {
+      setAgendamentoBusy(false)
+    }
+  }
+
+  const sendAgendamentoReminderToAluno = async () => {
+    if (!agendamentoInscricao) return
+    setAgendamentoError(null)
+    setAgendamentoSuccess(null)
+    setAgendamentoBusy(true)
+    try {
+      await axios.post(
+        AGENDAMENTO_SEND_ENDPOINT,
+        { inscricaoId: agendamentoInscricao.id },
+        { headers: { Authorization: `Bearer ${token}` } }
+      )
+      setAgendamentoSuccess('Lembrete enviado ao aluno (email + SMS).')
+    } catch (err: unknown) {
+      if (axios.isAxiosError(err)) {
+        setAgendamentoError(err.response?.data?.detail || err.response?.data?.error || err.message)
+      } else if (err instanceof Error) setAgendamentoError(err.message)
+      else setAgendamentoError('Erro ao enviar lembrete')
     } finally {
       setAgendamentoBusy(false)
     }
@@ -1428,9 +1455,15 @@ export default function Admin() {
                   disabled={agendamentoBusy}
                 />
                 <Form.Text className="text-muted">
-                  Envia lembrete 5 dias antes e no dia. Caso já tenha pago, pode desconsiderar.
+                  O lembrete automático (5 dias antes e no dia) é enviado para o admin. Para o aluno, use o botão
+                  abaixo.
                 </Form.Text>
               </Form.Group>
+              {agendamentoSuccess && (
+                <Alert variant="success" className="mt-3 mb-0">
+                  {agendamentoSuccess}
+                </Alert>
+              )}
               {agendamentoError && (
                 <Alert variant="danger" className="mt-3 mb-0">
                   {agendamentoError}
@@ -1438,6 +1471,13 @@ export default function Admin() {
               )}
             </Modal.Body>
             <Modal.Footer>
+              <Button
+                variant="outline-secondary"
+                onClick={() => void sendAgendamentoReminderToAluno()}
+                disabled={agendamentoBusy || !agendamentoInscricao}
+              >
+                Enviar lembrete ao aluno
+              </Button>
               <Button
                 variant="outline-danger"
                 onClick={() => void cancelAgendamento()}
