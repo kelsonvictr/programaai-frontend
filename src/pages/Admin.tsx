@@ -16,7 +16,8 @@ import {
   Col,
   Card,
   Dropdown,
-  ButtonGroup
+  ButtonGroup,
+  Modal
 } from 'react-bootstrap'
 import { Check2, Clipboard, ClipboardCheck, Whatsapp, FileEarmarkPdf } from 'react-bootstrap-icons'
 import GalaxyCalendar from '../components/GalaxyCalendar'
@@ -27,6 +28,8 @@ const WAITLIST_ENDPOINT = `${API_BASE}/galaxy/lista-espera`
 const TOGGLE_ENDPOINT = `${API_BASE}/galaxy/inscricoes/toggle`
 const UPDATE_ENDPOINT = `${API_BASE}/galaxy/inscricoes/update`
 const CONTRATO_ENDPOINT = (id: string) => `${API_BASE}/galaxy/inscricoes/${id}/contrato`
+const AGENDAMENTO_ENDPOINT = `${API_BASE}/galaxy/agendamento-pagamento`
+const AGENDAMENTO_CANCEL_ENDPOINT = `${API_BASE}/galaxy/agendamento-pagamento/cancelar`
 const MONTHLY_SLOTS = 6
 const FULLSTACK_KEYWORD = 'fullstack'
 
@@ -96,6 +99,13 @@ type WaitlistApiResp = {
   cursos: Record<string, WaitlistCursoGroup & { ultimoCriadoEm?: string }>
 }
 
+type AgendamentoPagamento = {
+  id: string
+  inscricaoId: string
+  scheduledDate?: string | null
+  status?: string | null
+}
+
 type EditableField =
   | 'valorLiquidoFinal'
   | 'observacoes'
@@ -126,6 +136,15 @@ export default function Admin() {
 
   const [waitlistCursos, setWaitlistCursos] = useState<Record<string, WaitlistCursoGroup>>({})
   const [activeWaitlistCurso, setActiveWaitlistCurso] = useState<string>(ALL_CURSO_KEY)
+
+  const [agendamentoCache, setAgendamentoCache] = useState<Record<string, AgendamentoPagamento | null>>(
+    {}
+  )
+  const [agendamentoModalOpen, setAgendamentoModalOpen] = useState(false)
+  const [agendamentoInscricao, setAgendamentoInscricao] = useState<Inscricao | null>(null)
+  const [agendamentoDate, setAgendamentoDate] = useState('')
+  const [agendamentoBusy, setAgendamentoBusy] = useState(false)
+  const [agendamentoError, setAgendamentoError] = useState<string | null>(null)
 
   const cursoEntries = useMemo(
     () => Object.entries(cursos).sort(([a], [b]) => a.localeCompare(b, 'pt-BR')),
@@ -339,6 +358,89 @@ export default function Admin() {
         void removed
         return rest
       })
+    }
+  }
+
+  const formatBrDate = (iso?: string | null) => {
+    if (!iso) return ''
+    const parts = iso.split('-')
+    if (parts.length !== 3) return iso
+    return `${parts[2]}/${parts[1]}/${parts[0]}`
+  }
+
+  const openAgendamentoModal = async (inscricao: Inscricao) => {
+    setAgendamentoError(null)
+    setAgendamentoInscricao(inscricao)
+    setAgendamentoModalOpen(true)
+    setAgendamentoBusy(true)
+    try {
+      const { data } = await axios.get<{ ok: boolean; agendamento?: AgendamentoPagamento | null }>(
+        AGENDAMENTO_ENDPOINT,
+        {
+          headers: { Authorization: `Bearer ${token}` },
+          params: { inscricaoId: inscricao.id }
+        }
+      )
+      const agendamento = data.agendamento ?? null
+      setAgendamentoCache(prev => ({ ...prev, [inscricao.id]: agendamento }))
+      setAgendamentoDate((agendamento?.scheduledDate as string) || '')
+    } catch {
+      setAgendamentoCache(prev => ({ ...prev, [inscricao.id]: null }))
+      setAgendamentoDate('')
+    } finally {
+      setAgendamentoBusy(false)
+    }
+  }
+
+  const saveAgendamento = async () => {
+    if (!agendamentoInscricao) return
+    setAgendamentoError(null)
+    setAgendamentoBusy(true)
+    try {
+      const { data } = await axios.post<{ ok: boolean; agendamento?: AgendamentoPagamento }>(
+        AGENDAMENTO_ENDPOINT,
+        { inscricaoId: agendamentoInscricao.id, scheduledDate: agendamentoDate },
+        { headers: { Authorization: `Bearer ${token}` } }
+      )
+      const agendamento = data.agendamento ?? null
+      setAgendamentoCache(prev => ({ ...prev, [agendamentoInscricao.id]: agendamento }))
+      setAgendamentoModalOpen(false)
+    } catch (err: unknown) {
+      if (axios.isAxiosError(err)) {
+        setAgendamentoError(err.response?.data?.detail || err.response?.data?.error || err.message)
+      } else if (err instanceof Error) setAgendamentoError(err.message)
+      else setAgendamentoError('Erro ao salvar agendamento')
+    } finally {
+      setAgendamentoBusy(false)
+    }
+  }
+
+  const cancelAgendamento = async () => {
+    if (!agendamentoInscricao) return
+    setAgendamentoError(null)
+    setAgendamentoBusy(true)
+    try {
+      await axios.post(
+        AGENDAMENTO_CANCEL_ENDPOINT,
+        { inscricaoId: agendamentoInscricao.id },
+        { headers: { Authorization: `Bearer ${token}` } }
+      )
+      setAgendamentoCache(prev => ({
+        ...prev,
+        [agendamentoInscricao.id]: {
+          id: agendamentoInscricao.id,
+          inscricaoId: agendamentoInscricao.id,
+          status: 'canceled'
+        }
+      }))
+      setAgendamentoModalOpen(false)
+    } catch (err: unknown) {
+      if (axios.isAxiosError(err)) {
+        setAgendamentoError(err.response?.data?.detail || err.response?.data?.error || err.message)
+      } else if (err instanceof Error) setAgendamentoError(err.message)
+      else setAgendamentoError('Erro ao cancelar agendamento')
+    } finally {
+      setAgendamentoBusy(false)
     }
   }
 
@@ -1234,6 +1336,9 @@ export default function Admin() {
                             />
                             <Dropdown.Menu>
                               <Dropdown.Header>Atalhos</Dropdown.Header>
+                              <Dropdown.Item as="button" type="button" onClick={() => void openAgendamentoModal(i)}>
+                                Agendar pagamento (email + SMS)
+                              </Dropdown.Item>
                               <Dropdown.Item
                                 as="button"
                                 type="button"
@@ -1265,6 +1370,12 @@ export default function Admin() {
                               )}
                             </Dropdown.Menu>
                           </Dropdown>
+                          {agendamentoCache[i.id]?.status === 'active' &&
+                            agendamentoCache[i.id]?.scheduledDate && (
+                              <div className="small text-muted mt-1">
+                                Agendado: {formatBrDate(agendamentoCache[i.id]?.scheduledDate)}
+                              </div>
+                            )}
                         </td>
 
                         <td className="text-center">
@@ -1297,6 +1408,52 @@ export default function Admin() {
               <Spinner animation="border" />
             </div>
           )}
+
+          <Modal show={agendamentoModalOpen} onHide={() => setAgendamentoModalOpen(false)} centered>
+            <Modal.Header closeButton>
+              <Modal.Title>Agendamento de pagamento</Modal.Title>
+            </Modal.Header>
+            <Modal.Body>
+              {agendamentoInscricao && (
+                <div className="small text-muted mb-3">
+                  {agendamentoInscricao.nomeCompleto} — {agendamentoInscricao.curso}
+                </div>
+              )}
+              <Form.Group>
+                <Form.Label>Data do pagamento</Form.Label>
+                <Form.Control
+                  type="date"
+                  value={agendamentoDate}
+                  onChange={e => setAgendamentoDate(e.target.value)}
+                  disabled={agendamentoBusy}
+                />
+                <Form.Text className="text-muted">
+                  Envia lembrete 5 dias antes e no dia. Caso já tenha pago, pode desconsiderar.
+                </Form.Text>
+              </Form.Group>
+              {agendamentoError && (
+                <Alert variant="danger" className="mt-3 mb-0">
+                  {agendamentoError}
+                </Alert>
+              )}
+            </Modal.Body>
+            <Modal.Footer>
+              <Button
+                variant="outline-danger"
+                onClick={() => void cancelAgendamento()}
+                disabled={agendamentoBusy || !agendamentoInscricao}
+              >
+                Cancelar
+              </Button>
+              <Button
+                variant="primary"
+                onClick={() => void saveAgendamento()}
+                disabled={agendamentoBusy || !agendamentoInscricao || !agendamentoDate}
+              >
+                {agendamentoBusy ? <Spinner size="sm" animation="border" /> : 'Salvar'}
+              </Button>
+            </Modal.Footer>
+          </Modal>
         </>
       )}
 
