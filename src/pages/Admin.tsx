@@ -52,6 +52,10 @@ type Inscricao = {
   whatsapp?: string
   ondeEstuda?: string
   asaasPaymentLinkUrl?: string
+  asaasPaymentStatus?: string | null
+  asaasPaymentUpdatedAt?: string | null
+  asaasPaymentBillingType?: string | null
+  asaasPaymentValue?: number | null
   valorOriginal?: number
   valorCurso?: number
   cupom?: string | null
@@ -113,6 +117,45 @@ type EditableField =
   | 'paymentMode'
   | 'monthlyPayments'
   | 'valorPrevisto'
+
+const ASAAS_STATUS_LABELS: Record<string, string> = {
+  PENDING: 'Aguardando',
+  RECEIVED: 'Recebido',
+  CONFIRMED: 'Confirmado',
+  OVERDUE: 'Em atraso',
+  REFUNDED: 'Estornado',
+  RECEIVED_IN_CASH: 'Recebido (dinheiro)',
+  CHARGEBACK: 'Chargeback',
+  CHARGEBACK_REQUESTED: 'Chargeback solicitado',
+  CHARGEBACK_DISPUTE: 'Em disputa',
+  AWAITING_RISK_ANALYSIS: 'Em análise',
+  DUNNING_REQUESTED: 'Cobrança solicitada',
+  DUNNING_RECEIVED: 'Cobrança recebida',
+  DUNNING_RECEIVED_IN_CASH: 'Cobrança recebida (dinheiro)',
+  PROTEST_REQUESTED: 'Protesto solicitado',
+  PROTESTED: 'Protestado',
+  PROTEST_CANCELED: 'Protesto cancelado',
+  CANCELLED: 'Cancelado'
+}
+
+const ASAAS_STATUS_VARIANTS: Record<string, string> = {
+  RECEIVED: 'success',
+  CONFIRMED: 'success',
+  RECEIVED_IN_CASH: 'success',
+  DUNNING_RECEIVED: 'success',
+  DUNNING_RECEIVED_IN_CASH: 'success',
+  PENDING: 'secondary',
+  AWAITING_RISK_ANALYSIS: 'warning',
+  OVERDUE: 'danger',
+  REFUNDED: 'dark',
+  CHARGEBACK: 'danger',
+  CHARGEBACK_REQUESTED: 'danger',
+  CHARGEBACK_DISPUTE: 'danger',
+  PROTEST_REQUESTED: 'danger',
+  PROTESTED: 'danger',
+  PROTEST_CANCELED: 'secondary',
+  CANCELLED: 'secondary'
+}
 
 export default function Admin() {
   const [user, setUser] = useState<User | null>(null)
@@ -368,6 +411,13 @@ export default function Admin() {
     const parts = iso.split('-')
     if (parts.length !== 3) return iso
     return `${parts[2]}/${parts[1]}/${parts[0]}`
+  }
+
+  const formatDateTime = (iso?: string | null) => {
+    if (!iso) return ''
+    const dt = new Date(iso)
+    if (Number.isNaN(dt.getTime())) return iso
+    return dt.toLocaleString()
   }
 
   const openAgendamentoModal = async (inscricao: Inscricao) => {
@@ -1043,6 +1093,13 @@ export default function Admin() {
                     const normalizedMonthlyPayments = ensureMonthlyPayments(i.monthlyPayments)
                     const showMonthlyDetails = isFullstack && paymentMode === 'monthly'
                     const monthlyTotal = sumMonthlyPayments(normalizedMonthlyPayments)
+                    const asaasStatusRaw = (i.asaasPaymentStatus || '').toUpperCase()
+                    const asaasStatusLabel = asaasStatusRaw
+                      ? (ASAAS_STATUS_LABELS[asaasStatusRaw] || asaasStatusRaw)
+                      : ''
+                    const asaasStatusVariant = (asaasStatusRaw && ASAAS_STATUS_VARIANTS[asaasStatusRaw])
+                      ? ASAAS_STATUS_VARIANTS[asaasStatusRaw]
+                      : 'secondary'
 
                     return (
                       <tr key={i.id}>
@@ -1181,11 +1238,44 @@ export default function Admin() {
                                   {monthlyBusy ? <Spinner size="sm" animation="border" /> : 'Salvar pagamentos'}
                                 </Button>
                               </div>
+
+                              <div className="d-flex flex-column gap-1">
+                                <div className="fw-semibold small">Status Asaas</div>
+                                {asaasStatusLabel ? (
+                                  <Badge bg={asaasStatusVariant} className="align-self-start">
+                                    {asaasStatusLabel}
+                                  </Badge>
+                                ) : (
+                                  <small className="text-muted">Sem atualização</small>
+                                )}
+                                {i.asaasPaymentUpdatedAt && (
+                                  <small className="text-muted">
+                                    Atualizado: {formatDateTime(i.asaasPaymentUpdatedAt)}
+                                  </small>
+                                )}
+                              </div>
                             </div>
                           ) : (
-                            <Badge bg="secondary" pill>
-                              Pagamento único
-                            </Badge>
+                            <div className="d-flex flex-column gap-1">
+                              <Badge bg="secondary" pill className="align-self-start">
+                                Pagamento único
+                              </Badge>
+                              <div className="d-flex flex-column gap-1">
+                                <div className="fw-semibold small">Status Asaas</div>
+                                {asaasStatusLabel ? (
+                                  <Badge bg={asaasStatusVariant} className="align-self-start">
+                                    {asaasStatusLabel}
+                                  </Badge>
+                                ) : (
+                                  <small className="text-muted">Sem atualização</small>
+                                )}
+                                {i.asaasPaymentUpdatedAt && (
+                                  <small className="text-muted">
+                                    Atualizado: {formatDateTime(i.asaasPaymentUpdatedAt)}
+                                  </small>
+                                )}
+                              </div>
+                            </div>
                           )}
                         </td>
 
