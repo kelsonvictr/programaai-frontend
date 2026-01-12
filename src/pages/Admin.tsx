@@ -119,6 +119,7 @@ type Bebida = {
   preco: number
   estoqueAtual: number
   ativo: boolean
+  imagemUrl?: string | null
   criadoEm?: string
   updatedAt?: string
 }
@@ -243,8 +244,10 @@ export default function Admin() {
     nome: '',
     preco: '',
     estoqueAtual: '',
-    ativo: true
+    ativo: true,
+    imagemUrl: ''
   })
+  const [bebidaImageUploading, setBebidaImageUploading] = useState(false)
   const [pedidosBebidas, setPedidosBebidas] = useState<BebidaPedido[]>([])
   const [agendamentosBebidas, setAgendamentosBebidas] = useState<BebidaAgendamento[]>([])
 
@@ -441,7 +444,8 @@ export default function Admin() {
       nome: '',
       preco: '',
       estoqueAtual: '',
-      ativo: true
+      ativo: true,
+      imagemUrl: ''
     })
 
   const fetchBebidasAdmin = async (jwt: string) => {
@@ -480,7 +484,8 @@ export default function Admin() {
       nome,
       preco: precoValue,
       estoqueAtual: Math.max(0, Math.floor(estoqueValue)),
-      ativo: bebidaForm.ativo
+      ativo: bebidaForm.ativo,
+      imagemUrl: bebidaForm.imagemUrl || undefined
     }
 
     try {
@@ -507,7 +512,8 @@ export default function Admin() {
       nome: bebida.nome || '',
       preco: bebida.preco?.toString() || '',
       estoqueAtual: bebida.estoqueAtual?.toString() || '',
-      ativo: bebida.ativo ?? true
+      ativo: bebida.ativo ?? true,
+      imagemUrl: bebida.imagemUrl || ''
     })
   }
 
@@ -523,6 +529,38 @@ export default function Admin() {
     } catch (err) {
       console.error(err)
       setBebidasError('Erro ao remover bebida')
+    }
+  }
+
+  const uploadBebidaImage = async (file: File) => {
+    if (!token) return
+    setBebidaImageUploading(true)
+    setBebidasError(null)
+    try {
+      const { data } = await axios.post(
+        `${BEBIDAS_ENDPOINT}/upload-url`,
+        { fileName: file.name, contentType: file.type || 'application/octet-stream' },
+        { headers: { Authorization: `Bearer ${token}` } }
+      )
+      const uploadUrl = data?.uploadUrl as string
+      const fileUrl = data?.fileUrl as string
+      if (!uploadUrl || !fileUrl) {
+        throw new Error('URL de upload inválida')
+      }
+      const resp = await fetch(uploadUrl, {
+        method: 'PUT',
+        headers: { 'Content-Type': file.type || 'application/octet-stream' },
+        body: file
+      })
+      if (!resp.ok) {
+        throw new Error('Falha no upload da imagem')
+      }
+      setBebidaForm(prev => ({ ...prev, imagemUrl: fileUrl }))
+    } catch (err) {
+      console.error(err)
+      setBebidasError('Erro ao enviar imagem da bebida')
+    } finally {
+      setBebidaImageUploading(false)
     }
   }
 
@@ -1905,6 +1943,39 @@ export default function Admin() {
                         required
                       />
                     </Form.Group>
+                    <Form.Group className="mb-3">
+                      <Form.Label>Imagem</Form.Label>
+                      <Form.Control
+                        type="file"
+                        accept="image/*"
+                        onChange={e => {
+                          const file = e.target.files?.[0]
+                          if (file) void uploadBebidaImage(file)
+                        }}
+                        disabled={bebidaImageUploading}
+                      />
+                      <Form.Text className="text-muted">
+                        Envie a imagem antes de salvar. O link será associado à bebida.
+                      </Form.Text>
+                      {bebidaImageUploading && (
+                        <div className="mt-2">
+                          <Spinner size="sm" animation="border" /> Enviando imagem...
+                        </div>
+                      )}
+                      {bebidaForm.imagemUrl && (
+                        <div className="mt-3">
+                          <img
+                            src={bebidaForm.imagemUrl}
+                            alt="Preview bebida"
+                            style={{ width: 140, height: 140, objectFit: 'cover', borderRadius: 8 }}
+                            onError={e => {
+                              const img = e.currentTarget
+                              img.style.display = 'none'
+                            }}
+                          />
+                        </div>
+                      )}
+                    </Form.Group>
                     <Row className="g-2">
                       <Col xs={6}>
                         <Form.Group className="mb-3">
@@ -1941,7 +2012,7 @@ export default function Admin() {
                       className="mb-3"
                     />
                     <div className="d-flex gap-2">
-                      <Button type="submit" disabled={bebidasLoading}>
+                      <Button type="submit" disabled={bebidasLoading || bebidaImageUploading}>
                         {bebidaForm.id ? 'Atualizar' : 'Cadastrar'}
                       </Button>
                       <Button variant="outline-secondary" onClick={resetBebidaForm}>
@@ -1972,6 +2043,7 @@ export default function Admin() {
                       <Table striped bordered hover size="sm" className="align-middle">
                         <thead>
                           <tr>
+                            <th>Imagem</th>
                             <th>Nome</th>
                             <th>Preço</th>
                             <th>Estoque</th>
@@ -1982,6 +2054,21 @@ export default function Admin() {
                         <tbody>
                           {bebidas.map(bebida => (
                             <tr key={bebida.id}>
+                              <td>
+                                {bebida.imagemUrl ? (
+                                  <img
+                                    src={bebida.imagemUrl}
+                                    alt={bebida.nome}
+                                    style={{ width: 48, height: 48, objectFit: 'cover', borderRadius: 6 }}
+                                    onError={e => {
+                                      const img = e.currentTarget
+                                      img.style.display = 'none'
+                                    }}
+                                  />
+                                ) : (
+                                  <span className="text-muted small">—</span>
+                                )}
+                              </td>
                               <td>{bebida.nome}</td>
                               <td>{money(bebida.preco)}</td>
                               <td>{bebida.estoqueAtual}</td>

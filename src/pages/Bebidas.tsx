@@ -1,6 +1,7 @@
 import React, { useEffect, useMemo, useState } from "react"
 import { Alert, Badge, Button, Card, Col, Container, Form, Row, Spinner, Table } from "react-bootstrap"
 import axios from "axios"
+import placeholderImg from "../assets/logo.png"
 
 const PIX_CHAVE = "54e8d2a5-16b4-4c1b-9e70-5ee30a902579"
 
@@ -14,6 +15,7 @@ type Bebida = {
   nome: string
   preco: number
   disponivel: boolean
+  imagemUrl?: string | null
 }
 
 type CartItem = {
@@ -173,14 +175,27 @@ const Bebidas: React.FC = () => {
                     <Col xs={12} md={6} key={bebida.id}>
                       <Card className="h-100 border">
                         <Card.Body className="d-flex flex-column">
-                          <div className="d-flex justify-content-between align-items-start mb-2">
-                            <div>
-                              <h5 className="mb-1">{bebida.nome}</h5>
-                              <div className="text-muted">{money.format(bebida.preco)}</div>
+                          <div className="d-flex gap-3 align-items-start mb-2">
+                            <img
+                              src={bebida.imagemUrl || placeholderImg}
+                              alt={bebida.nome}
+                              style={{ width: 72, height: 72, objectFit: "cover", borderRadius: 10 }}
+                              onError={e => {
+                                const img = e.currentTarget
+                                img.src = placeholderImg
+                              }}
+                            />
+                            <div className="flex-grow-1">
+                              <div className="d-flex justify-content-between align-items-start">
+                                <div>
+                                  <h5 className="mb-1">{bebida.nome}</h5>
+                                  <div className="text-muted">{money.format(bebida.preco)}</div>
+                                </div>
+                                <Badge bg={bebida.disponivel ? "success" : "secondary"}>
+                                  {bebida.disponivel ? "Disponível" : "Sem estoque"}
+                                </Badge>
+                              </div>
                             </div>
-                            <Badge bg={bebida.disponivel ? "success" : "secondary"}>
-                              {bebida.disponivel ? "Disponível" : "Sem estoque"}
-                            </Badge>
                           </div>
                           <div className="mt-auto">
                             <Button
