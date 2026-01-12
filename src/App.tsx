@@ -12,6 +12,7 @@ import Admin from "./pages/Admin"
 import Estrutura from "./pages/Estrutura"
 import ListaEspera from "./pages/ListaEspera"
 import TvBanners from "./pages/TvBanners"
+import Bebidas from "./pages/Bebidas"
 
 const App: React.FC = () => {
   return (
@@ -25,6 +26,7 @@ const App: React.FC = () => {
         <Route path='/estrutura' element={<Estrutura />} />
         <Route path="/lista-espera" element={<ListaEspera />} />
         <Route path="/tvsala" element={<TvBanners />} />
+        <Route path="/bebidas" element={<Bebidas />} />
         <Route
           path="/_galaxy"
           element={

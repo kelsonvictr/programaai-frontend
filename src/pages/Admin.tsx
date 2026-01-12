@@ -31,6 +31,8 @@ const CONTRATO_ENDPOINT = (id: string) => `${API_BASE}/galaxy/inscricoes/${id}/c
 const AGENDAMENTO_ENDPOINT = `${API_BASE}/galaxy/agendamento-pagamento`
 const AGENDAMENTO_CANCEL_ENDPOINT = `${API_BASE}/galaxy/agendamento-pagamento/cancelar`
 const AGENDAMENTO_SEND_ENDPOINT = `${API_BASE}/galaxy/agendamento-pagamento/enviar-lembrete`
+const BEBIDAS_ENDPOINT = `${API_BASE}/galaxy/bebidas`
+const BEBIDAS_ITEM_ENDPOINT = (id: string) => `${API_BASE}/galaxy/bebidas/${id}`
 const MONTHLY_SLOTS = 6
 const FULLSTACK_KEYWORD = 'fullstack'
 
@@ -111,6 +113,48 @@ type AgendamentoPagamento = {
   status?: string | null
 }
 
+type Bebida = {
+  id: string
+  nome: string
+  preco: number
+  estoqueAtual: number
+  ativo: boolean
+  criadoEm?: string
+  updatedAt?: string
+}
+
+type BebidaItem = {
+  bebidaId?: string
+  nome?: string
+  quantidade?: number
+  precoUnitario?: number
+  subtotal?: number
+}
+
+type BebidaPedido = {
+  id: string
+  total: number
+  status: string
+  criadoEm?: string
+  itens?: BebidaItem[]
+}
+
+type BebidaAgendamento = {
+  id: string
+  total: number
+  status: string
+  usuarioNome?: string
+  origem?: string
+  criadoEm?: string
+  itens?: BebidaItem[]
+}
+
+type BebidasAdminResp = {
+  bebidas: Bebida[]
+  pedidosPagos: BebidaPedido[]
+  agendamentosPendentes: BebidaAgendamento[]
+}
+
 type EditableField =
   | 'valorLiquidoFinal'
   | 'observacoes'
@@ -174,7 +218,7 @@ export default function Admin() {
 
   const ALL_CURSO_KEY = '__all__'
   const [activeCurso, setActiveCurso] = useState<string>(ALL_CURSO_KEY)
-  const [activeView, setActiveView] = useState<'inscricoes' | 'calendario' | 'lista-espera'>(
+  const [activeView, setActiveView] = useState<'inscricoes' | 'calendario' | 'lista-espera' | 'bebidas'>(
     'inscricoes'
   )
 
@@ -190,6 +234,19 @@ export default function Admin() {
   const [agendamentoBusy, setAgendamentoBusy] = useState(false)
   const [agendamentoError, setAgendamentoError] = useState<string | null>(null)
   const [agendamentoSuccess, setAgendamentoSuccess] = useState<string | null>(null)
+
+  const [bebidas, setBebidas] = useState<Bebida[]>([])
+  const [bebidasLoading, setBebidasLoading] = useState(false)
+  const [bebidasError, setBebidasError] = useState<string | null>(null)
+  const [bebidaForm, setBebidaForm] = useState({
+    id: '',
+    nome: '',
+    preco: '',
+    estoqueAtual: '',
+    ativo: true
+  })
+  const [pedidosBebidas, setPedidosBebidas] = useState<BebidaPedido[]>([])
+  const [agendamentosBebidas, setAgendamentosBebidas] = useState<BebidaAgendamento[]>([])
 
   const cursoEntries = useMemo(
     () => Object.entries(cursos).sort(([a], [b]) => a.localeCompare(b, 'pt-BR')),
@@ -268,6 +325,11 @@ export default function Admin() {
     })
   }, [])
 
+  useEffect(() => {
+    if (activeView !== 'bebidas' || !token) return
+    void fetchBebidasAdmin(token)
+  }, [activeView, token])
+
   const login = async (e: React.FormEvent) => {
     e.preventDefault()
     setError(null)
@@ -291,6 +353,10 @@ export default function Admin() {
     setLastUpdated(null)
     setActiveCurso(ALL_CURSO_KEY)
     setActiveWaitlistCurso(ALL_CURSO_KEY)
+    setBebidas([])
+    setPedidosBebidas([])
+    setAgendamentosBebidas([])
+    resetBebidaForm()
   }
 
   const fetchInscricoes = async (jwt: string) => {
@@ -366,6 +432,97 @@ export default function Admin() {
       setError('Erro ao carregar lista de espera')
     } finally {
       setLoading(false)
+    }
+  }
+
+  const resetBebidaForm = () =>
+    setBebidaForm({
+      id: '',
+      nome: '',
+      preco: '',
+      estoqueAtual: '',
+      ativo: true
+    })
+
+  const fetchBebidasAdmin = async (jwt: string) => {
+    setBebidasLoading(true)
+    setBebidasError(null)
+    try {
+      const { data } = await axios.get<BebidasAdminResp>(BEBIDAS_ENDPOINT, {
+        headers: { Authorization: `Bearer ${jwt}` }
+      })
+      setBebidas(data.bebidas || [])
+      setPedidosBebidas(data.pedidosPagos || [])
+      setAgendamentosBebidas(data.agendamentosPendentes || [])
+      setLastUpdated(new Date())
+    } catch (err) {
+      console.error(err)
+      setBebidasError('Erro ao carregar bebidas')
+    } finally {
+      setBebidasLoading(false)
+    }
+  }
+
+  const submitBebidaForm = async (e: React.FormEvent) => {
+    e.preventDefault()
+    if (!token) return
+    setBebidasError(null)
+
+    const nome = bebidaForm.nome.trim()
+    const precoValue = Number(String(bebidaForm.preco).replace(',', '.'))
+    const estoqueValue = Number(String(bebidaForm.estoqueAtual))
+    if (!nome || !Number.isFinite(precoValue) || !Number.isFinite(estoqueValue)) {
+      setBebidasError('Preencha nome, preço e estoque corretamente.')
+      return
+    }
+
+    const payload = {
+      nome,
+      preco: precoValue,
+      estoqueAtual: Math.max(0, Math.floor(estoqueValue)),
+      ativo: bebidaForm.ativo
+    }
+
+    try {
+      if (bebidaForm.id) {
+        await axios.put(BEBIDAS_ITEM_ENDPOINT(bebidaForm.id), payload, {
+          headers: { Authorization: `Bearer ${token}` }
+        })
+      } else {
+        await axios.post(BEBIDAS_ENDPOINT, payload, {
+          headers: { Authorization: `Bearer ${token}` }
+        })
+      }
+      resetBebidaForm()
+      await fetchBebidasAdmin(token)
+    } catch (err) {
+      console.error(err)
+      setBebidasError('Erro ao salvar bebida')
+    }
+  }
+
+  const editBebida = (bebida: Bebida) => {
+    setBebidaForm({
+      id: bebida.id,
+      nome: bebida.nome || '',
+      preco: bebida.preco?.toString() || '',
+      estoqueAtual: bebida.estoqueAtual?.toString() || '',
+      ativo: bebida.ativo ?? true
+    })
+  }
+
+  const deleteBebida = async (id: string) => {
+    if (!token) return
+    if (!window.confirm('Tem certeza que deseja remover esta bebida?')) return
+    setBebidasError(null)
+    try {
+      await axios.delete(BEBIDAS_ITEM_ENDPOINT(id), {
+        headers: { Authorization: `Bearer ${token}` }
+      })
+      await fetchBebidasAdmin(token)
+    } catch (err) {
+      console.error(err)
+      setBebidasError('Erro ao remover bebida')
     }
   }
 
@@ -816,6 +973,7 @@ export default function Admin() {
   const ultimaAtualizacaoLabel = lastUpdated ? lastUpdated.toLocaleString('pt-BR') : '—'
   const hasCursos = cursoEntries.length > 0
   const waitlistHasCursos = waitlistCursoEntries.length > 0
+  const isRefreshing = loading || bebidasLoading
 
   if (!user) {
     return (
@@ -853,13 +1011,20 @@ export default function Admin() {
                 if (token) {
                   void fetchWaitlist(token)
                 }
+                return
+              }
+              if (activeView === 'bebidas') {
+                if (token) {
+                  void fetchBebidasAdmin(token)
+                }
+                return
               } else {
                 fetchInscricoes(token)
               }
             }}
-            disabled={loading}
+            disabled={isRefreshing}
           >
-            {loading ? <Spinner size="sm" animation="border" /> : 'Atualizar'}
+            {isRefreshing ? <Spinner size="sm" animation="border" /> : 'Atualizar'}
           </Button>
           <Button variant="secondary" size="sm" onClick={logout}>
             Sair
@@ -890,6 +1055,12 @@ export default function Admin() {
             onClick={() => setActiveView('calendario')}
           >
             Calendário
+          </Button>
+          <Button
+            variant={activeView === 'bebidas' ? 'primary' : 'outline-primary'}
+            onClick={() => setActiveView('bebidas')}
+          >
+            Bebidas
           </Button>
         </ButtonGroup>
       </div>
@@ -1712,6 +1883,213 @@ export default function Admin() {
               <Spinner animation="border" />
             </div>
           )}
+        </>
+      )}
+
+      {activeView === 'bebidas' && (
+        <>
+          <Row className="g-4 mb-4">
+            <Col xs={12} lg={5}>
+              <Card className="shadow-sm">
+                <Card.Body>
+                  <Card.Title className="mb-3">
+                    {bebidaForm.id ? 'Editar bebida' : 'Nova bebida'}
+                  </Card.Title>
+                  {bebidasError && <Alert variant="danger">{bebidasError}</Alert>}
+                  <Form onSubmit={submitBebidaForm}>
+                    <Form.Group className="mb-3">
+                      <Form.Label>Nome</Form.Label>
+                      <Form.Control
+                        value={bebidaForm.nome}
+                        onChange={e => setBebidaForm(prev => ({ ...prev, nome: e.target.value }))}
+                        required
+                      />
+                    </Form.Group>
+                    <Row className="g-2">
+                      <Col xs={6}>
+                        <Form.Group className="mb-3">
+                          <Form.Label>Preço</Form.Label>
+                          <Form.Control
+                            type="number"
+                            step="0.01"
+                            min="0"
+                            value={bebidaForm.preco}
+                            onChange={e => setBebidaForm(prev => ({ ...prev, preco: e.target.value }))}
+                            required
+                          />
+                        </Form.Group>
+                      </Col>
+                      <Col xs={6}>
+                        <Form.Group className="mb-3">
+                          <Form.Label>Estoque</Form.Label>
+                          <Form.Control
+                            type="number"
+                            min="0"
+                            value={bebidaForm.estoqueAtual}
+                            onChange={e => setBebidaForm(prev => ({ ...prev, estoqueAtual: e.target.value }))}
+                            required
+                          />
+                        </Form.Group>
+                      </Col>
+                    </Row>
+                    <Form.Check
+                      type="switch"
+                      id="bebida-ativa"
+                      label="Bebida ativa"
+                      checked={bebidaForm.ativo}
+                      onChange={e => setBebidaForm(prev => ({ ...prev, ativo: e.target.checked }))}
+                      className="mb-3"
+                    />
+                    <div className="d-flex gap-2">
+                      <Button type="submit" disabled={bebidasLoading}>
+                        {bebidaForm.id ? 'Atualizar' : 'Cadastrar'}
+                      </Button>
+                      <Button variant="outline-secondary" onClick={resetBebidaForm}>
+                        Limpar
+                      </Button>
+                    </div>
+                  </Form>
+                </Card.Body>
+              </Card>
+            </Col>
+
+            <Col xs={12} lg={7}>
+              <Card className="shadow-sm">
+                <Card.Body>
+                  <Card.Title className="mb-3">Bebidas cadastradas</Card.Title>
+                  {bebidasLoading && (
+                    <div className="text-center py-4">
+                      <Spinner animation="border" />
+                    </div>
+                  )}
+                  {!bebidasLoading && bebidas.length === 0 && (
+                    <Alert variant="info" className="mb-0">
+                      Nenhuma bebida cadastrada.
+                    </Alert>
+                  )}
+                  {!bebidasLoading && bebidas.length > 0 && (
+                    <div style={{ maxHeight: 420, overflow: 'auto' }}>
+                      <Table striped bordered hover size="sm" className="align-middle">
+                        <thead>
+                          <tr>
+                            <th>Nome</th>
+                            <th>Preço</th>
+                            <th>Estoque</th>
+                            <th>Status</th>
+                            <th>Ações</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {bebidas.map(bebida => (
+                            <tr key={bebida.id}>
+                              <td>{bebida.nome}</td>
+                              <td>{money(bebida.preco)}</td>
+                              <td>{bebida.estoqueAtual}</td>
+                              <td>
+                                <Badge bg={bebida.ativo ? 'success' : 'secondary'}>
+                                  {bebida.ativo ? 'Ativa' : 'Inativa'}
+                                </Badge>
+                              </td>
+                              <td>
+                                <div className="d-flex gap-2">
+                                  <Button
+                                    variant="outline-primary"
+                                    size="sm"
+                                    onClick={() => editBebida(bebida)}
+                                  >
+                                    Editar
+                                  </Button>
+                                  <Button
+                                    variant="outline-danger"
+                                    size="sm"
+                                    onClick={() => deleteBebida(bebida.id)}
+                                  >
+                                    Remover
+                                  </Button>
+                                </div>
+                              </td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </Table>
+                    </div>
+                  )}
+                </Card.Body>
+              </Card>
+            </Col>
+          </Row>
+
+          <Row className="g-4">
+            <Col xs={12} lg={6}>
+              <Card className="shadow-sm">
+                <Card.Body>
+                  <Card.Title className="mb-3">Pedidos pagos</Card.Title>
+                  {pedidosBebidas.length === 0 && (
+                    <Alert variant="light" className="mb-0">
+                      Nenhum pedido pago registrado.
+                    </Alert>
+                  )}
+                  {pedidosBebidas.length > 0 && (
+                    <Table striped bordered hover size="sm" className="align-middle">
+                      <thead>
+                        <tr>
+                          <th>ID</th>
+                          <th>Total</th>
+                          <th>Itens</th>
+                          <th>Criado em</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {pedidosBebidas.map(pedido => (
+                          <tr key={pedido.id}>
+                            <td>{pedido.id}</td>
+                            <td>{money(pedido.total)}</td>
+                            <td>{pedido.itens?.length || 0}</td>
+                            <td>{pedido.criadoEm || '—'}</td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </Table>
+                  )}
+                </Card.Body>
+              </Card>
+            </Col>
+
+            <Col xs={12} lg={6}>
+              <Card className="shadow-sm">
+                <Card.Body>
+                  <Card.Title className="mb-3">Agendamentos pendentes</Card.Title>
+                  {agendamentosBebidas.length === 0 && (
+                    <Alert variant="light" className="mb-0">
+                      Nenhum agendamento pendente.
+                    </Alert>
+                  )}
+                  {agendamentosBebidas.length > 0 && (
+                    <Table striped bordered hover size="sm" className="align-middle">
+                      <thead>
+                        <tr>
+                          <th>ID</th>
+                          <th>Total</th>
+                          <th>Aluno</th>
+                          <th>Criado em</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {agendamentosBebidas.map(agendamento => (
+                          <tr key={agendamento.id}>
+                            <td>{agendamento.id}</td>
+                            <td>{money(agendamento.total)}</td>
+                            <td>{agendamento.usuarioNome || '—'}</td>
+                            <td>{agendamento.criadoEm || '—'}</td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </Table>
+                  )}
+                </Card.Body>
+              </Card>
+            </Col>
+          </Row>
         </>
       )}
 
