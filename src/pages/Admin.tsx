@@ -564,6 +564,18 @@ export default function Admin() {
     }
   }
 
+  const handleBebidaPaste = (e: React.ClipboardEvent<HTMLDivElement>) => {
+    const items = e.clipboardData?.items
+    if (!items || !items.length) return
+    const imageItem = Array.from(items).find(item => item.type.startsWith('image/'))
+    if (!imageItem) return
+    const blob = imageItem.getAsFile()
+    if (!blob) return
+    const ext = blob.type.split('/')[1] || 'png'
+    const file = new File([blob], `bebida-paste.${ext}`, { type: blob.type })
+    void uploadBebidaImage(file)
+  }
+
   const deletar = async (id: string) => {
     void id
     alert('Excluir ainda não disponível nesta API')
@@ -1945,6 +1957,22 @@ export default function Admin() {
                     </Form.Group>
                     <Form.Group className="mb-3">
                       <Form.Label>Imagem</Form.Label>
+                      <div
+                        tabIndex={0}
+                        onPaste={handleBebidaPaste}
+                        onKeyDown={e => {
+                          if (e.key === 'Enter') e.currentTarget.focus()
+                        }}
+                        style={{
+                          border: '1px dashed #ced4da',
+                          borderRadius: 8,
+                          padding: '12px 14px',
+                          marginBottom: 12,
+                          outline: 'none'
+                        }}
+                      >
+                        Cole a imagem aqui (Ctrl + V) ou selecione um arquivo
+                      </div>
                       <Form.Control
                         type="file"
                         accept="image/*"
