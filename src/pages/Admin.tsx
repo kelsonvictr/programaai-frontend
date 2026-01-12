@@ -564,6 +564,11 @@ export default function Admin() {
     }
   }
 
+  const handleBebidaFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]
+    if (file) void uploadBebidaImage(file)
+  }
+
   const handleBebidaPaste = (e: React.ClipboardEvent<HTMLDivElement>) => {
     const items = e.clipboardData?.items
     if (!items || !items.length) return
@@ -1976,10 +1981,7 @@ export default function Admin() {
                       <Form.Control
                         type="file"
                         accept="image/*"
-                        onChange={e => {
-                          const file = e.target.files?.[0]
-                          if (file) void uploadBebidaImage(file)
-                        }}
+                        onChange={handleBebidaFileChange}
                         disabled={bebidaImageUploading}
                       />
                       <Form.Text className="text-muted">
