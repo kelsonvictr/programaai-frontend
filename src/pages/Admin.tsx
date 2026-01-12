@@ -549,7 +549,10 @@ export default function Admin() {
       }
       const resp = await fetch(uploadUrl, {
         method: 'PUT',
-        headers: { 'Content-Type': file.type || 'application/octet-stream' },
+        headers: {
+          'Content-Type': file.type || 'application/octet-stream',
+          'x-amz-acl': 'public-read'
+        },
         body: file
       })
       if (!resp.ok) {
