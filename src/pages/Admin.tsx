@@ -120,6 +120,7 @@ type Bebida = {
   estoqueAtual: number
   ativo: boolean
   imagemUrl?: string | null
+  imagemUrlSigned?: string | null
   criadoEm?: string
   updatedAt?: string
 }
@@ -248,6 +249,7 @@ export default function Admin() {
     imagemUrl: ''
   })
   const [bebidaImageUploading, setBebidaImageUploading] = useState(false)
+  const [bebidaImagePreview, setBebidaImagePreview] = useState<string>("")
   const [pedidosBebidas, setPedidosBebidas] = useState<BebidaPedido[]>([])
   const [agendamentosBebidas, setAgendamentosBebidas] = useState<BebidaAgendamento[]>([])
 
@@ -360,6 +362,7 @@ export default function Admin() {
     setPedidosBebidas([])
     setAgendamentosBebidas([])
     resetBebidaForm()
+    resetBebidaPreview()
   }
 
   const fetchInscricoes = async (jwt: string) => {
@@ -447,6 +450,7 @@ export default function Admin() {
       ativo: true,
       imagemUrl: ''
     })
+  const resetBebidaPreview = () => setBebidaImagePreview("")
 
   const fetchBebidasAdmin = async (jwt: string) => {
     setBebidasLoading(true)
@@ -499,6 +503,7 @@ export default function Admin() {
         })
       }
       resetBebidaForm()
+      resetBebidaPreview()
       await fetchBebidasAdmin(token)
     } catch (err) {
       console.error(err)
@@ -515,6 +520,7 @@ export default function Admin() {
       ativo: bebida.ativo ?? true,
       imagemUrl: bebida.imagemUrl || ''
     })
+    setBebidaImagePreview(bebida.imagemUrlSigned || bebida.imagemUrl || '')
   }
 
   const deleteBebida = async (id: string) => {
@@ -544,21 +550,20 @@ export default function Admin() {
       )
       const uploadUrl = data?.uploadUrl as string
       const fileUrl = data?.fileUrl as string
-      if (!uploadUrl || !fileUrl) {
+      const fileKey = data?.fileKey as string
+      if (!uploadUrl || !fileUrl || !fileKey) {
         throw new Error('URL de upload inválida')
       }
       const resp = await fetch(uploadUrl, {
         method: 'PUT',
-        headers: {
-          'Content-Type': file.type || 'application/octet-stream',
-          'x-amz-acl': 'public-read'
-        },
+        headers: { 'Content-Type': file.type || 'application/octet-stream' },
         body: file
       })
       if (!resp.ok) {
         throw new Error('Falha no upload da imagem')
       }
-      setBebidaForm(prev => ({ ...prev, imagemUrl: fileUrl }))
+      setBebidaForm(prev => ({ ...prev, imagemUrl: fileKey }))
+      setBebidaImagePreview(fileUrl)
     } catch (err) {
       console.error(err)
       setBebidasError('Erro ao enviar imagem da bebida')
@@ -1998,7 +2003,7 @@ export default function Admin() {
                       {bebidaForm.imagemUrl && (
                         <div className="mt-3">
                           <img
-                            src={bebidaForm.imagemUrl}
+                            src={bebidaImagePreview || bebidaForm.imagemUrl}
                             alt="Preview bebida"
                             style={{ width: 140, height: 140, objectFit: 'cover', borderRadius: 8 }}
                             onError={e => {
@@ -2088,9 +2093,9 @@ export default function Admin() {
                           {bebidas.map(bebida => (
                             <tr key={bebida.id}>
                               <td>
-                                {bebida.imagemUrl ? (
+                                {bebida.imagemUrlSigned || bebida.imagemUrl ? (
                                   <img
-                                    src={bebida.imagemUrl}
+                                    src={bebida.imagemUrlSigned || bebida.imagemUrl}
                                     alt={bebida.nome}
                                     style={{ width: 48, height: 48, objectFit: 'cover', borderRadius: 6 }}
                                     onError={e => {
