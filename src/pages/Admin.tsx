@@ -2095,7 +2095,7 @@ export default function Admin() {
                               <td>
                                 {bebida.imagemUrlSigned || bebida.imagemUrl ? (
                                   <img
-                                    src={bebida.imagemUrlSigned || bebida.imagemUrl}
+                                    src={bebida.imagemUrlSigned || bebida.imagemUrl || undefined}
                                     alt={bebida.nome}
                                     style={{ width: 48, height: 48, objectFit: 'cover', borderRadius: 6 }}
                                     onError={e => {
