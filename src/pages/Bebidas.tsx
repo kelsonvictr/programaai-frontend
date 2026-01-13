@@ -4,6 +4,7 @@ import axios from "axios"
 import placeholderImg from "../assets/logo.png"
 
 const PIX_CHAVE = "54e8d2a5-16b4-4c1b-9e70-5ee30a902579"
+const PIX_QR_PATH = "/qr.jpeg"
 
 const money = new Intl.NumberFormat("pt-BR", {
   style: "currency",
@@ -39,6 +40,9 @@ const Bebidas: React.FC = () => {
   const [usuarioNome, setUsuarioNome] = useState("")
   const [checkout, setCheckout] = useState<CheckoutResponse | null>(null)
   const [processing, setProcessing] = useState<"agora" | "depois" | null>(null)
+  const [copyOk, setCopyOk] = useState(false)
+  const [informando, setInformando] = useState(false)
+  const [informado, setInformado] = useState(false)
 
   const fetchBebidas = async () => {
     setLoading(true)
@@ -67,6 +71,8 @@ const Bebidas: React.FC = () => {
   const addToCart = (bebida: Bebida) => {
     if (!bebida.disponivel) return
     setCheckout(null)
+    setCopyOk(false)
+    setInformado(false)
     setCart(prev => {
       const existing = prev[bebida.id]
       const nextQty = (existing?.quantidade || 0) + 1
@@ -76,6 +82,8 @@ const Bebidas: React.FC = () => {
 
   const removeFromCart = (bebidaId: string) => {
     setCheckout(null)
+    setCopyOk(false)
+    setInformado(false)
     setCart(prev => {
       const next = { ...prev }
       delete next[bebidaId]
@@ -85,6 +93,8 @@ const Bebidas: React.FC = () => {
 
   const adjustQty = (bebidaId: string, delta: number) => {
     setCheckout(null)
+    setCopyOk(false)
+    setInformado(false)
     setCart(prev => {
       const existing = prev[bebidaId]
       if (!existing) return prev
@@ -116,6 +126,8 @@ const Bebidas: React.FC = () => {
         payload
       )
       setCheckout(data)
+      setCopyOk(false)
+      setInformado(false)
       setCart({})
       void fetchBebidas()
     } catch (err: any) {
@@ -123,6 +135,33 @@ const Bebidas: React.FC = () => {
       setError(err?.response?.data?.error || "Não foi possível concluir o pedido.")
     } finally {
       setProcessing(null)
+    }
+  }
+
+  const copiarChavePix = async (valor: string) => {
+    try {
+      await navigator.clipboard.writeText(valor)
+      setCopyOk(true)
+      setTimeout(() => setCopyOk(false), 2000)
+    } catch (err) {
+      console.error(err)
+    }
+  }
+
+  const informarPagamento = async () => {
+    if (!checkout?.id) return
+    setInformando(true)
+    setError(null)
+    try {
+      await axios.post(`${import.meta.env.VITE_API_URL}/bebidas/pedido/informar`, {
+        pedidoId: checkout.id
+      })
+      setInformado(true)
+    } catch (err) {
+      console.error(err)
+      setError("Não foi possível informar o pagamento agora.")
+    } finally {
+      setInformando(false)
     }
   }
 
@@ -150,7 +189,44 @@ const Bebidas: React.FC = () => {
           <div className="mb-2">
             Chave PIX: <strong>{checkout.pixChave || PIX_CHAVE}</strong>
           </div>
-          <div>{checkout.instrucoes}</div>
+          <div className="d-flex flex-column flex-md-row gap-3 align-items-start">
+            <img
+              src={PIX_QR_PATH}
+              alt="QR code PIX"
+              style={{ width: 140, height: 140, objectFit: "cover", borderRadius: 8 }}
+              onError={e => {
+                const img = e.currentTarget
+                img.style.display = "none"
+              }}
+            />
+            <div>
+              <div className="mb-2">{checkout.instrucoes}</div>
+              <div className="d-flex flex-wrap gap-2">
+                <Button
+                  size="sm"
+                  variant={copyOk ? "success" : "outline-primary"}
+                  onClick={() => copiarChavePix(checkout.pixChave || PIX_CHAVE)}
+                >
+                  {copyOk ? "Chave copiada" : "Copiar chave PIX"}
+                </Button>
+                <Button
+                  size="sm"
+                  variant={informado ? "success" : "primary"}
+                  onClick={informarPagamento}
+                  disabled={informando || informado}
+                >
+                  {informando
+                    ? "Enviando..."
+                    : informado
+                      ? "Pagamento informado"
+                      : "Informar pagamento"}
+                </Button>
+              </div>
+              <div className="text-muted small mt-2">
+                Após realizar o PIX, clique em <strong>Informar pagamento</strong> para avisar a equipe.
+              </div>
+            </div>
+          </div>
         </Alert>
       )}
 
