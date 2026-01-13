@@ -549,8 +549,8 @@ export default function Admin() {
         { headers: { Authorization: `Bearer ${token}` } }
       )
       const uploadUrl = data?.uploadUrl as string
-      const fileUrl = data?.fileUrl as string
-      const fileKey = data?.fileKey as string
+      const fileUrl = data?.fileUrl as string | undefined | null
+      const fileKey = data?.fileKey as string | undefined | null
       if (!uploadUrl || !fileUrl || !fileKey) {
         throw new Error('URL de upload inválida')
       }
@@ -563,7 +563,7 @@ export default function Admin() {
         throw new Error('Falha no upload da imagem')
       }
       setBebidaForm(prev => ({ ...prev, imagemUrl: fileKey }))
-      setBebidaImagePreview(fileUrl)
+      setBebidaImagePreview(fileUrl ?? '')
     } catch (err) {
       console.error(err)
       setBebidasError('Erro ao enviar imagem da bebida')
