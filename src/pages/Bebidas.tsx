@@ -41,6 +41,7 @@ const Bebidas: React.FC = () => {
   const [usuarioCpf, setUsuarioCpf] = useState("")
   const [usuarioEmail, setUsuarioEmail] = useState("")
   const [usuarioTelefone, setUsuarioTelefone] = useState("")
+  const [pagarAte, setPagarAte] = useState("")
   const [checkout, setCheckout] = useState<CheckoutResponse | null>(null)
   const [processing, setProcessing] = useState<"agora" | "depois" | null>(null)
   const [copyOk, setCopyOk] = useState(false)
@@ -70,6 +71,11 @@ const Bebidas: React.FC = () => {
   const total = useMemo(() => {
     return Object.values(cart).reduce((acc, item) => acc + item.bebida.preco * item.quantidade, 0)
   }, [cart])
+  const hoje = new Date()
+  const maxDate = new Date()
+  maxDate.setDate(hoje.getDate() + 30)
+  const minDateStr = hoje.toISOString().slice(0, 10)
+  const maxDateStr = maxDate.toISOString().slice(0, 10)
   const formOk = Boolean(
     usuarioNome.trim() &&
       usuarioCpf.trim() &&
@@ -127,6 +133,10 @@ const Bebidas: React.FC = () => {
       setError("Informe nome, CPF, e-mail e telefone antes de continuar.")
       return
     }
+    if (!pagarAgora && !pagarAte) {
+      setError("Informe a data limite de pagamento.")
+      return
+    }
     setProcessing(pagarAgora ? "agora" : "depois")
     setError(null)
     try {
@@ -139,7 +149,8 @@ const Bebidas: React.FC = () => {
         usuarioNome: nome,
         usuarioCpf: cpf,
         usuarioEmail: email,
-        usuarioTelefone: telefone
+        usuarioTelefone: telefone,
+        pagarAte: pagarAgora ? undefined : pagarAte
       }
       const { data } = await axios.post<CheckoutResponse>(
         `${import.meta.env.VITE_API_URL}/bebidas/pedido`,
@@ -209,6 +220,11 @@ const Bebidas: React.FC = () => {
           <div className="mb-2">
             Chave PIX: <strong>{checkout.pixChave || PIX_CHAVE}</strong>
           </div>
+          {checkout.tipo === "agendamento" && (
+            <div className="text-muted small mb-2">
+              Você também recebeu por email as informações do pagamento (itens, valor e PIX).
+            </div>
+          )}
           <div className="d-flex flex-column flex-md-row gap-3 align-items-start">
             <img
               src={PIX_QR_PATH}
@@ -420,6 +436,19 @@ const Bebidas: React.FC = () => {
                       required
                     />
                   </Form.Group>
+                  <Form.Group className="mb-3">
+                    <Form.Label>Data limite para pagamento</Form.Label>
+                    <Form.Control
+                      type="date"
+                      value={pagarAte}
+                      min={minDateStr}
+                      max={maxDateStr}
+                      onChange={e => setPagarAte(e.target.value)}
+                    />
+                    <Form.Text className="text-muted">
+                      Escolha uma data até 30 dias a partir de hoje (obrigatória para pagar depois).
+                    </Form.Text>
+                  </Form.Group>
 
                   <div className="d-grid gap-2">
                     <Button
@@ -432,7 +461,7 @@ const Bebidas: React.FC = () => {
                     <Button
                       variant="outline-secondary"
                       onClick={() => finalizarPedido(false)}
-                      disabled={processing === "agora" || !formOk}
+                      disabled={processing === "agora" || !formOk || !pagarAte}
                     >
                       {processing === "depois" ? "Processando..." : "Pagar depois"}
                     </Button>
