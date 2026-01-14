@@ -38,6 +38,9 @@ const Bebidas: React.FC = () => {
   const [error, setError] = useState<string | null>(null)
   const [cart, setCart] = useState<Record<string, CartItem>>({})
   const [usuarioNome, setUsuarioNome] = useState("")
+  const [usuarioCpf, setUsuarioCpf] = useState("")
+  const [usuarioEmail, setUsuarioEmail] = useState("")
+  const [usuarioTelefone, setUsuarioTelefone] = useState("")
   const [checkout, setCheckout] = useState<CheckoutResponse | null>(null)
   const [processing, setProcessing] = useState<"agora" | "depois" | null>(null)
   const [copyOk, setCopyOk] = useState(false)
@@ -67,6 +70,12 @@ const Bebidas: React.FC = () => {
   const total = useMemo(() => {
     return Object.values(cart).reduce((acc, item) => acc + item.bebida.preco * item.quantidade, 0)
   }, [cart])
+  const formOk = Boolean(
+    usuarioNome.trim() &&
+      usuarioCpf.trim() &&
+      usuarioEmail.trim() &&
+      usuarioTelefone.trim()
+  )
 
   const addToCart = (bebida: Bebida) => {
     if (!bebida.disponivel) return
@@ -110,6 +119,14 @@ const Bebidas: React.FC = () => {
 
   const finalizarPedido = async (pagarAgora: boolean) => {
     if (!Object.keys(cart).length) return
+    const nome = usuarioNome.trim()
+    const cpf = usuarioCpf.trim()
+    const email = usuarioEmail.trim()
+    const telefone = usuarioTelefone.trim()
+    if (!nome || !cpf || !email || !telefone) {
+      setError("Informe nome, CPF, e-mail e telefone antes de continuar.")
+      return
+    }
     setProcessing(pagarAgora ? "agora" : "depois")
     setError(null)
     try {
@@ -119,7 +136,10 @@ const Bebidas: React.FC = () => {
           quantidade: item.quantidade
         })),
         pagarAgora,
-        usuarioNome: usuarioNome.trim() || undefined
+        usuarioNome: nome,
+        usuarioCpf: cpf,
+        usuarioEmail: email,
+        usuarioTelefone: telefone
       }
       const { data } = await axios.post<CheckoutResponse>(
         `${import.meta.env.VITE_API_URL}/bebidas/pedido`,
@@ -358,11 +378,46 @@ const Bebidas: React.FC = () => {
                   </div>
 
                   <Form.Group className="mb-3">
-                    <Form.Label>Seu nome (opcional)</Form.Label>
+                    <Form.Label>Nome completo</Form.Label>
                     <Form.Control
                       value={usuarioNome}
                       onChange={e => setUsuarioNome(e.target.value)}
                       placeholder="Ex: João Silva"
+                      required
+                    />
+                  </Form.Group>
+                  <Row className="g-2">
+                    <Col xs={12} md={6}>
+                      <Form.Group className="mb-3">
+                        <Form.Label>CPF</Form.Label>
+                        <Form.Control
+                          value={usuarioCpf}
+                          onChange={e => setUsuarioCpf(e.target.value)}
+                          placeholder="Somente números"
+                          required
+                        />
+                      </Form.Group>
+                    </Col>
+                    <Col xs={12} md={6}>
+                      <Form.Group className="mb-3">
+                        <Form.Label>Telefone</Form.Label>
+                        <Form.Control
+                          value={usuarioTelefone}
+                          onChange={e => setUsuarioTelefone(e.target.value)}
+                          placeholder="Ex: (83) 99999-9999"
+                          required
+                        />
+                      </Form.Group>
+                    </Col>
+                  </Row>
+                  <Form.Group className="mb-3">
+                    <Form.Label>Email</Form.Label>
+                    <Form.Control
+                      type="email"
+                      value={usuarioEmail}
+                      onChange={e => setUsuarioEmail(e.target.value)}
+                      placeholder="exemplo@email.com"
+                      required
                     />
                   </Form.Group>
 
@@ -370,14 +425,14 @@ const Bebidas: React.FC = () => {
                     <Button
                       variant="success"
                       onClick={() => finalizarPedido(true)}
-                      disabled={processing === "depois"}
+                      disabled={processing === "depois" || !formOk}
                     >
                       {processing === "agora" ? "Processando..." : "Pagar agora"}
                     </Button>
                     <Button
                       variant="outline-secondary"
                       onClick={() => finalizarPedido(false)}
-                      disabled={processing === "agora"}
+                      disabled={processing === "agora" || !formOk}
                     >
                       {processing === "depois" ? "Processando..." : "Pagar depois"}
                     </Button>

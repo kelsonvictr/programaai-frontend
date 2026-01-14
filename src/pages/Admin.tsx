@@ -137,6 +137,7 @@ type BebidaPedido = {
   id: string
   total: number
   status: string
+  usuarioNome?: string
   criadoEm?: string
   itens?: BebidaItem[]
 }
@@ -2148,10 +2149,10 @@ export default function Admin() {
             <Col xs={12} lg={6}>
               <Card className="shadow-sm">
                 <Card.Body>
-                  <Card.Title className="mb-3">Pedidos pagos</Card.Title>
+                  <Card.Title className="mb-3">Pedidos (todos)</Card.Title>
                   {pedidosBebidas.length === 0 && (
                     <Alert variant="light" className="mb-0">
-                      Nenhum pedido pago registrado.
+                      Nenhum pedido registrado.
                     </Alert>
                   )}
                   {pedidosBebidas.length > 0 && (
@@ -2160,7 +2161,8 @@ export default function Admin() {
                         <tr>
                           <th>ID</th>
                           <th>Total</th>
-                          <th>Itens</th>
+                          <th>Status</th>
+                          <th>Aluno</th>
                           <th>Criado em</th>
                         </tr>
                       </thead>
@@ -2169,7 +2171,8 @@ export default function Admin() {
                           <tr key={pedido.id}>
                             <td>{pedido.id}</td>
                             <td>{money(pedido.total)}</td>
-                            <td>{pedido.itens?.length || 0}</td>
+                            <td>{pedido.status || '—'}</td>
+                            <td>{(pedido as any).usuarioNome || '—'}</td>
                             <td>{pedido.criadoEm || '—'}</td>
                           </tr>
                         ))}
