@@ -33,6 +33,10 @@ const AGENDAMENTO_CANCEL_ENDPOINT = `${API_BASE}/galaxy/agendamento-pagamento/ca
 const AGENDAMENTO_SEND_ENDPOINT = `${API_BASE}/galaxy/agendamento-pagamento/enviar-lembrete`
 const BEBIDAS_ENDPOINT = `${API_BASE}/galaxy/bebidas`
 const BEBIDAS_ITEM_ENDPOINT = (id: string) => `${API_BASE}/galaxy/bebidas/${id}`
+const BEBIDAS_PEDIDO_CONFIRMAR_ENDPOINT = `${API_BASE}/galaxy/bebidas/pedido/confirmar`
+const BEBIDAS_PEDIDO_EXCLUIR_ENDPOINT = `${API_BASE}/galaxy/bebidas/pedido/excluir`
+const BEBIDAS_AGENDAMENTO_CONFIRMAR_ENDPOINT = `${API_BASE}/galaxy/bebidas/agendamento/confirmar`
+const BEBIDAS_AGENDAMENTO_EXCLUIR_ENDPOINT = `${API_BASE}/galaxy/bebidas/agendamento/excluir`
 const MONTHLY_SLOTS = 6
 const FULLSTACK_KEYWORD = 'fullstack'
 
@@ -138,6 +142,9 @@ type BebidaPedido = {
   total: number
   status: string
   usuarioNome?: string
+  usuarioEmail?: string
+  usuarioTelefone?: string
+  confirmadoEm?: string
   criadoEm?: string
   itens?: BebidaItem[]
 }
@@ -147,6 +154,9 @@ type BebidaAgendamento = {
   total: number
   status: string
   usuarioNome?: string
+  usuarioEmail?: string
+  usuarioTelefone?: string
+  confirmadoEm?: string
   origem?: string
   criadoEm?: string
   itens?: BebidaItem[]
@@ -154,8 +164,10 @@ type BebidaAgendamento = {
 
 type BebidasAdminResp = {
   bebidas: Bebida[]
-  pedidosPagos: BebidaPedido[]
-  agendamentosPendentes: BebidaAgendamento[]
+  pedidos?: BebidaPedido[]
+  pedidosPagos?: BebidaPedido[]
+  agendamentos?: BebidaAgendamento[]
+  agendamentosPendentes?: BebidaAgendamento[]
 }
 
 type EditableField =
@@ -253,6 +265,8 @@ export default function Admin() {
   const [bebidaImagePreview, setBebidaImagePreview] = useState<string>("")
   const [pedidosBebidas, setPedidosBebidas] = useState<BebidaPedido[]>([])
   const [agendamentosBebidas, setAgendamentosBebidas] = useState<BebidaAgendamento[]>([])
+  const [pedidoSortAsc, setPedidoSortAsc] = useState(false)
+  const [agendamentoSortAsc, setAgendamentoSortAsc] = useState(false)
 
   const cursoEntries = useMemo(
     () => Object.entries(cursos).sort(([a], [b]) => a.localeCompare(b, 'pt-BR')),
@@ -461,8 +475,8 @@ export default function Admin() {
         headers: { Authorization: `Bearer ${jwt}` }
       })
       setBebidas(data.bebidas || [])
-      setPedidosBebidas(data.pedidosPagos || [])
-      setAgendamentosBebidas(data.agendamentosPendentes || [])
+      setPedidosBebidas(data.pedidos || data.pedidosPagos || [])
+      setAgendamentosBebidas(data.agendamentos || data.agendamentosPendentes || [])
       setLastUpdated(new Date())
     } catch (err) {
       console.error(err)
@@ -536,6 +550,34 @@ export default function Admin() {
     } catch (err) {
       console.error(err)
       setBebidasError('Erro ao remover bebida')
+    }
+  }
+
+  const confirmarPagamentoBebida = async (id: string, tipo: 'pedido' | 'agendamento') => {
+    if (!token) return
+    setBebidasError(null)
+    const endpoint =
+      tipo === 'pedido' ? BEBIDAS_PEDIDO_CONFIRMAR_ENDPOINT : BEBIDAS_AGENDAMENTO_CONFIRMAR_ENDPOINT
+    try {
+      await axios.post(endpoint, { id }, { headers: { Authorization: `Bearer ${token}` } })
+      await fetchBebidasAdmin(token)
+    } catch (err) {
+      console.error(err)
+      setBebidasError('Erro ao confirmar pagamento')
+    }
+  }
+
+  const excluirRegistroBebida = async (id: string, tipo: 'pedido' | 'agendamento') => {
+    if (!token) return
+    setBebidasError(null)
+    const endpoint =
+      tipo === 'pedido' ? BEBIDAS_PEDIDO_EXCLUIR_ENDPOINT : BEBIDAS_AGENDAMENTO_EXCLUIR_ENDPOINT
+    try {
+      await axios.post(endpoint, { id }, { headers: { Authorization: `Bearer ${token}` } })
+      await fetchBebidasAdmin(token)
+    } catch (err) {
+      console.error(err)
+      setBebidasError('Erro ao excluir registro')
     }
   }
 
@@ -745,6 +787,29 @@ export default function Admin() {
   // helpers
   const money = (v?: number | null) =>
     typeof v === 'number' && !Number.isNaN(v) ? `R$ ${v.toFixed(2)}` : '-'
+  const formatBrDateTime = (value?: string | null) => {
+    if (!value) return '—'
+    const dt = new Date(value)
+    if (Number.isNaN(dt.getTime())) return '—'
+    return dt.toLocaleString('pt-BR')
+  }
+  const formatBebidasItens = (itens?: BebidaItem[]) => {
+    if (!Array.isArray(itens) || !itens.length) return '—'
+    return (
+      <div className="d-flex flex-column gap-1">
+        {itens.map((item, idx) => {
+          const nome = item.nome || item.bebidaId || '—'
+          const qtd = item.quantidade ?? 0
+          const subtotal = typeof item.subtotal === 'number' ? money(item.subtotal) : '—'
+          return (
+            <div key={`${nome}-${idx}`}>
+              {nome} x{qtd} <span className="text-muted">({subtotal})</span>
+            </div>
+          )
+        })}
+      </div>
+    )
+  }
   const isFullstackCourse = (nome?: string | null) =>
     typeof nome === 'string' && nome.toLowerCase().includes(FULLSTACK_KEYWORD)
   const getPaymentMode = (inscricao: Inscricao): PaymentMode =>
@@ -1038,6 +1103,33 @@ export default function Admin() {
   const hasCursos = cursoEntries.length > 0
   const waitlistHasCursos = waitlistCursoEntries.length > 0
   const isRefreshing = loading || bebidasLoading
+  const pedidosOrdenados = [...pedidosBebidas].sort((a, b) => {
+    const da = new Date(a.criadoEm || 0).getTime()
+    const db = new Date(b.criadoEm || 0).getTime()
+    const base = (Number.isNaN(da) ? 0 : da) - (Number.isNaN(db) ? 0 : db)
+    return pedidoSortAsc ? base : -base
+  })
+  const agendamentosOrdenados = [...agendamentosBebidas].sort((a, b) => {
+    const da = new Date(a.criadoEm || 0).getTime()
+    const db = new Date(b.criadoEm || 0).getTime()
+    const base = (Number.isNaN(da) ? 0 : da) - (Number.isNaN(db) ? 0 : db)
+    return agendamentoSortAsc ? base : -base
+  })
+  const faturamentoMensal = useMemo(() => {
+    const mapa = new Map<string, number>()
+    const add = (item: BebidaPedido | BebidaAgendamento) => {
+      if ((item.status || '').toUpperCase() !== 'PAGO') return
+      const base = item.confirmadoEm || item.criadoEm
+      if (!base) return
+      const dt = new Date(base)
+      if (Number.isNaN(dt.getTime())) return
+      const chave = dt.toLocaleDateString('pt-BR', { month: 'long', year: 'numeric' })
+      mapa.set(chave, (mapa.get(chave) || 0) + (item.total || 0))
+    }
+    pedidosBebidas.forEach(add)
+    agendamentosBebidas.forEach(add)
+    return Array.from(mapa.entries()).sort((a, b) => a[0].localeCompare(b[0], 'pt-BR'))
+  }, [pedidosBebidas, agendamentosBebidas])
 
   if (!user) {
     return (
@@ -2159,21 +2251,51 @@ export default function Admin() {
                     <Table striped bordered hover size="sm" className="align-middle">
                       <thead>
                         <tr>
-                          <th>ID</th>
+                          <th>Aluno</th>
+                          <th>Itens</th>
                           <th>Total</th>
                           <th>Status</th>
-                          <th>Aluno</th>
-                          <th>Criado em</th>
+                          <th>Confirmado em</th>
+                          <th>
+                            <button
+                              type="button"
+                              onClick={() => setPedidoSortAsc(prev => !prev)}
+                              style={{ background: 'none', border: 'none', padding: 0 }}
+                            >
+                              Criado em {pedidoSortAsc ? '▲' : '▼'}
+                            </button>
+                          </th>
+                          <th>Ações</th>
                         </tr>
                       </thead>
                       <tbody>
-                        {pedidosBebidas.map(pedido => (
+                        {pedidosOrdenados.map(pedido => (
                           <tr key={pedido.id}>
-                            <td>{pedido.id}</td>
+                            <td>{pedido.usuarioNome || '—'}</td>
+                            <td style={{ minWidth: 220 }}>{formatBebidasItens(pedido.itens)}</td>
                             <td>{money(pedido.total)}</td>
                             <td>{pedido.status || '—'}</td>
-                            <td>{(pedido as any).usuarioNome || '—'}</td>
-                            <td>{pedido.criadoEm || '—'}</td>
+                            <td>{formatBrDateTime(pedido.confirmadoEm)}</td>
+                            <td>{formatBrDateTime(pedido.criadoEm)}</td>
+                            <td>
+                              <div className="d-flex flex-column gap-2">
+                                <Button
+                                  variant="success"
+                                  size="sm"
+                                  onClick={() => confirmarPagamentoBebida(pedido.id, 'pedido')}
+                                  disabled={(pedido.status || '').toUpperCase() === 'PAGO'}
+                                >
+                                  Confirmar pagamento
+                                </Button>
+                                <Button
+                                  variant="outline-danger"
+                                  size="sm"
+                                  onClick={() => excluirRegistroBebida(pedido.id, 'pedido')}
+                                >
+                                  Excluir
+                                </Button>
+                              </div>
+                            </td>
                           </tr>
                         ))}
                       </tbody>
@@ -2186,29 +2308,93 @@ export default function Admin() {
             <Col xs={12} lg={6}>
               <Card className="shadow-sm">
                 <Card.Body>
-                  <Card.Title className="mb-3">Agendamentos pendentes</Card.Title>
+                  <Card.Title className="mb-3">Agendamentos (todos)</Card.Title>
                   {agendamentosBebidas.length === 0 && (
                     <Alert variant="light" className="mb-0">
-                      Nenhum agendamento pendente.
+                      Nenhum agendamento registrado.
                     </Alert>
                   )}
                   {agendamentosBebidas.length > 0 && (
                     <Table striped bordered hover size="sm" className="align-middle">
                       <thead>
                         <tr>
-                          <th>ID</th>
-                          <th>Total</th>
                           <th>Aluno</th>
-                          <th>Criado em</th>
+                          <th>Itens</th>
+                          <th>Total</th>
+                          <th>Status</th>
+                          <th>Confirmado em</th>
+                          <th>
+                            <button
+                              type="button"
+                              onClick={() => setAgendamentoSortAsc(prev => !prev)}
+                              style={{ background: 'none', border: 'none', padding: 0 }}
+                            >
+                              Criado em {agendamentoSortAsc ? '▲' : '▼'}
+                            </button>
+                          </th>
+                          <th>Ações</th>
                         </tr>
                       </thead>
                       <tbody>
-                        {agendamentosBebidas.map(agendamento => (
+                        {agendamentosOrdenados.map(agendamento => (
                           <tr key={agendamento.id}>
-                            <td>{agendamento.id}</td>
-                            <td>{money(agendamento.total)}</td>
                             <td>{agendamento.usuarioNome || '—'}</td>
-                            <td>{agendamento.criadoEm || '—'}</td>
+                            <td style={{ minWidth: 220 }}>{formatBebidasItens(agendamento.itens)}</td>
+                            <td>{money(agendamento.total)}</td>
+                            <td>{agendamento.status || '—'}</td>
+                            <td>{formatBrDateTime(agendamento.confirmadoEm)}</td>
+                            <td>{formatBrDateTime(agendamento.criadoEm)}</td>
+                            <td>
+                              <div className="d-flex flex-column gap-2">
+                                <Button
+                                  variant="success"
+                                  size="sm"
+                                  onClick={() => confirmarPagamentoBebida(agendamento.id, 'agendamento')}
+                                  disabled={(agendamento.status || '').toUpperCase() === 'PAGO'}
+                                >
+                                  Confirmar pagamento
+                                </Button>
+                                <Button
+                                  variant="outline-danger"
+                                  size="sm"
+                                  onClick={() => excluirRegistroBebida(agendamento.id, 'agendamento')}
+                                >
+                                  Excluir
+                                </Button>
+                              </div>
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </Table>
+                  )}
+                </Card.Body>
+              </Card>
+            </Col>
+          </Row>
+          <Row className="g-4 mt-1">
+            <Col xs={12}>
+              <Card className="shadow-sm">
+                <Card.Body>
+                  <Card.Title className="mb-3">Faturamento por mês</Card.Title>
+                  {faturamentoMensal.length === 0 && (
+                    <Alert variant="light" className="mb-0">
+                      Nenhum faturamento confirmado.
+                    </Alert>
+                  )}
+                  {faturamentoMensal.length > 0 && (
+                    <Table striped bordered hover size="sm" className="align-middle">
+                      <thead>
+                        <tr>
+                          <th>Mês</th>
+                          <th>Total</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {faturamentoMensal.map(([mes, total]) => (
+                          <tr key={mes}>
+                            <td>{mes}</td>
+                            <td>{money(total)}</td>
                           </tr>
                         ))}
                       </tbody>
