@@ -9,6 +9,7 @@ import {
   Spinner,
   Ratio,
   Modal,
+  Accordion,
   Row,
   Col
 } from "react-bootstrap"
@@ -69,6 +70,7 @@ interface Course {
   oQueVaiAprender?: string[]
   modulos?: string[]
   prerequisitos?: string[]
+  faq?: { pergunta: string; resposta: string }[]
   ativo: boolean
 }
 
@@ -646,6 +648,21 @@ const CourseDetails: React.FC = () => {
                   <li key={idx}>{item}</li>
                 ))}
               </ul>
+            </>
+          )}
+
+          {course.faq && course.faq.length > 0 && (
+            <>
+              <hr />
+              <h5>❓ Perguntas frequentes</h5>
+              <Accordion flush>
+                {course.faq.map((item, idx) => (
+                  <Accordion.Item eventKey={`${idx}`} key={`${item.pergunta}-${idx}`}>
+                    <Accordion.Header>{item.pergunta}</Accordion.Header>
+                    <Accordion.Body>{item.resposta}</Accordion.Body>
+                  </Accordion.Item>
+                ))}
+              </Accordion>
             </>
           )}
 
