@@ -556,6 +556,11 @@
     max-width: 100%;
   }
 
+  .course-typewriter-text {
+    min-width: 0 !important;
+    display: inline !important;
+  }
+
   .course-hero-media {
     transform: none;
     background-position: 30% center;
