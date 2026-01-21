@@ -414,10 +414,7 @@ const CourseDetails: React.FC = () => {
           {!course.ativo && (
             <div className="course-hero-ribbon">VAGAS ENCERRADAS</div>
           )}
-          <div
-            className="course-hero-media"
-            style={{ backgroundImage: `url(${course.imageUrl})` }}
-          />
+          <div className="course-hero-media" />
           <div className="course-hero-overlay" />
           <div className="course-hero-content">
             <div className="course-hero-text">
