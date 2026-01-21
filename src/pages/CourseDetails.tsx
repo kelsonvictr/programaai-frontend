@@ -28,6 +28,7 @@ import Seo from "../components/Seo"
 import { buildAbsoluteUrl, SITE_URL } from "../config/seo"
 import Typewriter from "../components/Typewriter"
 import CourseGallery from "../components/CourseGallery"
+import "../styles/course-details-landing.css"
 
 const COURSE_TYPEWRITER_PHRASES = [
   "Presencial ao vivo em João Pessoa",
@@ -81,6 +82,8 @@ const CourseDetails: React.FC = () => {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const [showParcelamento, setShowParcelamento] = useState(false)
+  const [showAllDates, setShowAllDates] = useState(false)
+  const [profPhotoError, setProfPhotoError] = useState(false)
   const [showVideoModal, setShowVideoModal] = useState(false)
   const [isDesktop, setIsDesktop] = useState(false)
 
@@ -244,6 +247,17 @@ const CourseDetails: React.FC = () => {
   const videoCaption = "Assista ao nosso vídeo de apresentação do curso."
   const showCombinedLayout = Boolean(videoSrc && isDesktop)
   const handleOpenVideo = () => setShowVideoModal(true)
+  const professorInitials = course.professor
+    .split(" ")
+    .filter(Boolean)
+    .slice(0, 2)
+    .map(part => part[0]?.toUpperCase())
+    .join("")
+  const datesCountLabel =
+    course.datas && course.datas.length > 0
+      ? `${course.datas.length} encontros`
+      : "Datas a confirmar"
+  const nextDateLabel = course.datas?.[0] ? `Próxima turma: ${course.datas[0]}` : "Próxima turma em breve"
   const desktopVideoCard = videoSrc ? (
     <Card
       role="button"
@@ -322,7 +336,7 @@ const CourseDetails: React.FC = () => {
       style={{ maxWidth: "460px" }}
     >
       <Card.Body className="p-0">
-        <Ratio aspectRatio={100 * (16 / 9)}>
+        <Ratio aspectRatio="16x9">
           <video
             src={videoSrc}
             controls
@@ -354,7 +368,7 @@ const CourseDetails: React.FC = () => {
         </Modal.Title>
       </Modal.Header>
       <Modal.Body className="p-0">
-        <Ratio aspectRatio={100 * (16 / 9)}>
+        <Ratio aspectRatio="16x9">
           <video
             src={videoSrc}
             controls
@@ -372,6 +386,10 @@ const CourseDetails: React.FC = () => {
     </Modal>
   ) : null
 
+  const safeDates = Array.isArray(course.datas) ? course.datas : []
+  const datesToShow = showAllDates ? safeDates : safeDates.slice(0, 3)
+  const remainingDates = Math.max(safeDates.length - 3, 0)
+
   return (
     <>
       <Seo
@@ -382,334 +400,350 @@ const CourseDetails: React.FC = () => {
         ogType="article"
         structuredData={structuredData}
       />
-      <Container className="py-5">
-        <div className="d-flex flex-wrap align-items-center justify-content-between gap-2 mb-3">
-          <Link
-            to="/cursos"
-            className="course-back-link px-0 d-inline-flex align-items-center gap-2"
-          >
+      <Container className="course-landing py-5">
+        <div className="d-flex align-items-center justify-content-between mb-4">
+          <Link to="/cursos" className="course-back-link px-0 d-inline-flex align-items-center gap-2">
             <FaArrowLeft /> Ver todos os cursos
           </Link>
-          <Button
-            as="a"
-            href={WHATSAPP_LINK}
-            target="_blank"
-            rel="noopener noreferrer"
-            variant="success"
-            className="d-inline-flex align-items-center gap-2 course-whatsapp-top"
-          >
-            <FaWhatsapp /> Quero falar agora
-          </Button>
+          {!isDesktop && !course.ativo && (
+            <span className="course-status-pill">Vagas encerradas</span>
+          )}
         </div>
 
-        <Card className="shadow-sm position-relative overflow-hidden">
-        {/* Ribbon de Vagas Encerradas */}
-        {!course.ativo && (
+        <section className="course-hero-card">
+          {!course.ativo && (
+            <div className="course-hero-ribbon">VAGAS ENCERRADAS</div>
+          )}
           <div
-            style={{
-              position: "absolute",
-              top: "1rem",
-              left: "-2rem",
-              background: "#dc3545",
-              color: "#fff",
-              padding: "0.5rem 3rem",
-              transform: "rotate(-45deg)",
-              zIndex: 10,
-              fontWeight: "bold",
-            }}
-          >
-            VAGAS ENCERRADAS
+            className="course-hero-media"
+            style={{ backgroundImage: `url(${course.imageUrl})` }}
+          />
+          <div className="course-hero-overlay" />
+          <div className="course-hero-content">
+            <div className="course-hero-text">
+              <span className="course-hero-kicker">Curso presencial em João Pessoa</span>
+              <h1 className="course-hero-title">{course.title}</h1>
+              <div className="course-typewriter-banner">
+                <span className="course-typewriter-title">Experiência Imersiva e Presencial</span>
+                <Typewriter phrases={COURSE_TYPEWRITER_PHRASES} className="course-typewriter-text" />
+              </div>
+              <p className="course-hero-description">{course.description}</p>
+              <div className="course-hero-chips">
+                <span className="course-chip">{course.modalidade}</span>
+                <span className="course-chip">{datesCountLabel}</span>
+                <span className="course-chip">{course.horario}</span>
+                <span className="course-chip">João Pessoa - PB</span>
+              </div>
+            </div>
+
+            <div className="course-hero-actions">
+              <div className="course-price-box">
+                <div className="course-price-header">
+                  <span className="course-price-label">Investimento</span>
+                  <span className="course-price-value">{course.price}</span>
+                </div>
+                {course.ativo && (
+                  <span className="text-warning small fw-semibold">
+                    ⏳ Vagas limitadas para esta turma
+                  </span>
+                )}
+                {course.obsPrice && (
+                  <div className="course-price-note">{course.obsPrice}</div>
+                )}
+              {(() => {
+                const { base, parcela12 } = calcularValores(course.price)
+                return (
+                  <div className="course-price-breakdown">
+                    <span>Pix à vista: R$ {base.toFixed(2).replace(".", ",")}</span>
+                    <span>12x de R$ {parcela12.toFixed(2).replace(".", ",")}</span>
+                  </div>
+                )
+              })()}
+              <div className="course-price-info">{nextDateLabel}</div>
+              <button
+                type="button"
+                className="course-link course-link--onDark"
+                onClick={() => setShowParcelamento(true)}
+                aria-label="Ver parcelamento e condições"
+              >
+                Ver parcelamento e condições
+              </button>
+            </div>
+
+              <div className="course-hero-cta">
+                <Button
+                  as="a"
+                  href={WHATSAPP_LINK}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  variant="success"
+                  className="course-btn-primary"
+                >
+                  <FaWhatsapp /> Falar com um professor
+                </Button>
+                {course.ativo ? (
+                  <Link to={`/inscricao/${course.id}`} className="btn btn-outline-primary course-btn-secondary">
+                    Garantir minha vaga
+                  </Link>
+                ) : (
+                  <Alert variant="danger" className="course-closed-alert">
+                    🚫 Vagas encerradas! Avise-me da próxima turma.
+                  </Alert>
+                )}
+              </div>
+            </div>
           </div>
+        </section>
+
+        <section className="course-section-card course-section-grid">
+          <div>
+            <h2 className="course-section-title">Detalhes da turma</h2>
+            <p className="course-section-subtitle">
+              Planeje seu ritmo de estudos e garanta sua presença nas aulas presenciais.
+            </p>
+          </div>
+          <div className="course-info-grid">
+            <div className="course-info-item">
+              <span className="course-info-label">Datas</span>
+              <span className="course-info-value">
+                {datesToShow.join(" | ")}
+                {!showAllDates && remainingDates > 0 ? ` | +${remainingDates} datas` : ""}
+              </span>
+              {remainingDates > 0 && (
+                <button
+                  type="button"
+                  className="course-link"
+                  onClick={() => setShowAllDates(prev => !prev)}
+                  aria-label={showAllDates ? "Ver menos datas" : "Ver todas as datas"}
+                >
+                  {showAllDates ? "Ver menos" : "Ver todas"}
+                </button>
+              )}
+            </div>
+            <div className="course-info-item">
+              <span className="course-info-label">Horário</span>
+              <span className="course-info-value">{course.horario}</span>
+            </div>
+            <div className="course-info-item">
+              <span className="course-info-label">Duração</span>
+              <span className="course-info-value">{course.duration}</span>
+            </div>
+            <div className="course-info-item">
+              <span className="course-info-label">Modalidade</span>
+              <span className="course-info-value">{course.modalidade}</span>
+            </div>
+          </div>
+        </section>
+
+        {videoSrc && (
+          <section className="course-section-card">
+            <div className="course-section-header">
+              <h2 className="course-section-title">Veja a experiência do curso</h2>
+              <p className="course-section-subtitle">{videoCaption}</p>
+            </div>
+            {showCombinedLayout ? (
+              <div className="course-video-desktop">{desktopVideoCard}</div>
+            ) : (
+              <div className="course-video-mobile">{inlineVideoCard}</div>
+            )}
+          </section>
         )}
 
-        {/* Banner / Imagem */}
-        <Card.Img
-          variant="top"
-          src={course.imageUrl}
-          alt={`Imagem do curso ${course.title}`}
-          style={{ maxHeight: "530px", objectFit: "cover" }}
-        />
+        {course.oQueVaiAprender && (
+          <section className="course-section-card">
+            <h2 className="course-section-title">O que você vai aprender</h2>
+            <ul className="course-icon-list">
+              {course.oQueVaiAprender.map((item, idx) => (
+                <li key={idx}>
+                  <FaCheckCircle className="text-success" />
+                  {item}
+                </li>
+              ))}
+            </ul>
+          </section>
+        )}
 
-        <Card.Body>
-          <Card.Title as="h2">{course.title}</Card.Title>
-          <div className="course-typewriter-banner">
-            <span className="course-typewriter-title">Experiência Imersiva e Presencial</span>
-            <Typewriter phrases={COURSE_TYPEWRITER_PHRASES} className="course-typewriter-text" />
+        {course.modulos && (
+          <section className="course-section-card">
+            <h2 className="course-section-title">Módulos do curso</h2>
+            <Accordion className="course-accordion" flush>
+              {course.modulos.map((item, idx) => (
+                <Accordion.Item eventKey={`${idx}`} key={`${item}-${idx}`}>
+                  <Accordion.Header>Módulo {idx + 1}</Accordion.Header>
+                  <Accordion.Body>{item}</Accordion.Body>
+                </Accordion.Item>
+              ))}
+            </Accordion>
+          </section>
+        )}
+
+        <section className="course-section-card course-instructor">
+          <div className="course-instructor-avatar">
+            {course.profFoto && !profPhotoError ? (
+              <img
+                src={course.profFoto}
+                alt={`Foto de ${course.professor}`}
+                onError={() => setProfPhotoError(true)}
+              />
+            ) : (
+              <span>{professorInitials}</span>
+            )}
           </div>
+          <div className="course-instructor-content">
+            <h2 className="course-section-title">Professor {course.professor}</h2>
+            <p className="course-section-subtitle">{course.bio}</p>
+            <Button
+              as="a"
+              href={course.linkedin}
+              target="_blank"
+              rel="noopener noreferrer"
+              variant="outline-primary"
+              size="sm"
+              className="rounded-pill d-inline-flex align-items-center gap-2"
+            >
+              <FaLinkedin size={16} /> LinkedIn
+            </Button>
+          </div>
+        </section>
 
-          <p className="text-muted">
-            <strong>Modalidade:</strong> {course.modalidade} <br />
-            <strong>Datas:</strong> {course.datas.join(" | ")} <br />
-            <strong>Horário:</strong> {course.horario} <br />
-            <strong>Duração:</strong> {course.duration} <br />
-            <strong>Investimento:</strong> {course.price}
-            {course.obsPrice && <span> ({course.obsPrice})</span>} <br />
-            <strong>Formas de Pagamento:</strong> Pix ou Cartão de Crédito (em até 12x)
-          </p>
-
-          {/* Destaque dos valores parcelados */}
-          {(() => {
-            const { base, parcela12 } = calcularValores(course.price)
-            return (
-              <div className="mt-3 p-3 bg-light border rounded">
-                <p className="mb-1">
-                  💰 <strong>À vista no PIX:</strong> R$ {base.toFixed(2).replace(".", ",")}
-                </p>
-                <p className="mb-0 text-success fw-bold">
-                  🚀 💳  Ou em até 12x de R$ {parcela12.toFixed(2).replace(".", ",")}
-                </p>
+        {(course.publicoAlvo || course.prerequisitos) && (
+          <section className="course-section-card course-dual-grid">
+            {course.publicoAlvo && (
+              <div>
+                <h2 className="course-section-title">Público-alvo</h2>
+                <ul className="course-bullet-list">
+                  {course.publicoAlvo.map((item, idx) => (
+                    <li key={idx}>{item}</li>
+                  ))}
+                </ul>
               </div>
-            )
-          })()}
+            )}
+            {course.prerequisitos && (
+              <div>
+                <h2 className="course-section-title">Pré-requisitos</h2>
+                <ul className="course-bullet-list">
+                  {course.prerequisitos.map((item, idx) => (
+                    <li key={idx}>{item}</li>
+                  ))}
+                </ul>
+              </div>
+            )}
+          </section>
+        )}
 
-          <div className="course-whatsapp-highlight">
-            <div>
-              <h6 className="fw-semibold mb-2">Tire suas dúvidas em minutos</h6>
-              <ul className="mb-0">
-                <li><FaCheckCircle className="me-2 text-success" /> Atendimento direto com os professores</li>
-                <li><FaCheckCircle className="me-2 text-success" /> Ver a possibilidade de guardar a vaga (pré-inscrição)</li>
-                <li><FaCheckCircle className="me-2 text-success" /> Confirmação de vagas e formas de pagamento</li>
-                <li><FaCheckCircle className="me-2 text-success" /> Receba a apresentação sobre o curso em tempo real</li>
+        <section className="course-section-card">
+          <h2 className="course-section-title">Como é a experiência presencial</h2>
+          <p className="course-section-subtitle">
+            Turmas reduzidas, espaço confortável e prática guiada em cada encontro.
+          </p>
+          <CourseGallery />
+        </section>
+
+        <section className="course-section-card course-location-card mt-0">
+          <Row className="g-3 align-items-center">
+            <Col md={5}>
+              <img
+                src={LOCATION_IMAGE}
+                alt="Espaço físico da Programa AI"
+                className="course-location-image"
+                loading="lazy"
+              />
+            </Col>
+            <Col md={7}>
+              <h6 className="text-primary fw-bold mb-2">Onde acontecem as aulas</h6>
+              <p className="mb-3">
+                Empresarial Eldorado — Av. Epitácio Pessoa, 1133, Sala 104. Ambiente climatizado,
+                cadeiras ergonômicas NR17, projetor multimídia e café à vontade para manter o ritmo
+                nas práticas presenciais.
+              </p>
+              <ul className="course-location-list">
+                <li>
+                  <FaMapMarkerAlt className="text-danger me-2" /> Localização central, fácil acesso e estacionamento próximo
+                </li>
+                <li>
+                  <FaCheckCircle className="text-success me-2" /> Mesão colaborativo para pair programming e mentorias individuais
+                </li>
+                <li>
+                  <FaCheckCircle className="text-success me-2" /> Coffee station liberado durante as aulas
+                </li>
               </ul>
-            </div>
+              <div className="d-flex flex-wrap gap-2">
+                <Button
+                  as="a"
+                  href="https://www.google.com/maps/place/Empresarial+Eldorado/@-7.119502,-34.8602648,17z"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  variant="outline-primary"
+                  className="d-inline-flex align-items-center gap-2"
+                >
+                  <FaMapMarkerAlt /> Ver rota no Google Maps
+                </Button>
+                <Button
+                  as="a"
+                  href={WHATSAPP_LINK}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  variant="success"
+                  className="d-inline-flex align-items-center gap-2"
+                >
+                  <FaWhatsapp /> Falar com a Programa AI
+                </Button>
+              </div>
+            </Col>
+          </Row>
+        </section>
+
+        {course.faq && course.faq.length > 0 && (
+          <section className="course-section-card">
+            <h2 className="course-section-title">Perguntas frequentes</h2>
+            <Accordion className="course-accordion" flush>
+              {course.faq.map((item, idx) => (
+                <Accordion.Item eventKey={`${idx}`} key={`${item.pergunta}-${idx}`}>
+                  <Accordion.Header>{item.pergunta}</Accordion.Header>
+                  <Accordion.Body>{item.resposta}</Accordion.Body>
+                </Accordion.Item>
+              ))}
+            </Accordion>
+          </section>
+        )}
+
+        <Alert variant="warning" className="course-section-card course-alert">
+          💻 <strong>Atenção!</strong> Não disponibilizamos computadores no local do curso. É necessário que cada aluno leve
+          seu <strong>notebook pessoal</strong>. Essa abordagem é excelente pois garante que o{" "}
+          <strong>ambiente de desenvolvimento</strong> configurado em sala estará prontinho para você continuar praticando em casa!
+        </Alert>
+
+        <section className="course-section-card course-final-cta">
+          <div>
+            <h2 className="course-section-title">Pronto para garantir sua vaga?</h2>
+            <p className="course-section-subtitle">
+              Converse com a equipe e finalize sua inscrição em poucos minutos.
+            </p>
+          </div>
+          <div className="course-final-actions">
+            {course.ativo ? (
+              <Link to={`/inscricao/${course.id}`} className="btn btn-primary course-btn-primary">
+                Garantir minha vaga
+              </Link>
+            ) : (
+              <Alert variant="danger" className="course-closed-alert">
+                🚫 Vagas encerradas! Avise-me da próxima turma.
+              </Alert>
+            )}
             <Button
               as="a"
               href={WHATSAPP_LINK}
               target="_blank"
               rel="noopener noreferrer"
               variant="success"
-              className="d-inline-flex align-items-center gap-2 flex-shrink-0"
+              className="course-btn-secondary"
             >
-              <FaWhatsapp /> Conversar no WhatsApp
+              <FaWhatsapp /> Tirar dúvidas no WhatsApp
             </Button>
           </div>
+        </section>
 
-          <CourseGallery />
-
-          <hr />
-
-          {showCombinedLayout ? (
-            <Row className="g-5 align-items-start">
-              <Col lg={7}>
-                <div className="d-flex flex-column gap-4 pe-lg-4">
-                  <div>
-                    <h5 className="mb-2">Professor: {course.professor}</h5>
-                    <Button
-                      as="a"
-                      href={course.linkedin}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      variant="outline-primary"
-                      size="sm"
-                      className="rounded-pill d-inline-flex align-items-center gap-2"
-                    >
-                      <FaLinkedin size={16} /> LinkedIn
-                    </Button>
-                    <p className="mt-3 text-secondary">{course.bio}</p>
-                  </div>
-                  <div>
-                    <h5 className="mb-2">Sobre o curso</h5>
-                    <p className="text-secondary mb-0">{course.description}</p>
-                  </div>
-                </div>
-              </Col>
-              <Col lg={5} className="mt-4 mt-lg-0">
-                <div className="d-flex flex-column align-items-lg-end gap-3">
-                  {desktopVideoCard}
-                </div>
-              </Col>
-            </Row>
-          ) : (
-            <>
-              <h5>Professor: {course.professor}</h5>
-              <Button
-                as="a"
-                href={course.linkedin}
-                target="_blank"
-                rel="noopener noreferrer"
-                variant="outline-primary"
-                size="sm"
-                className="rounded-pill d-inline-flex align-items-center gap-2"
-              >
-                <FaLinkedin size={16} /> LinkedIn
-              </Button>
-              <p className="mt-3">{course.bio}</p>
-
-              <hr />
-
-              <h5>Sobre o curso</h5>
-              <p>{course.description}</p>
-              {videoSrc && (
-                <div className="mt-4">
-                  {inlineVideoCard}
-                </div>
-              )}
-            </>
-          )}
-
-          <section className="course-location-card mt-4">
-            <Row className="g-3 align-items-center">
-              <Col md={5}>
-                <img
-                  src={LOCATION_IMAGE}
-                  alt="Espaço físico da Programa AI"
-                  className="course-location-image"
-                  loading="lazy"
-                />
-              </Col>
-              <Col md={7}>
-                <h6 className="text-primary fw-bold mb-2">Onde acontecem as aulas</h6>
-                <p className="mb-3">
-                  Empresarial Eldorado — Av. Epitácio Pessoa, 1133, Sala 104. Ambiente climatizado,
-                  cadeiras ergonômicas NR17, projetor multimídia e café à vontade para manter o ritmo
-                  nas práticas presenciais.
-                </p>
-                <ul className="course-location-list">
-                  <li>
-                    <FaMapMarkerAlt className="text-danger me-2" /> Localização central, fácil acesso e estacionamento próximo
-                  </li>
-                  <li>
-                    <FaCheckCircle className="text-success me-2" /> Mesão colaborativo para pair programming e mentorias individuais
-                  </li>
-                  <li>
-                    <FaCheckCircle className="text-success me-2" /> Coffee station liberado durante as aulas
-                  </li>
-                </ul>
-                <div className="d-flex flex-wrap gap-2">
-                  <Button
-                    as="a"
-                    href="https://www.google.com/maps/place/Empresarial+Eldorado/@-7.119502,-34.8602648,17z"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    variant="outline-primary"
-                    className="d-inline-flex align-items-center gap-2"
-                  >
-                    <FaMapMarkerAlt /> Ver rota no Google Maps
-                  </Button>
-                  <Button
-                    as="a"
-                    href={WHATSAPP_LINK}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    variant="success"
-                    className="d-inline-flex align-items-center gap-2"
-                  >
-                    <FaWhatsapp /> Falar com o prof. no Whastapp
-                  </Button>
-                </div>
-              </Col>
-            </Row>
-          </section>
-
-          {videoModal}
-
-          {course.publicoAlvo && (
-            <>
-              <hr />
-              <h5>🎯 Público-alvo</h5>
-              <ul>
-                {course.publicoAlvo.map((item, idx) => (
-                  <li key={idx}>{item}</li>
-                ))}
-              </ul>
-            </>
-          )}
-
-          {course.oQueVaiAprender && (
-            <>
-              <hr />
-              <h5>✅ O que você vai aprender</h5>
-              <ul>
-                {course.oQueVaiAprender.map((item, idx) => (
-                  <li key={idx}>{item}</li>
-                ))}
-              </ul>
-            </>
-          )}
-
-          {course.modulos && (
-            <>
-              <hr />
-              <h5>📦 Módulos do curso</h5>
-              <ol>
-                {course.modulos.map((item, idx) => (
-                  <li key={idx}>{item}</li>
-                ))}
-              </ol>
-            </>
-          )}
-
-          {course.prerequisitos && (
-            <>
-              <hr />
-              <h5>🧠 Pré-requisitos</h5>
-              <ul>
-                {course.prerequisitos.map((item, idx) => (
-                  <li key={idx}>{item}</li>
-                ))}
-              </ul>
-            </>
-          )}
-
-          {course.faq && course.faq.length > 0 && (
-            <>
-              <hr />
-              <h5>❓ Perguntas frequentes</h5>
-              <Accordion flush>
-                {course.faq.map((item, idx) => (
-                  <Accordion.Item eventKey={`${idx}`} key={`${item.pergunta}-${idx}`}>
-                    <Accordion.Header>{item.pergunta}</Accordion.Header>
-                    <Accordion.Body>{item.resposta}</Accordion.Body>
-                  </Accordion.Item>
-                ))}
-              </Accordion>
-            </>
-          )}
-
-          <Alert variant="warning" className="mt-4">
-            💻 <strong>Atenção!</strong> Não disponibilizamos computadores no local
-            do curso. É necessário que cada aluno leve seu <strong>notebook pessoal</strong>.<br/>
-            Essa abordagem é excelente pois garante que o <strong>ambiente de desenvolvimento</strong> configurado em sala estará prontinho para você continuar praticando em casa!
-          </Alert>
-
-          <div className="mt-4 d-flex flex-column flex-md-row gap-3">
-            <div>
-              {course.ativo ? (
-                <>
-                  <Link
-                    to={`/inscricao/${course.id}`}
-                    className="btn btn-success btn-lg fw-bold px-4 py-2"
-                  >
-                    🚀 Inscreva-se agora
-                  </Link>
-                  <p className="mt-2 mb-0 text-success-emphasis small">
-                    👨‍💻👩‍💻 Poucas vagas restantes! Garanta seu lugar.
-                  </p>
-                </>
-              ) : (
-                <Alert variant="danger" className="text-center">
-                  🚫 Vagas Encerradas! Fique de olho nas próximas turmas! 
-                </Alert>
-              )}
-            </div>
-            <div className="course-bottom-cta d-flex flex-column gap-2">
-              <span className="fw-semibold text-primary">
-                Prefere conversar antes de se inscrever?
-              </span>
-              <Button
-                as="a"
-                href={WHATSAPP_LINK}
-                target="_blank"
-                rel="noopener noreferrer"
-                variant="outline-success"
-                className="d-inline-flex align-items-center gap-2"
-              >
-                <FaWhatsapp /> Falar com a Programa AI
-              </Button>
-            </div>
-          </div>
-        </Card.Body>
-      </Card>
+        {videoModal}
 
         <ParcelamentoModal
           show={showParcelamento}
@@ -717,6 +751,26 @@ const CourseDetails: React.FC = () => {
           valor={parseFloat(course.price.replace("R$", "").replace(",", "."))}
         />
       </Container>
+
+      {!isDesktop && (
+        <div className="course-sticky-cta">
+          <Button
+            as="a"
+            href={WHATSAPP_LINK}
+            target="_blank"
+            rel="noopener noreferrer"
+            variant="success"
+            className="course-sticky-primary"
+          >
+            <FaWhatsapp /> WhatsApp
+          </Button>
+          {course.ativo && (
+            <Link to={`/inscricao/${course.id}`} className="btn btn-outline-primary course-sticky-secondary">
+              Inscrição
+            </Link>
+          )}
+        </div>
+      )}
     </>
   )
 }
