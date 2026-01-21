@@ -67,8 +67,8 @@
   position: absolute;
   inset: 0;
   background:
-    radial-gradient(circle at top left, rgba(15, 23, 42, 0.55) 0%, rgba(15, 23, 42, 0) 55%),
-    linear-gradient(120deg, rgba(11, 31, 54, 0.92) 0%, rgba(11, 31, 54, 0.6) 55%, rgba(11, 31, 54, 0.9) 100%);
+    radial-gradient(circle at top left, rgba(15, 23, 42, 0.45) 0%, rgba(15, 23, 42, 0) 55%),
+    linear-gradient(120deg, rgba(11, 31, 54, 0.75) 0%, rgba(11, 31, 54, 0.4) 55%, rgba(11, 31, 54, 0.75) 100%);
 }
 
 .course-hero-content {
@@ -94,17 +94,17 @@
 .course-hero-textPanel {
   display: grid;
   gap: 0.75rem;
-  padding: 0.75rem;
+  padding: 0.6rem;
   border-radius: 16px;
-  background: rgba(15, 23, 42, 0.4);
-  border: 1px solid rgba(148, 163, 184, 0.25);
-  backdrop-filter: blur(8px);
+  background: rgba(15, 23, 42, 0.65);
+  border: 1px solid rgba(148, 163, 184, 0.3);
+  backdrop-filter: blur(12px);
   min-width: 0;
   max-width: 100%;
   width: calc(100% - 4px);
   margin-inline: 2px;
   box-sizing: border-box;
-  padding-inline: 1.25rem;
+  padding-inline: 1rem;
   overflow: visible;
 }
 
@@ -125,16 +125,16 @@
   max-width: 100%;
   overflow-wrap: anywhere;
   word-break: break-word;
-  text-shadow: 0 6px 18px rgba(15, 23, 42, 0.6);
+  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.8), 0 4px 16px rgba(15, 23, 42, 0.9);
 }
 
 .course-hero-description {
-  color: rgba(255, 255, 255, 0.8);
+  color: rgba(255, 255, 255, 0.9);
   margin: 0;
   max-width: 540px;
   overflow-wrap: anywhere;
   word-break: break-word;
-  text-shadow: 0 4px 16px rgba(15, 23, 42, 0.55);
+  text-shadow: 0 2px 6px rgba(0, 0, 0, 0.7), 0 4px 12px rgba(15, 23, 42, 0.8);
 }
 
 .course-typewriter-banner {
@@ -153,12 +153,12 @@
   white-space: normal;
   overflow-wrap: anywhere;
   word-break: break-word;
-  text-shadow: 0 4px 14px rgba(15, 23, 42, 0.45);
+  text-shadow: 0 2px 6px rgba(0, 0, 0, 0.7), 0 4px 12px rgba(15, 23, 42, 0.8);
 }
 
 .course-typewriter-title {
-  color: rgba(255, 255, 255, 0.8);
-  text-shadow: 0 4px 14px rgba(15, 23, 42, 0.55);
+  color: rgba(255, 255, 255, 0.85);
+  text-shadow: 0 2px 6px rgba(0, 0, 0, 0.7), 0 4px 12px rgba(15, 23, 42, 0.8);
 }
 
 .course-hero-chips {
@@ -547,10 +547,11 @@
   }
 
   .course-hero-textPanel {
-    padding: 1rem;
-    padding-inline: 1.6rem;
+    padding: 0.75rem;
+    padding-inline: 1.2rem;
     width: calc(100% - 6px);
     margin-inline: 3px;
+    background: rgba(15, 23, 42, 0.7);
   }
 
   .course-hero-textPanel,
