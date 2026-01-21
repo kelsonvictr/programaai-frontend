@@ -84,6 +84,7 @@ const CourseDetails: React.FC = () => {
   const [showParcelamento, setShowParcelamento] = useState(false)
   const [showAllDates, setShowAllDates] = useState(false)
   const [profPhotoError, setProfPhotoError] = useState(false)
+  const [heroIndex, setHeroIndex] = useState(0)
   const [showVideoModal, setShowVideoModal] = useState(false)
   const [isDesktop, setIsDesktop] = useState(false)
 
@@ -175,6 +176,14 @@ const CourseDetails: React.FC = () => {
     return [breadcrumb, courseSchema]
   }, [course, canonicalPath, enrollmentPath])
 
+  const heroImages = useMemo(() => {
+    const modules = import.meta.glob("/public/hero-photos/*.{png,jpg,jpeg,webp,avif}", {
+      eager: true,
+      as: "url",
+    }) as Record<string, string>
+    return Object.values(modules)
+  }, [])
+
   useEffect(() => {
     if (!id) {
       navigate("/cursos")
@@ -191,6 +200,14 @@ const CourseDetails: React.FC = () => {
       })
       .finally(() => setLoading(false))
   }, [id, navigate])
+
+  useEffect(() => {
+    if (heroImages.length <= 1) return
+    const interval = window.setInterval(() => {
+      setHeroIndex(prev => (prev + 1) % heroImages.length)
+    }, 4000)
+    return () => window.clearInterval(interval)
+  }, [heroImages.length])
 
   useEffect(() => {
     if (typeof window === "undefined") return
@@ -415,6 +432,17 @@ const CourseDetails: React.FC = () => {
             <div className="course-hero-ribbon">VAGAS ENCERRADAS</div>
           )}
           <div className="course-hero-media" />
+          {heroImages.length > 0 && (
+            <div className="course-hero-slides" aria-hidden="true">
+              {heroImages.map((src, idx) => (
+                <div
+                  key={src}
+                  className={`course-hero-slide${idx === heroIndex ? " is-active" : ""}`}
+                  style={{ backgroundImage: `url(${src})` }}
+                />
+              ))}
+            </div>
+          )}
           <div className="course-hero-overlay" />
           <div className="course-hero-content">
             <div className="course-hero-text">

@@ -41,6 +41,27 @@
   transform: scale(1.03);
 }
 
+.course-hero-slides {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.course-hero-slide {
+  position: absolute;
+  inset: 0;
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position: center;
+  opacity: 0;
+  transition: opacity 1.2s ease;
+  will-change: opacity;
+}
+
+.course-hero-slide.is-active {
+  opacity: 1;
+}
+
 .course-hero-overlay {
   position: absolute;
   inset: 0;
@@ -447,5 +468,15 @@
   .course-hero-media {
     transform: none;
     background-position: 30% center;
+  }
+
+  .course-hero-slide {
+    background-position: 30% center;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .course-hero-slide {
+    transition: none;
   }
 }
