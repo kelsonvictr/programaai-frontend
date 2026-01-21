@@ -28,6 +28,7 @@
   padding: 2.5rem 1.5rem;
   box-shadow: 0 18px 40px rgba(15, 23, 42, 0.18);
   margin-bottom: 2rem;
+  box-sizing: border-box;
 }
 
 .course-hero-media {
@@ -77,6 +78,8 @@
   gap: 2rem;
   min-width: 0;
   max-width: 100%;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 .course-hero-text {
@@ -84,6 +87,8 @@
   gap: 0.75rem;
   min-width: 0;
   max-width: 100%;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 .course-hero-textPanel {
@@ -96,6 +101,9 @@
   backdrop-filter: blur(8px);
   min-width: 0;
   max-width: 100%;
+  width: 100%;
+  box-sizing: border-box;
+  padding-right: 1rem;
 }
 
 .course-hero-kicker {
@@ -161,6 +169,8 @@
   gap: 1.5rem;
   min-width: 0;
   max-width: 100%;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 .course-hero-ribbon {
@@ -178,12 +188,18 @@
 }
 
 .course-price-box {
-  background: rgba(255, 255, 255, 0.1);
-  border: 1px solid rgba(255, 255, 255, 0.2);
+  background: rgba(2, 6, 23, 0.68);
+  border: 1px solid rgba(148, 163, 184, 0.35);
   border-radius: 16px;
   padding: 1.25rem;
+  box-shadow: 0 18px 40px rgba(2, 6, 23, 0.45);
+  backdrop-filter: blur(10px);
   display: grid;
   gap: 0.5rem;
+  box-sizing: border-box;
+  width: 100%;
+  max-width: 100%;
+  padding-right: 1.35rem;
 }
 
 .course-price-header {
@@ -191,6 +207,7 @@
   justify-content: space-between;
   align-items: center;
   font-weight: 600;
+  gap: 0.75rem;
 }
 
 .course-price-label {
@@ -199,7 +216,10 @@
 }
 
 .course-price-value {
-  font-size: 1.4rem;
+  font-size: 1.65rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  text-shadow: 0 8px 18px rgba(15, 23, 42, 0.55);
 }
 
 .course-price-note {
@@ -212,11 +232,13 @@
   gap: 0.35rem;
   font-size: 0.9rem;
   color: rgba(255, 255, 255, 0.9);
+  text-shadow: 0 6px 14px rgba(15, 23, 42, 0.45);
 }
 
 .course-price-info {
   font-size: 0.85rem;
   color: rgba(255, 255, 255, 0.7);
+  text-shadow: 0 6px 14px rgba(15, 23, 42, 0.4);
 }
 
 .course-link {
@@ -238,6 +260,7 @@
 
 .course-link--onDark {
   color: #93c5fd;
+  text-shadow: 0 6px 14px rgba(15, 23, 42, 0.45);
 }
 
 .course-link--onDark:hover,
@@ -502,7 +525,7 @@
   }
 
   .course-hero-card {
-    padding: 1.5rem 1rem;
+    padding: 1.6rem 1.1rem;
   }
 
   .course-hero-title {
@@ -511,6 +534,7 @@
 
   .course-hero-textPanel {
     padding: 1rem;
+    padding-right: 1.15rem;
   }
 
   .course-hero-media {
