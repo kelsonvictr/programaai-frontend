@@ -65,7 +65,9 @@
 .course-hero-overlay {
   position: absolute;
   inset: 0;
-  background: linear-gradient(120deg, rgba(11, 31, 54, 0.9) 0%, rgba(11, 31, 54, 0.55) 55%, rgba(11, 31, 54, 0.88) 100%);
+  background:
+    radial-gradient(circle at top left, rgba(15, 23, 42, 0.55) 0%, rgba(15, 23, 42, 0) 55%),
+    linear-gradient(120deg, rgba(11, 31, 54, 0.92) 0%, rgba(11, 31, 54, 0.6) 55%, rgba(11, 31, 54, 0.9) 100%);
 }
 
 .course-hero-content {
@@ -73,11 +75,27 @@
   z-index: 1;
   display: grid;
   gap: 2rem;
+  min-width: 0;
+  max-width: 100%;
 }
 
 .course-hero-text {
   display: grid;
   gap: 0.75rem;
+  min-width: 0;
+  max-width: 100%;
+}
+
+.course-hero-textPanel {
+  display: grid;
+  gap: 0.75rem;
+  padding: 0.75rem;
+  border-radius: 16px;
+  background: rgba(15, 23, 42, 0.4);
+  border: 1px solid rgba(148, 163, 184, 0.25);
+  backdrop-filter: blur(8px);
+  min-width: 0;
+  max-width: 100%;
 }
 
 .course-hero-kicker {
@@ -91,18 +109,41 @@
   font-size: clamp(1.9rem, 3vw, 2.8rem);
   font-weight: 700;
   margin: 0;
+  max-width: 100%;
+  overflow-wrap: anywhere;
+  word-break: break-word;
+  text-shadow: 0 6px 18px rgba(15, 23, 42, 0.6);
 }
 
 .course-hero-description {
   color: rgba(255, 255, 255, 0.8);
   margin: 0;
   max-width: 540px;
+  overflow-wrap: anywhere;
+  word-break: break-word;
+  text-shadow: 0 4px 16px rgba(15, 23, 42, 0.55);
+}
+
+.course-typewriter-banner {
+  max-width: 100%;
+  overflow-wrap: anywhere;
+  word-break: break-word;
+}
+
+.course-typewriter-text {
+  display: inline-block;
+  max-width: 100%;
+  white-space: normal;
+  overflow-wrap: anywhere;
+  word-break: break-word;
+  text-shadow: 0 4px 14px rgba(15, 23, 42, 0.45);
 }
 
 .course-hero-chips {
   display: flex;
   flex-wrap: wrap;
   gap: 0.5rem;
+  max-width: 100%;
 }
 
 .course-chip {
@@ -112,11 +153,14 @@
   padding: 0.35rem 0.7rem;
   border-radius: 999px;
   font-size: 0.8rem;
+  max-width: 100%;
 }
 
 .course-hero-actions {
   display: grid;
   gap: 1.5rem;
+  min-width: 0;
+  max-width: 100%;
 }
 
 .course-hero-ribbon {
@@ -463,6 +507,10 @@
 
   .course-hero-title {
     word-break: break-word;
+  }
+
+  .course-hero-textPanel {
+    padding: 1rem;
   }
 
   .course-hero-media {

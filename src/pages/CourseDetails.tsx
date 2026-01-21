@@ -446,18 +446,20 @@ const CourseDetails: React.FC = () => {
           <div className="course-hero-overlay" />
           <div className="course-hero-content">
             <div className="course-hero-text">
-              <span className="course-hero-kicker">Curso presencial em João Pessoa</span>
-              <h1 className="course-hero-title">{course.title}</h1>
-              <div className="course-typewriter-banner">
-                <span className="course-typewriter-title">Experiência Imersiva e Presencial</span>
-                <Typewriter phrases={COURSE_TYPEWRITER_PHRASES} className="course-typewriter-text" />
-              </div>
-              <p className="course-hero-description">{course.description}</p>
-              <div className="course-hero-chips">
-                <span className="course-chip">{course.modalidade}</span>
-                <span className="course-chip">{datesCountLabel}</span>
-                <span className="course-chip">{course.horario}</span>
-                <span className="course-chip">João Pessoa - PB</span>
+              <div className="course-hero-textPanel">
+                <span className="course-hero-kicker">Curso presencial em João Pessoa</span>
+                <h1 className="course-hero-title">{course.title}</h1>
+                <div className="course-typewriter-banner">
+                  <span className="course-typewriter-title">Experiência Imersiva e Presencial</span>
+                  <Typewriter phrases={COURSE_TYPEWRITER_PHRASES} className="course-typewriter-text" />
+                </div>
+                <p className="course-hero-description">{course.description}</p>
+                <div className="course-hero-chips">
+                  <span className="course-chip">{course.modalidade}</span>
+                  <span className="course-chip">{datesCountLabel}</span>
+                  <span className="course-chip">{course.horario}</span>
+                  <span className="course-chip">João Pessoa - PB</span>
+                </div>
               </div>
             </div>
 
