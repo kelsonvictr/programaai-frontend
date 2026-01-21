@@ -141,7 +141,7 @@
   max-width: 100%;
   overflow-wrap: anywhere;
   word-break: break-word;
-  min-height: 3.6em;
+  height: 5em;
   display: flex;
   flex-direction: column;
   gap: 0.25rem;
@@ -561,7 +561,7 @@
   }
 
   .course-typewriter-banner {
-    min-height: 4em;
+    height: 6em;
   }
 
   .course-typewriter-text {
