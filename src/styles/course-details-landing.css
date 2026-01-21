@@ -104,7 +104,7 @@
   width: 100%;
   box-sizing: border-box;
   padding-right: 1rem;
-  overflow: hidden;
+  overflow: visible;
 }
 
 .course-hero-kicker {
