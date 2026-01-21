@@ -593,7 +593,12 @@ const CourseDetails: React.FC = () => {
         {course.modulos && (
           <section className="course-section-card">
             <h2 className="course-section-title">Módulos do curso</h2>
-            <Accordion className="course-accordion" flush>
+            <Accordion 
+              className="course-accordion" 
+              flush 
+              defaultActiveKey={course.modulos.map((_, idx) => `${idx}`)}
+              alwaysOpen
+            >
               {course.modulos.map((item, idx) => (
                 <Accordion.Item eventKey={`${idx}`} key={`${item}-${idx}`}>
                   <Accordion.Header>Módulo {idx + 1}</Accordion.Header>
