@@ -104,6 +104,7 @@
   width: 100%;
   box-sizing: border-box;
   padding-right: 1rem;
+  overflow: hidden;
 }
 
 .course-hero-kicker {
@@ -111,6 +112,9 @@
   letter-spacing: 0.2em;
   font-size: 0.7rem;
   color: rgba(255, 255, 255, 0.7);
+  max-width: 100%;
+  overflow-wrap: anywhere;
+  word-break: break-word;
 }
 
 .course-hero-title {
@@ -145,6 +149,11 @@
   overflow-wrap: anywhere;
   word-break: break-word;
   text-shadow: 0 4px 14px rgba(15, 23, 42, 0.45);
+}
+
+.course-typewriter-title {
+  color: rgba(255, 255, 255, 0.8);
+  text-shadow: 0 4px 14px rgba(15, 23, 42, 0.55);
 }
 
 .course-hero-chips {
@@ -535,6 +544,13 @@
   .course-hero-textPanel {
     padding: 1rem;
     padding-right: 1.15rem;
+  }
+
+  .course-hero-textPanel,
+  .course-hero-actions,
+  .course-price-box {
+    width: 100%;
+    max-width: 100%;
   }
 
   .course-hero-media {
