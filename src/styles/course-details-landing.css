@@ -100,10 +100,10 @@
   border: 1px solid rgba(148, 163, 184, 0.25);
   backdrop-filter: blur(8px);
   min-width: 0;
-  max-width: 100%;
+  max-width: calc(100% - 2px);
   width: 100%;
   box-sizing: border-box;
-  padding-right: 1rem;
+  padding-inline: 1.1rem;
   overflow: visible;
 }
 
@@ -543,7 +543,7 @@
 
   .course-hero-textPanel {
     padding: 1rem;
-    padding-right: 1.15rem;
+    padding-inline: 1.35rem;
   }
 
   .course-hero-textPanel,
