@@ -1,7 +1,8 @@
 // src/components/CourseCard.tsx
 import { Link } from "react-router-dom"
 import { Card, Button } from "react-bootstrap"
-import { FaLinkedin } from "react-icons/fa"
+import { FaLinkedin, FaArrowRight } from "react-icons/fa"
+import "./CourseCard.css"
 
 interface CourseCardProps {
   id: string             
@@ -28,57 +29,53 @@ const CourseCard: React.FC<CourseCardProps> = ({
   modalidade,
 }) => {
   return (
-    <Card className="mb-4 h-100 shadow-sm">
+    <Card className="course-card-dark h-100">
       <Link to={`/cursos/${id}`}>
         <Card.Img
           variant="top"
           src={imageUrl}
           alt={`Banner do curso ${title}`}
-          style={{ height: 180, objectFit: "cover", cursor: "pointer" }}
+          className="course-card-img"
         />
       </Link>
 
       <Card.Body className="d-flex flex-column">
-        <small className="text-uppercase text-primary fw-bold mb-2">
+        <span className="course-card-badge">
           {modalidade}
-        </small>
+        </span>
 
-        <Card.Title>{title}</Card.Title>
+        <Card.Title className="course-card-title">{title}</Card.Title>
 
-        <div className="mb-2">
-          <strong>Datas:</strong>{" "}
-          <span className="text-muted d-inline-flex flex-wrap gap-2">
-            {datas.map((d, i) => (
-              <span key={i}>{d}</span>
-            ))}
-          </span>
-          <br />
-          <strong>Horário:</strong> <span className="text-muted">{horario}</span>
+        <div className="course-card-meta">
+          <div className="meta-row">
+            <strong>Datas:</strong>{" "}
+            <span>
+              {datas.slice(0, 2).map((d, i) => (
+                <span key={i}>{d}{i < Math.min(datas.length, 2) - 1 ? ", " : ""}</span>
+              ))}
+              {datas.length > 2 && <span>...</span>}
+            </span>
+          </div>
+          <div className="meta-row">
+            <strong>Horário:</strong> <span>{horario}</span>
+          </div>
         </div>
 
-        <div className="mb-2">
+        <div className="course-card-prof">
           <strong>Professor(a):</strong> {professor}{" "}
-          <a href={linkedin} target="_blank" rel="noopener noreferrer">
-            <FaLinkedin size={20} className="ms-2 text-primary" />
+          <a href={linkedin} target="_blank" rel="noopener noreferrer" className="linkedin-icon">
+            <FaLinkedin size={18} />
           </a>
         </div>
 
-        <Card.Text
-          className="flex-grow-1 text-muted"
-          style={{
-            display: "-webkit-box",
-            WebkitLineClamp: 4,
-            WebkitBoxOrient: "vertical",
-            overflow: "hidden",
-          }}
-        >
+        <Card.Text className="course-card-desc flex-grow-1">
           {description}
         </Card.Text>
 
         <div className="text-end mt-3">
           <Link to={`/cursos/${id}`}>
-            <Button variant="primary" size="sm">
-              Ver Detalhes
+            <Button className="course-card-btn">
+              Ver Detalhes <FaArrowRight />
             </Button>
           </Link>
         </div>

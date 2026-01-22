@@ -2,11 +2,12 @@
 import React, { useEffect, useMemo, useState } from "react"
 import { Container, Row, Col, Button, Card, Spinner, Alert } from "react-bootstrap"
 import { Link } from "react-router-dom"
-import { FaWhatsapp } from "react-icons/fa"
-import BannerCarousel from "../components/BannerCarousel"
+import { FaWhatsapp, FaMapMarkerAlt, FaArrowRight, FaCheckCircle } from "react-icons/fa"
+import { SiPython, SiJavascript, SiReact, SiTypescript, SiDocker, SiKubernetes, SiPostgresql, SiMongodb, SiGit, SiLinux, SiAmazon, SiGooglecloud } from "react-icons/si"
 import axios from "axios"
 import Seo from "../components/Seo"
 import { buildAbsoluteUrl } from "../config/seo"
+import "../styles/home-dark.css"
 
 interface Course {
   id: string
@@ -32,10 +33,41 @@ interface Course {
   ativo?: boolean
 }
 
+const HERO_WORDS = [
+  "Fullstack",
+  "Java",
+  "Python", 
+  "Programação",
+  "QA",
+  "Dados",
+  "Cloud",
+  "React",
+  "Segurança",
+  "Golang",
+  "Microservices",
+  "Spring",
+  "IA",
+  "SQL",
+]
+
 const Home: React.FC = () => {
   const [courses, setCourses] = useState<Course[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
+  const [currentWordIndex, setCurrentWordIndex] = useState(0)
+  const [isAnimating, setIsAnimating] = useState(false)
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setIsAnimating(true)
+      setTimeout(() => {
+        setCurrentWordIndex(prev => (prev + 1) % HERO_WORDS.length)
+        setIsAnimating(false)
+      }, 300)
+    }, 2500)
+
+    return () => clearInterval(interval)
+  }, [])
 
   useEffect(() => {
     let isMounted = true
@@ -57,7 +89,6 @@ const Home: React.FC = () => {
     return () => { isMounted = false }
   }, [])
 
-  // pega só cursos ativos (se 'ativo' vier ausente, considera ativo)
   const novidades = useMemo(() => {
     const ativos = courses.filter(c => c.ativo !== false)
     const toNum = (v: string) => {
@@ -90,13 +121,36 @@ const Home: React.FC = () => {
         canonical="/"
         structuredData={structuredData}
       />
-      <BannerCarousel />
 
-      <Container className="py-2">
-        <Row className="align-items-start">
-          <Col md={6} className="mb-4 mb-md-0 text-md-start text-center">
-            <h3>Muita Programação, IA e Café! ☕👩‍💻👨‍💻</h3>
+      {/* HERO SECTION - 21st.dev Style */}
+      <section className="hero-section">
+        <div className="hero-glow hero-glow-1" />
+        <div className="hero-glow hero-glow-2" />
+        
+        <Container className="hero-container">
+          <div className="hero-badge">
+            <span className="hero-badge-dot" />
+            <span>Cursos Presenciais em João Pessoa</span>
+          </div>
 
+          <h1 className="hero-title">
+            Aprenda{" "}
+            <span className={`hero-word ${isAnimating ? 'animating' : ''}`}>
+              {HERO_WORDS[currentWordIndex]}
+            </span>
+            <br />
+            na prática, com mentoria
+          </h1>
+
+          <p className="hero-subtitle">
+            Turmas reduzidas, professores de mercado e muita prática. 
+            Saia do zero ao profissional com acompanhamento personalizado.
+          </p>
+
+          <div className="hero-buttons">
+            <Link to="/cursos" className="hero-btn-primary">
+              Ver Cursos <FaArrowRight />
+            </Link>
             <Button
               as="a"
               href={`https://wa.me/5583986608771?text=${encodeURIComponent(
@@ -104,146 +158,180 @@ const Home: React.FC = () => {
               )}`}
               target="_blank"
               rel="noopener noreferrer"
-              variant="success"
-              size="lg"
+              className="hero-btn-secondary"
             >
-              <FaWhatsapp size={20} className="me-2" />
-              Fale conosco pelo WhatsApp
+              <FaWhatsapp /> Falar no WhatsApp
             </Button>
+          </div>
 
-            <Row
-              className="my-4 text-center justify-content-center"
-              style={{ gap: "8px", flexWrap: "nowrap", overflowX: "auto" }}
-            >
-              <Col xs={6} md={6} style={{ flex: "0 0 auto", maxWidth: "300px" }}>
-                <video
-                  src="/videos/sala-web.mp4"
-                  autoPlay
-                  muted
-                  loop
-                  playsInline
-                  className="rounded shadow"
-                  style={{ maxHeight: 250, width: "100%" }}
-                />
-              </Col>
+          <div className="hero-location">
+            <FaMapMarkerAlt className="hero-location-icon" />
+            <span>Av. Epitácio Pessoa, 1133 - João Pessoa/PB</span>
+          </div>
+        </Container>
+      </section>
 
-              <Col xs={6} md={6} style={{ flex: "0 0 auto", maxWidth: "300px" }}>
-                <video
-                  src="/videos/video-2-web.mp4"
-                  autoPlay
-                  muted
-                  loop
-                  playsInline
-                  className="rounded shadow"
-                  style={{ maxHeight: 250, width: "100%" }}
-                />
-              </Col>
-            </Row>
+      {/* TECH ICONS SECTION */}
+      <section className="tech-section">
+        <Container>
+          <p className="tech-label">Tecnologias que ensinamos</p>
+          <div className="tech-icons">
+            <SiPython title="Python" />
+            <SiJavascript title="JavaScript" />
+            <SiTypescript title="TypeScript" />
+            <SiReact title="React" />
+            <SiDocker title="Docker" />
+            <SiKubernetes title="Kubernetes" />
+            <SiPostgresql title="PostgreSQL" />
+            <SiMongodb title="MongoDB" />
+            <SiGit title="Git" />
+            <SiLinux title="Linux" />
+            <SiAmazon title="AWS" />
+            <SiGooglecloud title="Google Cloud" />
+          </div>
+        </Container>
+      </section>
 
-            <p className="lead">
-              Cursos livres e bootcamps que te preparam para o mercado!
-              Sem lenga-lenga, muita prática, IA e didática!
+      {/* BENEFITS SECTION */}
+      <section className="benefits-section">
+        <Container>
+          <div className="benefits-header">
+            <h2 className="section-title">Por que estudar presencial?</h2>
+            <p className="section-subtitle">
+              Vantagens que fazem a diferença na sua jornada de aprendizado
             </p>
+          </div>
 
-            <p className="mt-3 text-muted d-flex align-items-center justify-content-md-start justify-content-center">
-              <span role="img" aria-label="map">📍</span>
-              <a
-                href="https://www.google.com/maps/place/Empresarial+Eldorado/@-7.119502,-34.8602648,17z"
+          <Row className="benefits-grid">
+            <Col md={4} className="benefit-card">
+              <div className="benefit-icon">🎯</div>
+              <h3>Foco Total</h3>
+              <p>Ambiente preparado para você se concentrar, sem distrações de casa</p>
+            </Col>
+            <Col md={4} className="benefit-card">
+              <div className="benefit-icon">�‍🏫</div>
+              <h3>Mentoria Direta</h3>
+              <p>Tire dúvidas na hora, sem ficar dias esperando resposta</p>
+            </Col>
+            <Col md={4} className="benefit-card">
+              <div className="benefit-icon">🤝</div>
+              <h3>Networking</h3>
+              <p>Construa conexões com colegas que podem virar parceiros de trabalho</p>
+            </Col>
+          </Row>
+        </Container>
+      </section>
+
+      {/* COURSES SECTION */}
+      <section className="courses-section">
+        <Container>
+          <div className="courses-header">
+            <h2 className="section-title">Próximas Turmas</h2>
+            <p className="section-subtitle">
+              Cursos com vagas abertas para você começar agora
+            </p>
+          </div>
+
+          {loading && (
+            <div className="text-center my-5">
+              <Spinner animation="border" role="status" />
+            </div>
+          )}
+
+          {error && (
+            <Alert variant="danger" className="my-4">{error}</Alert>
+          )}
+
+          {!loading && !error && novidades.length === 0 && (
+            <p className="text-center text-muted">Sem turmas abertas no momento. Volte em breve! 🙂</p>
+          )}
+
+          <Row className="courses-grid">
+            {!loading && !error && novidades.map(curso => (
+              <Col lg={6} key={curso.id} className="mb-4">
+                <Card className="course-card-modern">
+                  <Card.Body>
+                    <div className="course-card-header">
+                      <img
+                        src={curso.profFoto}
+                        alt={curso.professor}
+                        className="course-prof-photo"
+                      />
+                      <div className="course-card-info">
+                        <Card.Title className="course-card-title">{curso.title}</Card.Title>
+                        <span className="course-card-prof">Prof. {curso.professor}</span>
+                      </div>
+                    </div>
+                    
+                    <p className="course-card-desc">{curso.description.slice(0, 100)}...</p>
+                    
+                    <div className="course-card-meta">
+                      <span className="course-meta-item">
+                        <FaCheckCircle /> {curso.duration}
+                      </span>
+                      <span className="course-meta-item">
+                        <FaCheckCircle /> {curso.modalidade}
+                      </span>
+                    </div>
+
+                    <div className="course-card-footer">
+                      <span className="course-card-price">{curso.price}</span>
+                      <Link to={`/cursos/${curso.id}`} className="course-card-btn">
+                        Ver detalhes <FaArrowRight />
+                      </Link>
+                    </div>
+                  </Card.Body>
+                </Card>
+              </Col>
+            ))}
+          </Row>
+
+          <div className="text-center mt-4">
+            <Link to="/cursos" className="btn-see-all">
+              Ver todos os cursos <FaArrowRight />
+            </Link>
+          </div>
+        </Container>
+      </section>
+
+      {/* CTA SECTION */}
+      <section className="cta-section">
+        <Container>
+          <div className="cta-content">
+            <h2 className="cta-title">Pronto para começar?</h2>
+            <p className="cta-subtitle">
+              Fale com a gente e descubra qual curso é ideal para você
+            </p>
+            <div className="cta-buttons">
+              <Button
+                as="a"
+                href={`https://wa.me/5583986608771?text=${encodeURIComponent(
+                  "Oi prof. Kelson, venho do site da programa AI, poderia me esclarecer algumas dúvidas?"
+                )}`}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="ms-2 text-decoration-none"
-                style={{ color: "var(--color-secondary)" }}
+                className="cta-btn-primary"
               >
-                Programa AI – Empresarial Eldorado, Sala 104<br />
-                Av. Pres. Epitácio Pessoa – João Pessoa/PB
-              </a>
-            </p>
+                <FaWhatsapp /> Falar no WhatsApp
+              </Button>
+              <Link to="/cursos" className="cta-btn-secondary">
+                Explorar Cursos
+              </Link>
+            </div>
 
-            <Link to="/cursos" className="btn btn-primary btn-lg">
-              Conheça os Cursos
-            </Link>
-          </Col>
-
-          <Col md={6}>
-            <h3 className="mb-4">Novidades</h3>
-
-            {loading && (
-              <div className="text-center my-4">
-                <Spinner animation="border" role="status" />
+            <div className="cta-location">
+              <FaMapMarkerAlt />
+              <div>
+                <strong>Programa AI</strong>
+                <br />
+                Empresarial Eldorado, Sala 104
+                <br />
+                Av. Epitácio Pessoa, 1133 - João Pessoa/PB
               </div>
-            )}
-
-            {error && (
-              <Alert variant="danger">{error}</Alert>
-            )}
-
-            {!loading && !error && novidades.length === 0 && (
-              <p className="text-muted">Sem novidades no momento. Volte em breve! 🙂</p>
-            )}
-
-            {!loading && !error && novidades.map(curso => (
-              <Card key={curso.id} className="mb-3 shadow-sm">
-                <Card.Body className="d-flex">
-                  {/* Foto do professor */}
-                  <img
-                    src={curso.profFoto}
-                    alt={curso.professor}
-                    style={{
-                      width: 64,
-                      height: 64,
-                      objectFit: "cover",
-                      borderRadius: "50%",
-                      marginRight: "1rem"
-                    }}
-                  />
-
-                  <div className="flex-grow-1">
-                    <Card.Title className="h6 mb-1">{curso.title}</Card.Title>
-                    <small className="text-muted d-block mb-1">{curso.duration}</small>
-                    <p className="mb-2">
-                      {curso.description.slice(0, 60)}...
-                    </p>
-                    <Link
-                      to={`/cursos/${curso.id}`}
-                      className="btn btn-outline-primary btn-sm"
-                    >
-                      Ver curso
-                    </Link>
-                  </div>
-                </Card.Body>
-              </Card>
-            ))}
-          </Col>
-        </Row>
-
-        <Row className="mt-5">
-          <Col>
-            <Card className="shadow-sm">
-              <Card.Body className="text-center">
-                <Card.Title>Onde Estamos?</Card.Title>
-                <Card.Text className="mb-4">
-                  <span role="img" aria-label="local">📍</span>{" "}
-                  Av. Pres. Epitácio Pessoa, 1133 – Estados, João Pessoa – PB<br />
-                  (Empresarial Eldorado – Sala 104)
-                </Card.Text>
-                <Button
-                  as="a"
-                  href={`https://wa.me/5583986608771?text=${encodeURIComponent(
-                    "Oi prof. Kelson, venho do site da programa AI, poderia me esclarecer algumas dúvidas?"
-                  )}`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  variant="success"
-                  size="lg"
-                >
-                  <FaWhatsapp size={20} className="me-2" />
-                  Fale conosco pelo WhatsApp
-                </Button>
-              </Card.Body>
-            </Card>
-          </Col>
-        </Row>
-      </Container>
+            </div>
+          </div>
+        </Container>
+      </section>
     </>
   )
 }

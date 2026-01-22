@@ -4,6 +4,7 @@ import { BrowserRouter } from "react-router-dom";
 import App from "./App";
 import "./styles/variables.css";
 import "./styles/custom.css";
+import "./styles/dark-theme.css";
 
 import "bootstrap/dist/css/bootstrap.min.css";
 

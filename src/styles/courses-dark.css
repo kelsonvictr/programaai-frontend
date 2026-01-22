@@ -1,0 +1,198 @@
+/* Courses Page - Dark Theme */
+
+/* ========================================
+   PAGE WRAPPER
+======================================== */
+.courses-page {
+  background: linear-gradient(180deg, #0a0e27 0%, #0f172a 30%, #1e293b 100%);
+  min-height: 100vh;
+}
+
+/* ========================================
+   HERO SECTION
+======================================== */
+.courses-hero {
+  padding: 5rem 0 3rem;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+}
+
+.courses-hero::before {
+  content: '';
+  position: absolute;
+  top: -200px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 800px;
+  height: 500px;
+  background: radial-gradient(circle, rgba(102, 126, 234, 0.15), transparent);
+  pointer-events: none;
+}
+
+.courses-hero-title {
+  font-size: clamp(2rem, 5vw, 3rem);
+  font-weight: 800;
+  color: #f1f5f9;
+  margin-bottom: 1rem;
+  position: relative;
+  z-index: 1;
+}
+
+.courses-hero-subtitle {
+  font-size: 1.1rem;
+  color: #94a3b8;
+  max-width: 600px;
+  margin: 0 auto 2rem;
+  position: relative;
+  z-index: 1;
+}
+
+.courses-hero-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.875rem 1.75rem;
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+  color: #fff !important;
+  font-weight: 600;
+  font-size: 1rem;
+  border: none !important;
+  border-radius: 12px;
+  transition: all 0.3s ease;
+  position: relative;
+  z-index: 1;
+}
+
+.courses-hero-btn:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 15px 40px rgba(16, 185, 129, 0.4);
+  color: #fff !important;
+}
+
+/* ========================================
+   CONTAINER
+======================================== */
+.courses-container {
+  padding-top: 2rem;
+  padding-bottom: 4rem;
+}
+
+/* ========================================
+   ESTRUTURA PREVIEW
+======================================== */
+.estrutura-preview {
+  padding: 3rem;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 20px;
+  margin-bottom: 3rem;
+  text-align: center;
+}
+
+.estrutura-title {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #f1f5f9;
+  margin-bottom: 0.5rem;
+}
+
+.estrutura-subtitle {
+  color: #94a3b8;
+  font-size: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.estrutura-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.65rem 1.25rem;
+  background: transparent;
+  border: 1px solid rgba(102, 126, 234, 0.4);
+  color: #667eea;
+  font-weight: 600;
+  font-size: 0.9rem;
+  border-radius: 10px;
+  text-decoration: none;
+  transition: all 0.3s ease;
+}
+
+.estrutura-btn:hover {
+  background: rgba(102, 126, 234, 0.1);
+  color: #818cf8;
+}
+
+/* ========================================
+   COURSES SECTIONS
+======================================== */
+.courses-active-section,
+.courses-closed-section {
+  margin-bottom: 3rem;
+}
+
+.courses-section-title {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #f1f5f9;
+  margin-bottom: 1.5rem;
+  padding-bottom: 0.75rem;
+  border-bottom: 2px solid rgba(102, 126, 234, 0.3);
+  display: inline-block;
+}
+
+.courses-section-title.closed {
+  color: #64748b;
+  border-bottom-color: rgba(100, 116, 139, 0.3);
+}
+
+/* ========================================
+   CLOSED COURSE OVERLAY
+======================================== */
+.closed-course-wrapper {
+  position: relative;
+  border-radius: 16px;
+  overflow: hidden;
+}
+
+.closed-course-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(10, 14, 39, 0.75);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+}
+
+.closed-course-overlay span {
+  background: rgba(239, 68, 68, 0.2);
+  border: 1px solid rgba(239, 68, 68, 0.4);
+  color: #fca5a5;
+  padding: 0.5rem 1.25rem;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 1rem;
+}
+
+/* ========================================
+   RESPONSIVE
+======================================== */
+@media (max-width: 768px) {
+  .courses-hero {
+    padding: 3rem 1rem 2rem;
+  }
+
+  .estrutura-preview {
+    padding: 1.5rem;
+    margin-left: -0.5rem;
+    margin-right: -0.5rem;
+  }
+
+  .courses-section-title {
+    font-size: 1.25rem;
+  }
+}

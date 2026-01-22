@@ -3,11 +3,13 @@ import React, { useState, useEffect, useMemo } from "react"
 import { Container, Row, Col, Button, Spinner, Alert } from "react-bootstrap"
 import CourseCard from "../components/CourseCard"
 import axios from "axios"
-import { FaWhatsapp } from "react-icons/fa"
+import { FaWhatsapp, FaArrowRight } from "react-icons/fa"
 import { useGallery } from '../hooks/useGalleriesIndex'
 import PhotoGallery from '../components/media/PhotoGallery'
 import Seo from "../components/Seo"
 import { buildAbsoluteUrl } from "../config/seo"
+import { Link } from "react-router-dom"
+import "../styles/courses-dark.css"
 
 interface Course {
   id: string
@@ -71,104 +73,105 @@ const Courses: React.FC = () => {
   }, [activeCourses])
 
   return (
-    <Container className="py-5">
+    <div className="courses-page">
       <Seo
         title="Cursos de Programação Presenciais em João Pessoa | Programa AI"
         description="Veja todos os cursos presenciais e bootcamps de programação da Programa AI em João Pessoa - PB. Escolha sua trilha e fale com a gente para garantir a vaga."
         canonical="/cursos"
         structuredData={structuredData}
       />
-      <h2 className="mb-4">Nossos Cursos</h2>
-
-      <Button
-        as="a"
-        href={`https://wa.me/5583986608771?text=${encodeURIComponent(
-          "Oi prof. Kelson, venho do site da programa AI, poderia me esclarecer algumas dúvidas?"
-        )}`}
-        target="_blank"
-        rel="noopener noreferrer"
-        variant="success"
-        size="lg"
-        className="mb-4"
-      >
-        <FaWhatsapp size={20} className="me-2" />
-        Fala com a gente pelo WhatsApp
-      </Button>
-
-      {/* Bloco compacto da estrutura */}
-      {latestFotos.length > 0 && (
-        <section className="mb-5">
-          <h5 className="mb-2">Veja nossa estrutura</h5>
-          <p className="text-muted mb-3">
-            Mesão colaborativo, conforto NR17 e café sem fim — o lugar certo pra transformar ideia em código.
+      
+      {/* Hero Section */}
+      <section className="courses-hero">
+        <Container>
+          <h1 className="courses-hero-title">Nossos Cursos</h1>
+          <p className="courses-hero-subtitle">
+            Escolha sua trilha e transforme sua carreira com aulas presenciais em João Pessoa
           </p>
+          <Button
+            as="a"
+            href={`https://wa.me/5583986608771?text=${encodeURIComponent(
+              "Oi prof. Kelson, venho do site da programa AI, poderia me esclarecer algumas dúvidas?"
+            )}`}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="courses-hero-btn"
+          >
+            <FaWhatsapp size={20} />
+            Falar no WhatsApp
+          </Button>
+        </Container>
+      </section>
 
-          <PhotoGallery
-            items={latestFotos.map(f => ({ src: f.src }))}
-            maxVisible={3}
-            onSeeAll={() => (window.location.href = '/estrutura')}
-          />
+      <Container className="courses-container">
+        {/* Bloco compacto da estrutura */}
+        {latestFotos.length > 0 && (
+          <section className="estrutura-preview">
+            <h2 className="estrutura-title">Veja nossa estrutura</h2>
+            <p className="estrutura-subtitle">
+              Mesão colaborativo, conforto NR17 e café sem fim — o lugar certo pra transformar ideia em código.
+            </p>
 
-          <div className="text-center mt-3">
-            <button
-              className="btn btn-outline-primary btn-sm"
-              onClick={() => (window.location.href = '/estrutura')}
-            >
-              Ver todas as fotos
-            </button>
+            <PhotoGallery
+              items={latestFotos.map(f => ({ src: f.src }))}
+              maxVisible={3}
+              onSeeAll={() => (window.location.href = '/estrutura')}
+            />
+
+            <div className="text-center mt-4">
+              <Link to="/estrutura" className="estrutura-btn">
+                Ver todas as fotos <FaArrowRight />
+              </Link>
+            </div>
+          </section>
+        )}
+
+        {loading && (
+          <div className="text-center my-5">
+            <Spinner animation="border" role="status" />
           </div>
-        </section>
-      )}
+        )}
 
-      {loading && (
-        <div className="text-center my-5">
-          <Spinner animation="border" role="status" />
-        </div>
-      )}
+        {error && (
+          <Alert variant="danger">{error}</Alert>
+        )}
 
-      {error && (
-        <Alert variant="danger">{error}</Alert>
-      )}
-
-      {!loading && !error && (
-        <>
-          {/* Cursos ativos */}
-          <Row>
-            {activeCourses.map(curso => (
-              <Col key={curso.id} sm={12} md={6} lg={4} className="mb-4">
-                <CourseCard {...curso} />
-              </Col>
-            ))}
-          </Row>
-
-          {/* Cursos encerrados */}
-          {closedCourses.length > 0 && (
-            <>
-              <h3 className="mt-5 text-center text-muted">Vagas Encerradas</h3>
+        {!loading && !error && (
+          <>
+            {/* Cursos ativos */}
+            <section className="courses-active-section">
+              <h2 className="courses-section-title">Turmas Abertas</h2>
               <Row>
-                {closedCourses.map(curso => (
+                {activeCourses.map(curso => (
                   <Col key={curso.id} sm={12} md={6} lg={4} className="mb-4">
-                    <div className="position-relative">
-                      <CourseCard {...curso} />
-                      {/* Sobreposição visual */}
-                      <div
-                        className="position-absolute top-0 start-0 w-100 h-100 d-flex align-items-center justify-content-center"
-                        style={{
-                          backgroundColor: "rgba(0,0,0,0.6)",
-                          pointerEvents: "none"  // permite clonck-through
-                        }}
-                      >
-                        <span className="text-white fs-4">Vagas encerradas</span>
-                      </div>
-                    </div>
+                    <CourseCard {...curso} />
                   </Col>
                 ))}
               </Row>
-            </>
-          )}
-        </>
-      )}
-    </Container>
+            </section>
+
+            {/* Cursos encerrados */}
+            {closedCourses.length > 0 && (
+              <section className="courses-closed-section">
+                <h2 className="courses-section-title closed">Vagas Encerradas</h2>
+                <Row>
+                  {closedCourses.map(curso => (
+                    <Col key={curso.id} sm={12} md={6} lg={4} className="mb-4">
+                      <div className="closed-course-wrapper">
+                        <CourseCard {...curso} />
+                        <div className="closed-course-overlay">
+                          <span>Vagas encerradas</span>
+                        </div>
+                      </div>
+                    </Col>
+                  ))}
+                </Row>
+              </section>
+            )}
+          </>
+        )}
+      </Container>
+    </div>
   )
 }
 

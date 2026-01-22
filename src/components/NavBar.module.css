@@ -1,11 +1,12 @@
 .navbar {
-  /* fundo escuro elegante  */
-  background: linear-gradient(90deg, #0f1c2f 0%, #1c2f40 100%) !important;
+  /* fundo escuro combinando com o design system */
+  background: linear-gradient(90deg, #0a0e27 0%, #0f172a 100%) !important;
   position: sticky;
   top: 0;
   z-index: 1000;
   padding: 0.5rem 1rem;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  box-shadow: 0 2px 20px rgba(0, 0, 0, 0.3);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
   overflow: hidden;
 }
 
@@ -52,16 +53,16 @@
 .navLink {
   position: relative;
   z-index: 1;
-  color: #ffffff;
+  color: #94a3b8 !important;
   margin-left: 1rem;
-  font-weight: 600;
-  text-shadow: 0 0 5px rgba(0, 0, 0, 0.4);
+  font-weight: 500;
+  text-shadow: none;
   transition: color 0.2s ease;
 }
 
 .navLink:hover,
 .navLink:focus {
-  color: #66ccff;
+  color: #667eea !important;
   text-decoration: none;
 }
 
@@ -70,7 +71,7 @@
   display: block;
   width: 0;
   height: 2px;
-  background: #66ccff;
+  background: linear-gradient(90deg, #667eea, #764ba2);
   transition: width 0.3s;
 }
 
@@ -80,19 +81,19 @@
 
 /* Quando o menu está expandido no mobile */
 .navbar-collapse.show {
-  background-color: #0f1c2f; /* mantém o fundo escuro no mobile */
+  background-color: #0a0e27;
   padding: 1rem;
-  border-top: 1px solid #333;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
 }
 
 /* Links dentro do menu mobile */
 .navbar-collapse.show .navLink {
-  color: #d4af37 !important; /* dourado */
+  color: #f1f5f9 !important;
   font-weight: 600;
 }
 
 .navbar-collapse.show .navLink:hover {
-  color: #fffacd !important; /* tom mais claro de dourado no hover */
+  color: #667eea !important;
 }
 
 .navbar-collapse {

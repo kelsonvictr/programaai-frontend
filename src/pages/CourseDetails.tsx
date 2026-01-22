@@ -706,7 +706,12 @@ const CourseDetails: React.FC = () => {
         {course.faq && course.faq.length > 0 && (
           <section className="course-section-card">
             <h2 className="course-section-title">Perguntas frequentes</h2>
-            <Accordion className="course-accordion" flush>
+            <Accordion 
+              className="course-accordion" 
+              flush
+              defaultActiveKey={course.faq.map((_, idx) => `${idx}`)}
+              alwaysOpen
+            >
               {course.faq.map((item, idx) => (
                 <Accordion.Item eventKey={`${idx}`} key={`${item.pergunta}-${idx}`}>
                   <Accordion.Header>{item.pergunta}</Accordion.Header>

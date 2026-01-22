@@ -3,6 +3,8 @@ import { Container, Row, Col, Card, Form, Button, Alert, Spinner, Modal } from "
 import { useSearchParams } from "react-router-dom"
 import api from "../api/axios"
 import CourseGallery from "../components/CourseGallery"
+import { FaBell, FaCheckCircle } from "react-icons/fa"
+import "../styles/lista-espera-dark.css"
 
 const CURSOS_DISPONIVEIS = [
   "Curso Presencial Programação Fullstack",
@@ -135,25 +137,32 @@ const ListaEspera = () => {
   }
 
   return (
-    <section style={{ background: "#f7f9fc", minHeight: "100vh", padding: "60px 0" }}>
-      <Container>
+    <div className="lista-espera-page">
+      {/* Hero Section */}
+      <section className="lista-espera-hero">
+        <Container>
+          <div className="hero-icon">
+            <FaBell />
+          </div>
+          <h1 className="lista-espera-hero-title">Lista de Espera</h1>
+          <p className="lista-espera-hero-subtitle">
+            Entre na lista e receba em primeira mão o início das inscrições da Programa AI
+          </p>
+        </Container>
+      </section>
+
+      <Container className="lista-espera-container">
         <Row className="justify-content-center">
           <Col lg={8}>
-            <Card className="shadow-lg border-0">
+            <Card className="lista-espera-card">
               <Card.Body className="p-4 p-md-5">
-                <div className="text-center mb-4">
-                  <h1 className="fw-bold">Lista de Espera</h1>
-                  <p className="text-muted mb-0">
-                    Entre na lista e receba em primeira mão o início das inscrições da programa AI.
-                  </p>
+                <div className="prioridade-badge">
+                  <FaCheckCircle />
+                  <span>Ao se cadastrar, você garante prioridade para ser avisado sobre novas turmas e novidades exclusivas.</span>
                 </div>
 
-                <Alert variant="info" className="text-center">
-                  Ao se cadastrar, você garante prioridade para ser avisado sobre novas turmas e novidades exclusivas.
-                </Alert>
-
                 <div className="mb-4">
-                  <h5 className="text-center text-uppercase text-muted small mb-3">
+                  <h5 className="gallery-label">
                     Conheça um pouco da nossa estrutura
                   </h5>
                   <CourseGallery />
@@ -287,6 +296,7 @@ const ListaEspera = () => {
                   centered
                   backdrop="static"
                   keyboard={false}
+                  className="lista-espera-modal"
                 >
                   <Modal.Header closeButton className="border-0 pb-0">
                     <Modal.Title className="fw-bold">
@@ -313,7 +323,7 @@ const ListaEspera = () => {
           </Col>
         </Row>
       </Container>
-    </section>
+    </div>
   )
 }
 

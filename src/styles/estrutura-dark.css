@@ -1,0 +1,227 @@
+/* Estrutura Page - Dark Theme */
+
+/* ========================================
+   PAGE WRAPPER
+======================================== */
+.estrutura-page {
+  background: linear-gradient(180deg, #0a0e27 0%, #0f172a 30%, #1e293b 100%);
+  min-height: 100vh;
+}
+
+/* ========================================
+   HERO SECTION
+======================================== */
+.estrutura-hero {
+  padding: 5rem 0 3rem;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+}
+
+.estrutura-hero::before {
+  content: '';
+  position: absolute;
+  top: -200px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 800px;
+  height: 500px;
+  background: radial-gradient(circle, rgba(16, 185, 129, 0.12), transparent);
+  pointer-events: none;
+}
+
+.estrutura-hero-title {
+  font-size: clamp(2rem, 5vw, 3rem);
+  font-weight: 800;
+  color: #f1f5f9;
+  margin-bottom: 1rem;
+  position: relative;
+  z-index: 1;
+}
+
+.estrutura-hero-subtitle {
+  font-size: 1.1rem;
+  color: #94a3b8;
+  max-width: 600px;
+  margin: 0 auto;
+  position: relative;
+  z-index: 1;
+}
+
+/* ========================================
+   CONTAINER
+======================================== */
+.estrutura-container {
+  padding-top: 2rem;
+  padding-bottom: 4rem;
+}
+
+/* ========================================
+   LOCATION CARD
+======================================== */
+.estrutura-location-card {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  padding: 2rem;
+  background: rgba(16, 185, 129, 0.08);
+  border: 1px solid rgba(16, 185, 129, 0.2);
+  border-radius: 16px;
+  margin-bottom: 2rem;
+}
+
+.location-icon {
+  width: 60px;
+  height: 60px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, #10b981, #059669);
+  border-radius: 14px;
+  flex-shrink: 0;
+}
+
+.location-icon svg {
+  font-size: 1.5rem;
+  color: #fff;
+}
+
+.location-content h3 {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: #f1f5f9;
+  margin-bottom: 0.25rem;
+}
+
+.location-content p {
+  color: #94a3b8;
+  margin-bottom: 0.5rem;
+  font-size: 0.95rem;
+}
+
+.location-link {
+  color: #10b981;
+  font-weight: 600;
+  font-size: 0.9rem;
+  text-decoration: none;
+  transition: color 0.3s ease;
+}
+
+.location-link:hover {
+  color: #34d399;
+  text-decoration: underline;
+}
+
+/* ========================================
+   FEATURES GRID
+======================================== */
+.estrutura-features {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1rem;
+  margin-bottom: 2.5rem;
+}
+
+.feature-item {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 1rem 1.25rem;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 12px;
+  color: #cbd5e1;
+  font-size: 0.9rem;
+  font-weight: 500;
+  transition: all 0.3s ease;
+}
+
+.feature-item:hover {
+  background: rgba(102, 126, 234, 0.08);
+  border-color: rgba(102, 126, 234, 0.2);
+  transform: translateY(-2px);
+}
+
+.feature-icon {
+  font-size: 1.25rem;
+  color: #667eea;
+}
+
+/* ========================================
+   DESCRIPTION
+======================================== */
+.estrutura-description {
+  padding: 2rem;
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 16px;
+  margin-bottom: 3rem;
+}
+
+.estrutura-description p {
+  color: #94a3b8;
+  font-size: 1.05rem;
+  line-height: 1.8;
+  margin-bottom: 1rem;
+}
+
+.estrutura-description p:last-child {
+  margin-bottom: 0;
+}
+
+.estrutura-description strong {
+  color: #f1f5f9;
+  font-weight: 600;
+}
+
+/* ========================================
+   GALLERY SECTIONS
+======================================== */
+.estrutura-gallery-section {
+  margin-bottom: 3rem;
+}
+
+.gallery-section-title {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #f1f5f9;
+  margin-bottom: 1.5rem;
+  padding-bottom: 0.75rem;
+  border-bottom: 2px solid rgba(102, 126, 234, 0.3);
+  display: inline-block;
+}
+
+/* ========================================
+   RESPONSIVE
+======================================== */
+@media (max-width: 768px) {
+  .estrutura-hero {
+    padding: 3rem 1rem 2rem;
+  }
+
+  .estrutura-location-card {
+    flex-direction: column;
+    text-align: center;
+    padding: 1.5rem;
+  }
+
+  .estrutura-features {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .feature-item {
+    flex-direction: column;
+    text-align: center;
+    padding: 1rem;
+  }
+
+  .estrutura-description {
+    padding: 1.5rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .estrutura-features {
+    grid-template-columns: 1fr;
+  }
+}

@@ -1,0 +1,268 @@
+/* Lista de Espera Page - Dark Theme */
+
+/* ========================================
+   PAGE WRAPPER
+======================================== */
+.lista-espera-page {
+  background: linear-gradient(180deg, #0a0e27 0%, #0f172a 30%, #1e293b 100%);
+  min-height: 100vh;
+}
+
+/* ========================================
+   HERO SECTION
+======================================== */
+.lista-espera-hero {
+  padding: 5rem 0 3rem;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+}
+
+.lista-espera-hero::before {
+  content: '';
+  position: absolute;
+  top: -200px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 800px;
+  height: 500px;
+  background: radial-gradient(circle, rgba(245, 158, 11, 0.12), transparent);
+  pointer-events: none;
+}
+
+.hero-icon {
+  width: 80px;
+  height: 80px;
+  margin: 0 auto 1.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, rgba(245, 158, 11, 0.2), rgba(234, 179, 8, 0.1));
+  border: 2px solid rgba(245, 158, 11, 0.3);
+  border-radius: 20px;
+  position: relative;
+  z-index: 1;
+}
+
+.hero-icon svg {
+  font-size: 2rem;
+  color: #f59e0b;
+}
+
+.lista-espera-hero-title {
+  font-size: clamp(2rem, 5vw, 3rem);
+  font-weight: 800;
+  color: #f1f5f9;
+  margin-bottom: 1rem;
+  position: relative;
+  z-index: 1;
+}
+
+.lista-espera-hero-subtitle {
+  font-size: 1.1rem;
+  color: #94a3b8;
+  max-width: 600px;
+  margin: 0 auto;
+  position: relative;
+  z-index: 1;
+}
+
+/* ========================================
+   CONTAINER
+======================================== */
+.lista-espera-container {
+  padding-top: 2rem;
+  padding-bottom: 4rem;
+}
+
+/* ========================================
+   CARD
+======================================== */
+.lista-espera-card {
+  background: rgba(255, 255, 255, 0.03) !important;
+  border: 1px solid rgba(255, 255, 255, 0.08) !important;
+  border-radius: 20px !important;
+}
+
+.lista-espera-card .card-body {
+  background: transparent;
+}
+
+/* ========================================
+   PRIORIDADE BADGE
+======================================== */
+.prioridade-badge {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+  padding: 1rem 1.25rem;
+  background: rgba(16, 185, 129, 0.1);
+  border: 1px solid rgba(16, 185, 129, 0.2);
+  border-radius: 12px;
+  margin-bottom: 2rem;
+  color: #10b981;
+  font-size: 0.95rem;
+}
+
+.prioridade-badge svg {
+  font-size: 1.25rem;
+  flex-shrink: 0;
+  margin-top: 0.1rem;
+}
+
+.prioridade-badge span {
+  color: #a7f3d0;
+}
+
+/* ========================================
+   GALLERY LABEL
+======================================== */
+.gallery-label {
+  text-align: center;
+  text-transform: uppercase;
+  color: #64748b;
+  font-size: 0.8rem;
+  letter-spacing: 0.1em;
+  margin-bottom: 1rem;
+}
+
+/* ========================================
+   FORM STYLES
+======================================== */
+.lista-espera-card .form-label {
+  color: #e2e8f0;
+  font-weight: 500;
+  font-size: 0.95rem;
+}
+
+.lista-espera-card .form-control,
+.lista-espera-card .form-select {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  color: #f1f5f9;
+  border-radius: 10px;
+  padding: 0.75rem 1rem;
+  transition: all 0.3s ease;
+}
+
+.lista-espera-card .form-control:focus,
+.lista-espera-card .form-select:focus {
+  background: rgba(255, 255, 255, 0.08);
+  border-color: rgba(102, 126, 234, 0.5);
+  box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.15);
+  color: #f1f5f9;
+}
+
+.lista-espera-card .form-control::placeholder {
+  color: #64748b;
+}
+
+.lista-espera-card .form-text {
+  color: #64748b !important;
+}
+
+.lista-espera-card .form-select option {
+  background: #1e293b;
+  color: #f1f5f9;
+}
+
+/* ========================================
+   SUBMIT BUTTON
+======================================== */
+.lista-espera-card .btn-primary {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border: none;
+  padding: 1rem 2rem;
+  font-size: 1.05rem;
+  font-weight: 600;
+  border-radius: 12px;
+  transition: all 0.3s ease;
+}
+
+.lista-espera-card .btn-primary:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 15px 40px rgba(102, 126, 234, 0.4);
+}
+
+.lista-espera-card .btn-primary:disabled {
+  opacity: 0.6;
+  transform: none;
+}
+
+/* ========================================
+   ALERTS
+======================================== */
+.lista-espera-card .alert-danger {
+  background: rgba(239, 68, 68, 0.1);
+  border: 1px solid rgba(239, 68, 68, 0.3);
+  color: #fca5a5;
+  border-radius: 10px;
+}
+
+/* ========================================
+   MODAL
+======================================== */
+.lista-espera-modal .modal-content {
+  background: linear-gradient(180deg, #1e293b 0%, #0f172a 100%);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 16px;
+}
+
+.lista-espera-modal .modal-header {
+  border-bottom: none;
+}
+
+.lista-espera-modal .modal-title {
+  color: #f1f5f9;
+}
+
+.lista-espera-modal .modal-body {
+  color: #94a3b8;
+}
+
+.lista-espera-modal .modal-body .text-success {
+  color: #10b981 !important;
+}
+
+.lista-espera-modal .modal-footer {
+  border-top: none;
+}
+
+.lista-espera-modal .btn-primary {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border: none;
+  border-radius: 10px;
+  padding: 0.65rem 1.5rem;
+}
+
+.lista-espera-modal .btn-close {
+  filter: invert(1);
+}
+
+/* ========================================
+   RESPONSIVE
+======================================== */
+@media (max-width: 768px) {
+  .lista-espera-hero {
+    padding: 3rem 1rem 2rem;
+  }
+
+  .hero-icon {
+    width: 60px;
+    height: 60px;
+  }
+
+  .hero-icon svg {
+    font-size: 1.5rem;
+  }
+
+  .lista-espera-card .card-body {
+    padding: 1.5rem !important;
+  }
+
+  .prioridade-badge {
+    flex-direction: column;
+    text-align: center;
+    align-items: center;
+  }
+}
