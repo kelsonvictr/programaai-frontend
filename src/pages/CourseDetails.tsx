@@ -28,6 +28,7 @@ import Seo from "../components/Seo"
 import { buildAbsoluteUrl, SITE_URL } from "../config/seo"
 import Typewriter from "../components/Typewriter"
 import CourseGallery from "../components/CourseGallery"
+import LocationCarousel from "../components/LocationCarousel"
 import "../styles/course-details-landing.css"
 
 const COURSE_TYPEWRITER_PHRASES = [
@@ -47,7 +48,6 @@ const COURSE_TYPEWRITER_PHRASES = [
 const WHATSAPP_MESSAGE =
   "Oi prof. Kelson, venho do site da programa AI, poderia me esclarecer algumas dúvidas?"
 const WHATSAPP_LINK = `https://wa.me/5583986608771?text=${encodeURIComponent(WHATSAPP_MESSAGE)}`
-const LOCATION_IMAGE = "/galeria-course-details/14.jpg"
 
 interface Course {
   id: string
@@ -718,6 +718,17 @@ const CourseDetails: React.FC = () => {
           </section>
         )}
 
+        <section className="course-benefit-banner course-benefit-banner-1">
+          <div className="benefit-banner-content">
+            <div className="benefit-banner-icon">🤝</div>
+            <h3 className="benefit-banner-title">Aprendizado Colaborativo</h3>
+            <p className="benefit-banner-text">
+              Presencial não é só estar no mesmo lugar. É trocar ideias, debater soluções e 
+              aprender com quem está no mesmo caminho que você.
+            </p>
+          </div>
+        </section>
+
         <section className="course-section-card">
           <h2 className="course-section-title">Como é a experiência presencial</h2>
           <p className="course-section-subtitle">
@@ -726,22 +737,43 @@ const CourseDetails: React.FC = () => {
           <CourseGallery />
         </section>
 
+        <section className="course-benefit-banner course-benefit-banner-2">
+          <div className="benefit-banner-content">
+            <div className="benefit-banner-icon">💡</div>
+            <h3 className="benefit-banner-title">Feedback em Tempo Real</h3>
+            <p className="benefit-banner-text">
+              Dúvidas surgem? Professores e monitores ao seu lado para responder na hora. 
+              Sem esperar, sem ficar travado. Evolua mais rápido.
+            </p>
+          </div>
+        </section>
+
+        <section className="course-benefit-banner course-benefit-banner-3">
+          <div className="benefit-banner-content">
+            <div className="benefit-banner-icon">🎯</div>
+            <h3 className="benefit-banner-title">Networking que Transforma</h3>
+            <p className="benefit-banner-text">
+              Seus colegas de turma são sua primeira rede profissional. Projetos em grupo, 
+              networking e conexões que vão além da sala de aula.
+            </p>
+          </div>
+        </section>
+
         <section className="course-section-card course-location-card mt-0">
-          <Row className="g-3 align-items-center">
+          <Row className="g-4 align-items-center">
             <Col md={5}>
-              <img
-                src={LOCATION_IMAGE}
-                alt="Espaço físico da Programa AI"
-                className="course-location-image"
-                loading="lazy"
-              />
+              <LocationCarousel />
             </Col>
             <Col md={7}>
-              <h6 className="text-primary fw-bold mb-2">Onde acontecem as aulas</h6>
-              <p className="mb-3">
-                Empresarial Eldorado — Av. Epitácio Pessoa, 1133, Sala 104. Ambiente climatizado,
-                cadeiras ergonômicas NR17, projetor multimídia e café à vontade para manter o ritmo
-                nas práticas presenciais.
+              <div className="location-header mb-3">
+                <span className="location-badge">📍 Localização</span>
+                <h3 className="location-title">Av. Epitácio Pessoa, 1133 - João Pessoa/PB</h3>
+                <p className="location-subtitle">Empresarial Eldorado, Sala 104</p>
+              </div>
+              <p className="location-description">
+                Ambiente climatizado, cadeiras ergonômicas NR17, projetor multimídia e café à vontade 
+                para manter o ritmo nas práticas presenciais. Um espaço projetado para você aprender 
+                com foco e conforto.
               </p>
               <ul className="course-location-list">
                 <li>
@@ -778,6 +810,17 @@ const CourseDetails: React.FC = () => {
               </div>
             </Col>
           </Row>
+        </section>
+
+        <section className="course-benefit-banner course-benefit-banner-4">
+          <div className="benefit-banner-content">
+            <div className="benefit-banner-icon">🚀</div>
+            <h3 className="benefit-banner-title">Foco e Disciplina que Funcionam</h3>
+            <p className="benefit-banner-text">
+              Estudar em casa tem suas distrações. No presencial, você entra no modo foco: 
+              ambiente preparado, colegas motivados e aprendizado intenso.
+            </p>
+          </div>
         </section>
 
         {course.faq && course.faq.length > 0 && (

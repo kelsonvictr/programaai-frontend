@@ -1,0 +1,154 @@
+/* Location Carousel Styles */
+.location-carousel {
+  position: relative;
+  border-radius: 16px;
+  overflow: hidden;
+  width: 100%;
+  height: 320px;
+  box-shadow: 0 8px 24px rgba(15, 23, 42, 0.15);
+}
+
+.location-carousel-wrapper {
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+
+.location-carousel-image {
+  position: absolute;
+  inset: 0;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  transition: opacity 0.3s ease-in-out, transform 0.3s ease-in-out;
+  transform: scale(1);
+}
+
+.location-carousel-image.transitioning {
+  opacity: 0.7;
+  transform: scale(1.05);
+}
+
+.location-carousel-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    180deg,
+    rgba(15, 23, 42, 0) 0%,
+    rgba(15, 23, 42, 0.2) 60%,
+    rgba(15, 23, 42, 0.4) 100%
+  );
+  pointer-events: none;
+}
+
+.location-carousel-indicators {
+  position: absolute;
+  bottom: 1rem;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 0.5rem;
+  z-index: 2;
+}
+
+.carousel-indicator {
+  width: 32px;
+  height: 4px;
+  border: none;
+  border-radius: 2px;
+  background: rgba(255, 255, 255, 0.4);
+  cursor: pointer;
+  transition: all 0.3s ease;
+  padding: 0;
+}
+
+.carousel-indicator:hover {
+  background: rgba(255, 255, 255, 0.6);
+}
+
+.carousel-indicator.active {
+  background: #fff;
+  width: 48px;
+}
+
+.location-carousel-badge {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(10px);
+  padding: 0.5rem 1rem;
+  border-radius: 24px;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  z-index: 2;
+}
+
+.badge-icon {
+  font-size: 1.1rem;
+}
+
+.badge-text {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #0b1f36;
+}
+
+.location-carousel-skeleton {
+  width: 100%;
+  height: 320px;
+  background: #e2e8f0;
+  border-radius: 16px;
+  position: relative;
+  overflow: hidden;
+}
+
+.skeleton-shimmer {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(255, 255, 255, 0.4) 50%,
+    transparent 100%
+  );
+  animation: shimmer 2s infinite;
+}
+
+@keyframes shimmer {
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(100%);
+  }
+}
+
+@media (max-width: 768px) {
+  .location-carousel {
+    height: 240px;
+  }
+
+  .location-carousel-skeleton {
+    height: 240px;
+  }
+
+  .carousel-indicator {
+    width: 24px;
+    height: 3px;
+  }
+
+  .carousel-indicator.active {
+    width: 36px;
+  }
+
+  .location-carousel-badge {
+    padding: 0.4rem 0.8rem;
+  }
+
+  .badge-text {
+    font-size: 0.75rem;
+  }
+}
