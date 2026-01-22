@@ -366,6 +366,117 @@
   border: 1px solid #e2e8f0;
 }
 
+.course-info-dates-section {
+  grid-column: 1 / -1;
+  padding: 1.25rem;
+}
+
+.course-dates-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+  gap: 1rem;
+  margin-top: 1rem;
+}
+
+.course-date-card {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.25);
+  transition: all 0.3s ease;
+  cursor: default;
+}
+
+.course-date-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 20px rgba(102, 126, 234, 0.35);
+}
+
+.course-date-card-header {
+  background: rgba(255, 255, 255, 0.2);
+  padding: 0.4rem;
+  text-align: center;
+  backdrop-filter: blur(10px);
+}
+
+.course-date-month {
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: #fff;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.course-date-card-body {
+  padding: 1rem 0.75rem 0.9rem;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.course-date-day {
+  font-size: 2rem;
+  font-weight: 800;
+  color: #fff;
+  line-height: 1;
+}
+
+.course-date-weekday {
+  font-size: 0.7rem;
+  color: rgba(255, 255, 255, 0.9);
+  text-transform: capitalize;
+  font-weight: 500;
+}
+
+.course-date-card-more {
+  background: linear-gradient(135deg, #94a3b8 0%, #64748b 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 120px;
+}
+
+.course-date-card-more .course-date-card-body {
+  padding: 0;
+}
+
+.course-date-more-count {
+  font-size: 2.5rem;
+  font-weight: 800;
+  color: #fff;
+  line-height: 1;
+}
+
+.course-date-more-label {
+  font-size: 0.85rem;
+  color: rgba(255, 255, 255, 0.9);
+  font-weight: 600;
+}
+
+.course-dates-toggle-btn {
+  margin-top: 1rem;
+  padding: 0.65rem 1.5rem;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 8px rgba(102, 126, 234, 0.3);
+}
+
+.course-dates-toggle-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+}
+
+.course-dates-toggle-btn:active {
+  transform: translateY(0);
+}
+
 .course-info-label {
   font-size: 0.8rem;
   color: #64748b;
@@ -512,6 +623,15 @@
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
+  .course-info-dates-section {
+    grid-column: 1 / -1;
+  }
+
+  .course-dates-grid {
+    grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+    gap: 0.75rem;
+  }
+
   .course-instructor {
     grid-template-columns: 120px minmax(0, 1fr);
     align-items: center;
@@ -586,6 +706,10 @@
 
   .course-hero-slide {
     background-position: 30% center;
+  }
+
+  .course-dates-grid {
+    grid-template-columns: repeat(2, 1fr);
   }
 }
 

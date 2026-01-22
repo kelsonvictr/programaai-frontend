@@ -404,8 +404,41 @@ const CourseDetails: React.FC = () => {
   ) : null
 
   const safeDates = Array.isArray(course.datas) ? course.datas : []
-  const datesToShow = showAllDates ? safeDates : safeDates.slice(0, 3)
-  const remainingDates = Math.max(safeDates.length - 3, 0)
+  const datesToShow = showAllDates ? safeDates : safeDates.slice(0, 6)
+  const remainingDates = Math.max(safeDates.length - 6, 0)
+
+  // Função para formatar datas
+  const formatDateInfo = (dateStr: string) => {
+    const months = ["JAN", "FEV", "MAR", "ABR", "MAI", "JUN", "JUL", "AGO", "SET", "OUT", "NOV", "DEZ"]
+    const weekdays = ["domingo", "segunda", "terça", "quarta", "quinta", "sexta", "sábado"]
+    
+    // Tenta parsear a data no formato DD/MM/YYYY
+    const match = dateStr.match(/(\d{2})\/(\d{2})\/(\d{4})/)
+    if (match) {
+      const [, day, month, year] = match
+      const dateObj = new Date(parseInt(year), parseInt(month) - 1, parseInt(day))
+      const monthName = months[parseInt(month) - 1]
+      
+      // Extrai o dia da semana do formato original se tiver
+      const weekdayMatch = dateStr.match(/\((.*?)\)/)
+      const displayWeekday = weekdayMatch ? weekdayMatch[1] : weekdays[dateObj.getDay()]
+      
+      return {
+        day: day,
+        month: monthName,
+        weekday: displayWeekday,
+        fullDate: dateStr
+      }
+    }
+    
+    // Fallback se não conseguir parsear
+    return {
+      day: "--",
+      month: "---",
+      weekday: "",
+      fullDate: dateStr
+    }
+  }
 
   return (
     <>
@@ -529,34 +562,56 @@ const CourseDetails: React.FC = () => {
               Planeje seu ritmo de estudos e garanta sua presença nas aulas presenciais.
             </p>
           </div>
+          
           <div className="course-info-grid">
-            <div className="course-info-item">
-              <span className="course-info-label">Datas</span>
-              <span className="course-info-value">
-                {datesToShow.join(" | ")}
-                {!showAllDates && remainingDates > 0 ? ` | +${remainingDates} datas` : ""}
-              </span>
+            <div className="course-info-item course-info-dates-section">
+              <span className="course-info-label">📅 Datas das Aulas</span>
+              <div className="course-dates-grid">
+                {datesToShow.map((dateStr, idx) => {
+                  const dateInfo = formatDateInfo(dateStr)
+                  return (
+                    <div key={idx} className="course-date-card">
+                      <div className="course-date-card-header">
+                        <span className="course-date-month">{dateInfo.month}</span>
+                      </div>
+                      <div className="course-date-card-body">
+                        <span className="course-date-day">{dateInfo.day}</span>
+                        <span className="course-date-weekday">{dateInfo.weekday}</span>
+                      </div>
+                    </div>
+                  )
+                })}
+                {remainingDates > 0 && !showAllDates && (
+                  <div className="course-date-card course-date-card-more">
+                    <div className="course-date-card-body">
+                      <span className="course-date-more-count">+{remainingDates}</span>
+                      <span className="course-date-more-label">mais</span>
+                    </div>
+                  </div>
+                )}
+              </div>
               {remainingDates > 0 && (
                 <button
                   type="button"
-                  className="course-link"
+                  className="course-dates-toggle-btn"
                   onClick={() => setShowAllDates(prev => !prev)}
                   aria-label={showAllDates ? "Ver menos datas" : "Ver todas as datas"}
                 >
-                  {showAllDates ? "Ver menos" : "Ver todas"}
+                  {showAllDates ? "← Ver menos datas" : "Ver todas as datas →"}
                 </button>
               )}
             </div>
+            
             <div className="course-info-item">
-              <span className="course-info-label">Horário</span>
+              <span className="course-info-label">🕐 Horário</span>
               <span className="course-info-value">{course.horario}</span>
             </div>
             <div className="course-info-item">
-              <span className="course-info-label">Duração</span>
+              <span className="course-info-label">⏱️ Duração</span>
               <span className="course-info-value">{course.duration}</span>
             </div>
             <div className="course-info-item">
-              <span className="course-info-label">Modalidade</span>
+              <span className="course-info-label">📍 Modalidade</span>
               <span className="course-info-value">{course.modalidade}</span>
             </div>
           </div>
