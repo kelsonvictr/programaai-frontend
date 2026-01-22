@@ -3,12 +3,9 @@ import React, { useState, useEffect, useMemo } from "react"
 import { useParams, useNavigate, Link } from "react-router-dom"
 import {
   Container,
-  Card,
   Button,
   Alert,
   Spinner,
-  Ratio,
-  Modal,
   Accordion,
   Row,
   Col
@@ -17,7 +14,6 @@ import axios from "axios"
 import {
   FaLinkedin,
   FaWhatsapp,
-  FaPlay,
   FaArrowLeft,
   FaMapMarkerAlt,
   FaCheckCircle
@@ -29,6 +25,7 @@ import { buildAbsoluteUrl, SITE_URL } from "../config/seo"
 import Typewriter from "../components/Typewriter"
 import CourseGallery from "../components/CourseGallery"
 import LocationCarousel from "../components/LocationCarousel"
+import ModernVideoPlayer from "../components/ModernVideoPlayer"
 import "../styles/course-details-landing.css"
 
 const COURSE_TYPEWRITER_PHRASES = [
@@ -85,7 +82,6 @@ const CourseDetails: React.FC = () => {
   const [showAllDates, setShowAllDates] = useState(false)
   const [profPhotoError, setProfPhotoError] = useState(false)
   const [heroIndex, setHeroIndex] = useState(0)
-  const [showVideoModal, setShowVideoModal] = useState(false)
   const [isDesktop, setIsDesktop] = useState(false)
 
   const canonicalPath = course ? `/cursos/${course.id}` : undefined
@@ -261,9 +257,6 @@ const CourseDetails: React.FC = () => {
 
   const videoSrc = course.video ? `/videos-cursos/${course.video}` : null
   const videoPoster = course.bannerMobile || course.bannerSite
-  const videoCaption = "Assista ao nosso vídeo de apresentação do curso."
-  const showCombinedLayout = Boolean(videoSrc && isDesktop)
-  const handleOpenVideo = () => setShowVideoModal(true)
   const professorInitials = course.professor
     .split(" ")
     .filter(Boolean)
@@ -275,133 +268,6 @@ const CourseDetails: React.FC = () => {
       ? `${course.datas.length} encontros`
       : "Datas a confirmar"
   const nextDateLabel = course.datas?.[0] ? `Próxima turma: ${course.datas[0]}` : "Próxima turma em breve"
-  const desktopVideoCard = videoSrc ? (
-    <Card
-      role="button"
-      tabIndex={0}
-      onClick={handleOpenVideo}
-      onKeyDown={event => {
-        if (event.key === "Enter" || event.key === " ") {
-          event.preventDefault()
-          handleOpenVideo()
-        }
-      }}
-      aria-label="Assistir apresentação do curso"
-      className="border-0 shadow-lg text-white"
-      style={{
-        width: "100%",
-        maxWidth: "380px",
-        borderRadius: "24px",
-        background: "linear-gradient(160deg, #0f172a 0%, #233454 50%, #3b4b75 100%)",
-        cursor: "pointer",
-        transition: "transform 0.2s ease, box-shadow 0.2s ease",
-      }}
-    >
-      <Card.Body className="p-4 d-flex flex-column gap-3">
-        <div
-          className="position-relative rounded-4 overflow-hidden"
-          style={{ background: "#000", minHeight: "420px" }}
-        >
-          <img
-            src={videoPoster}
-            alt={`Assista o vídeo do curso ${course.title}`}
-            className="w-100 h-100"
-            style={{ objectFit: "cover" }}
-          />
-          <div
-            className="position-absolute top-0 start-0 w-100 h-100"
-            style={{
-              background: "linear-gradient(180deg, rgba(15,23,42,0) 40%, rgba(15,23,42,0.85) 100%)",
-            }}
-          />
-          <div
-            className="position-absolute top-50 start-50 translate-middle d-flex align-items-center justify-content-center"
-            style={{
-              width: "84px",
-              height: "84px",
-              borderRadius: "50%",
-              background: "rgba(15, 23, 42, 0.7)",
-              border: "3px solid rgba(255,255,255,0.75)",
-            }}
-          >
-            <FaPlay size={32} color="#fff" style={{ marginLeft: "6px" }} />
-          </div>
-        </div>
-        <div className="d-flex flex-column gap-2">
-          <span
-            className="text-white text-uppercase small fw-semibold"
-            style={{ letterSpacing: "0.08em" }}
-          >
-            APRESENTAÇÃO DO CURSO
-          </span>
-          <span className="text-white-50 small">{videoCaption}</span>
-        </div>
-        <div className="d-flex align-items-center justify-content-between">
-          <span className="badge bg-warning text-dark text-uppercase fw-semibold">Assistir agora</span>
-          <span className="text-white-50 small d-flex align-items-center gap-2">
-            Clique e veja
-            <FaPlay size={14} className="opacity-75" />
-          </span>
-        </div>
-      </Card.Body>
-    </Card>
-  ) : null
-
-  const inlineVideoCard = videoSrc ? (
-    <Card
-      className="border-0 shadow-sm overflow-hidden bg-dark text-white mx-auto mx-md-0"
-      style={{ maxWidth: "460px" }}
-    >
-      <Card.Body className="p-0">
-        <Ratio aspectRatio="16x9">
-          <video
-            src={videoSrc}
-            controls
-            preload="metadata"
-            poster={videoPoster}
-            className="w-100 h-100"
-            style={{ objectFit: "contain", backgroundColor: "#000" }}
-            playsInline
-          >
-            Seu navegador não suporta a reprodução de vídeo.
-          </video>
-        </Ratio>
-      </Card.Body>
-      <Card.Footer className="bg-dark text-white-50">{videoCaption}</Card.Footer>
-    </Card>
-  ) : null
-
-  const videoModal = videoSrc ? (
-    <Modal
-      show={showVideoModal}
-      onHide={() => setShowVideoModal(false)}
-      centered
-      size="lg"
-      contentClassName="bg-dark text-white border-0"
-    >
-      <Modal.Header closeButton closeVariant="white" className="border-0">
-        <Modal.Title className="fs-6 text-uppercase text-white-50">
-          🎥 Apresentação do Curso
-        </Modal.Title>
-      </Modal.Header>
-      <Modal.Body className="p-0">
-        <Ratio aspectRatio="16x9">
-          <video
-            src={videoSrc}
-            controls
-            autoPlay
-            preload="metadata"
-            poster={videoPoster}
-            className="w-100 h-100"
-            style={{ objectFit: "contain", backgroundColor: "#000" }}
-            playsInline
-          >
-            Seu navegador não suporta a reprodução de vídeo.
-          </video>
-        </Ratio>
-      </Modal.Body>
-    </Modal>
-  ) : null
 
   const safeDates = Array.isArray(course.datas) ? course.datas : []
   const datesToShow = showAllDates ? safeDates : safeDates.slice(0, 6)
@@ -555,17 +421,17 @@ const CourseDetails: React.FC = () => {
           </div>
         </section>
 
-        <section className="course-section-card course-section-grid">
-          <div>
+        <section className="course-section-card course-details-section">
+          <div className="course-details-header">
             <h2 className="course-section-title">Detalhes da turma</h2>
             <p className="course-section-subtitle">
               Planeje seu ritmo de estudos e garanta sua presença nas aulas presenciais.
             </p>
           </div>
           
-          <div className="course-info-grid">
+          <div className="course-details-grid">
             <div className="course-info-item course-info-dates-section">
-              <span className="course-info-label">📅 Datas das Aulas</span>
+              <span className="course-info-label">📅 DATAS DAS AULAS</span>
               <div className="course-dates-grid">
                 {datesToShow.map((dateStr, idx) => {
                   const dateInfo = formatDateInfo(dateStr)
@@ -602,32 +468,39 @@ const CourseDetails: React.FC = () => {
               )}
             </div>
             
-            <div className="course-info-item">
-              <span className="course-info-label">🕐 Horário</span>
-              <span className="course-info-value">{course.horario}</span>
-            </div>
-            <div className="course-info-item">
-              <span className="course-info-label">⏱️ Duração</span>
-              <span className="course-info-value">{course.duration}</span>
-            </div>
-            <div className="course-info-item">
-              <span className="course-info-label">📍 Modalidade</span>
-              <span className="course-info-value">{course.modalidade}</span>
+            <div className="course-info-sidebar">
+              <div className="course-info-item course-info-highlight">
+                <span className="course-info-label">🕐 HORÁRIO</span>
+                <span className="course-info-value-large">{course.horario}</span>
+                <span className="course-info-hint">Horário de João Pessoa/PB</span>
+              </div>
+              <div className="course-info-item course-info-highlight">
+                <span className="course-info-label">⏱️ DURAÇÃO</span>
+                <span className="course-info-value-large">{course.duration}</span>
+                <span className="course-info-hint">Incluindo intervalos</span>
+              </div>
+              <div className="course-info-item course-info-highlight course-info-presencial">
+                <span className="course-info-label">📍 MODALIDADE</span>
+                <span className="course-info-value-large">{course.modalidade}</span>
+                <span className="course-info-hint">Na Av. Epitácio Pessoa, João Pessoa/PB</span>
+              </div>
             </div>
           </div>
         </section>
 
         {videoSrc && (
-          <section className="course-section-card">
-            <div className="course-section-header">
+          <section className="course-section-card course-video-section">
+            <div className="course-section-header-center">
               <h2 className="course-section-title">Veja a experiência do curso</h2>
-              <p className="course-section-subtitle">{videoCaption}</p>
+              <p className="course-section-subtitle">
+                Conheça como são as aulas, o ambiente e a metodologia presencial que vai acelerar seu aprendizado
+              </p>
             </div>
-            {showCombinedLayout ? (
-              <div className="course-video-desktop">{desktopVideoCard}</div>
-            ) : (
-              <div className="course-video-mobile">{inlineVideoCard}</div>
-            )}
+            <ModernVideoPlayer 
+              videoSrc={videoSrc}
+              posterSrc={videoPoster}
+              title="Apresentação do Curso"
+            />
           </section>
         )}
 
@@ -654,12 +527,19 @@ const CourseDetails: React.FC = () => {
               defaultActiveKey={course.modulos.map((_, idx) => `${idx}`)}
               alwaysOpen
             >
-              {course.modulos.map((item, idx) => (
-                <Accordion.Item eventKey={`${idx}`} key={`${item}-${idx}`}>
-                  <Accordion.Header>Módulo {idx + 1}</Accordion.Header>
-                  <Accordion.Body>{item}</Accordion.Body>
-                </Accordion.Item>
-              ))}
+              {course.modulos.map((item, idx) => {
+                const moduleIcons = ['📚', '💻', '🔧', '🎯', '⚡', '🚀', '🔥', '✨']
+                const icon = moduleIcons[idx % moduleIcons.length]
+                return (
+                  <Accordion.Item eventKey={`${idx}`} key={`${item}-${idx}`}>
+                    <Accordion.Header>
+                      <span className="module-icon">{icon}</span>
+                      Módulo {idx + 1}
+                    </Accordion.Header>
+                    <Accordion.Body>{item}</Accordion.Body>
+                  </Accordion.Item>
+                )
+              })}
             </Accordion>
           </section>
         )}
@@ -872,8 +752,6 @@ const CourseDetails: React.FC = () => {
             </Button>
           </div>
         </section>
-
-        {videoModal}
 
         <ParcelamentoModal
           show={showParcelamento}
