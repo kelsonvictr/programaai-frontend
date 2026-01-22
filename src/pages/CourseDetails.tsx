@@ -467,7 +467,7 @@ const CourseDetails: React.FC = () => {
               <div className="course-price-box">
                 <div className="course-price-header">
                   <span className="course-price-label">Investimento</span>
-                  <span className="course-price-value">{course.price}</span>
+                  <span className="course-price-value">{course.price} <span className="fw-normal" style={{fontSize: '0.95em'}}>(Valor total do curso)</span></span>
                 </div>
                 {course.ativo && (
                   <span className="text-warning small fw-semibold">
@@ -506,7 +506,7 @@ const CourseDetails: React.FC = () => {
                   variant="success"
                   className="course-btn-primary"
                 >
-                  <FaWhatsapp /> Falar com um professor
+                  <FaWhatsapp /> Falar no Whatsapp
                 </Button>
                 {course.ativo ? (
                   <Link to={`/inscricao/${course.id}`} className="btn btn-outline-primary course-btn-secondary">
@@ -718,7 +718,7 @@ const CourseDetails: React.FC = () => {
                   variant="success"
                   className="d-inline-flex align-items-center gap-2"
                 >
-                  <FaWhatsapp /> Falar com a Programa AI
+                  <FaWhatsapp /> Falar no Whatsapp
                 </Button>
               </div>
             </Col>
