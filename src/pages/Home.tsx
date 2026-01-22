@@ -3,7 +3,8 @@ import React, { useEffect, useMemo, useState } from "react"
 import { Container, Row, Col, Button, Card, Spinner, Alert } from "react-bootstrap"
 import { Link } from "react-router-dom"
 import { FaWhatsapp, FaMapMarkerAlt, FaArrowRight, FaCheckCircle } from "react-icons/fa"
-import { SiPython, SiJavascript, SiReact, SiTypescript, SiDocker, SiKubernetes, SiPostgresql, SiMongodb, SiGit, SiLinux, SiAmazon, SiGooglecloud } from "react-icons/si"
+import { SiPython, SiJavascript, SiReact, SiTypescript, SiDocker, SiKubernetes, SiPostgresql, SiMongodb, SiGit, SiLinux, SiAmazon, SiGooglecloud, SiSpring } from "react-icons/si"
+import { DiJava } from "react-icons/di"
 import axios from "axios"
 import Seo from "../components/Seo"
 import { buildAbsoluteUrl } from "../config/seo"
@@ -180,6 +181,8 @@ const Home: React.FC = () => {
             <SiJavascript title="JavaScript" />
             <SiTypescript title="TypeScript" />
             <SiReact title="React" />
+            <DiJava title="Java" />
+            <SiSpring title="Spring" />
             <SiDocker title="Docker" />
             <SiKubernetes title="Kubernetes" />
             <SiPostgresql title="PostgreSQL" />
