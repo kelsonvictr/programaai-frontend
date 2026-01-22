@@ -467,7 +467,7 @@ const CourseDetails: React.FC = () => {
               <div className="course-price-box">
                 <div className="course-price-header">
                   <span className="course-price-label">Investimento</span>
-                  <span className="course-price-value">{course.price} <span className="fw-normal" style={{fontSize: '0.95em'}}>(Valor total do curso)</span></span>
+                  <span className="course-price-value">{course.price} <span className="course-price-subnote">(Valor total do curso)</span></span>
                 </div>
                 {course.ativo && (
                   <span className="text-warning small fw-semibold">
