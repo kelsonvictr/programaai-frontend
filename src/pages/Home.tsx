@@ -123,8 +123,23 @@ const Home: React.FC = () => {
         structuredData={structuredData}
       />
 
-      {/* HERO SECTION - 21st.dev Style */}
+      {/* HERO SECTION - 21st.dev Style with Video Background */}
       <section className="hero-section">
+        {/* Video Background */}
+        <div className="hero-video-wrapper">
+          <video
+            className="hero-video"
+            autoPlay
+            muted
+            loop
+            playsInline
+            poster="/videos/inicial-poster.jpg"
+          >
+            <source src="/videos/inicial.mp4" type="video/mp4" />
+          </video>
+          <div className="hero-video-overlay" />
+        </div>
+
         <div className="hero-glow hero-glow-1" />
         <div className="hero-glow hero-glow-2" />
         
