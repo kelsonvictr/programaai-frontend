@@ -1339,7 +1339,7 @@ export default function Admin() {
                 >
                     <thead
                       style={{ position: 'sticky', top: 0, zIndex: 1 }}
-                      className="bg-light text-muted"
+                      className="galaxy-table-thead"
                     >
                       <tr style={{ whiteSpace: 'nowrap' }}>
                         <th>Data/Hora</th>

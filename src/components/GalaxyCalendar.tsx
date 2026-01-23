@@ -340,12 +340,8 @@ export default function GalaxyCalendar(props: GalaxyCalendarProps) {
     const year = currentMonth.getFullYear()
     const month = currentMonth.getMonth()
     const dateKey = buildDateKey(year, month, day)
-    setSelectedDateKey(dateKey)
-    if (!selectedCursoId) {
-      setError('Selecione um curso para marcar as datas')
-      return
-    }
-    void toggleEvento(selectedCursoId, dateKey)
+    // Apenas seleciona o dia, não adiciona evento automaticamente
+    setSelectedDateKey(prev => prev === dateKey ? null : dateKey)
   }
 
   const toggleEvento = async (cursoId: string, dateKey: string) => {

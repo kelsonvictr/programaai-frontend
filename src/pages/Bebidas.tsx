@@ -1,7 +1,8 @@
 import React, { useEffect, useMemo, useState } from "react"
-import { Alert, Badge, Button, Card, Col, Container, Form, Row, Spinner, Table } from "react-bootstrap"
+import { Alert, Badge, Button, Col, Container, Form, Row, Spinner } from "react-bootstrap"
 import axios from "axios"
 import placeholderImg from "../assets/logo.png"
+import "../styles/bebidas-public.css"
 
 const PIX_CHAVE = "54e8d2a5-16b4-4c1b-9e70-5ee30a902579"
 const PIX_QR_PATH = "/qr.jpeg"
@@ -71,6 +72,11 @@ const Bebidas: React.FC = () => {
   const total = useMemo(() => {
     return Object.values(cart).reduce((acc, item) => acc + item.bebida.preco * item.quantidade, 0)
   }, [cart])
+  
+  const cartCount = useMemo(() => {
+    return Object.values(cart).reduce((acc, item) => acc + item.quantidade, 0)
+  }, [cart])
+
   const hoje = new Date()
   const maxDate = new Date()
   maxDate.setDate(hoje.getDate() + 30)
@@ -161,9 +167,10 @@ const Bebidas: React.FC = () => {
       setInformado(false)
       setCart({})
       void fetchBebidas()
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error(err)
-      setError(err?.response?.data?.error || "Não foi possível concluir o pedido.")
+      const axiosErr = err as { response?: { data?: { error?: string } } }
+      setError(axiosErr?.response?.data?.error || "Não foi possível concluir o pedido.")
     } finally {
       setProcessing(null)
     }
@@ -197,282 +204,306 @@ const Bebidas: React.FC = () => {
   }
 
   return (
-    <Container className="py-5" style={{ maxWidth: 1100 }}>
-      <Row className="mb-4">
-        <Col>
-          <h2 className="mb-2">Frigobar da Sala</h2>
-          <p className="text-muted mb-0">
+    <div className="bebidas-page">
+      <Container className="py-5">
+        <div className="bebidas-header">
+          <div className="bebidas-header-icon">🧊</div>
+          <h1 className="bebidas-title">Frigobar da Sala</h1>
+          <p className="bebidas-subtitle">
             Escolha suas bebidas e pague via PIX agora ou combine o pagamento para depois.
           </p>
-        </Col>
-      </Row>
+        </div>
 
-      {error && <Alert variant="danger">{error}</Alert>}
+        {error && (
+          <Alert variant="danger" className="bebidas-alert">
+            {error}
+          </Alert>
+        )}
 
-      {checkout && (
-        <Alert variant="success">
-          <div className="mb-2">
-            Pedido <strong>#{checkout.id}</strong> registrado ({checkout.tipo}).
-          </div>
-          <div className="mb-2">
-            Valor total: <strong>{money.format(checkout.total)}</strong>
-          </div>
-          <div className="mb-2">
-            Chave PIX: <strong>{checkout.pixChave || PIX_CHAVE}</strong>
-          </div>
-          {checkout.tipo === "agendamento" && (
-            <div className="text-muted small mb-2">
-              Você também recebeu por email as informações do pagamento (itens, valor e PIX).
+        {checkout && (
+          <div className="bebidas-checkout-success">
+            <div className="checkout-success-header">
+              <span className="checkout-success-icon">✓</span>
+              <h3>Pedido registrado com sucesso!</h3>
             </div>
-          )}
-          <div className="d-flex flex-column flex-md-row gap-3 align-items-start">
-            <img
-              src={PIX_QR_PATH}
-              alt="QR code PIX"
-              style={{ width: 140, height: 140, objectFit: "cover", borderRadius: 8 }}
-              onError={e => {
-                const img = e.currentTarget
-                img.style.display = "none"
-              }}
-            />
-            <div>
-              <div className="mb-2">{checkout.instrucoes}</div>
-              <div className="d-flex flex-wrap gap-2">
-                <Button
-                  size="sm"
-                  variant={copyOk ? "success" : "outline-primary"}
-                  onClick={() => copiarChavePix(checkout.pixChave || PIX_CHAVE)}
-                >
-                  {copyOk ? "Chave copiada" : "Copiar chave PIX"}
-                </Button>
-                <Button
-                  size="sm"
-                  variant={informado ? "success" : "primary"}
-                  onClick={informarPagamento}
-                  disabled={informando || informado}
-                >
-                  {informando
-                    ? "Enviando..."
-                    : informado
-                      ? "Pagamento informado"
-                      : "Informar pagamento"}
-                </Button>
+            <div className="checkout-success-details">
+              <div className="checkout-detail">
+                <span className="checkout-label">Pedido</span>
+                <span className="checkout-value">#{checkout.id.slice(0, 8)}</span>
               </div>
-              <div className="text-muted small mt-2">
-                Após realizar o PIX, clique em <strong>Informar pagamento</strong> para avisar a equipe.
+              <div className="checkout-detail">
+                <span className="checkout-label">Tipo</span>
+                <span className="checkout-value">{checkout.tipo === "pedido" ? "Pagamento imediato" : "Agendado"}</span>
+              </div>
+              <div className="checkout-detail highlight">
+                <span className="checkout-label">Total</span>
+                <span className="checkout-value">{money.format(checkout.total)}</span>
               </div>
             </div>
+            <div className="checkout-pix-section">
+              <div className="pix-qr-wrapper">
+                <img
+                  src={PIX_QR_PATH}
+                  alt="QR code PIX"
+                  className="pix-qr-code"
+                  onError={e => {
+                    const img = e.currentTarget
+                    img.style.display = "none"
+                  }}
+                />
+              </div>
+              <div className="pix-info">
+                <div className="pix-key-label">Chave PIX (copia e cola):</div>
+                <div className="pix-key-value">{checkout.pixChave || PIX_CHAVE}</div>
+                <div className="pix-actions">
+                  <Button
+                    className={`pix-copy-btn ${copyOk ? 'copied' : ''}`}
+                    onClick={() => copiarChavePix(checkout.pixChave || PIX_CHAVE)}
+                  >
+                    {copyOk ? "✓ Copiada!" : "📋 Copiar chave PIX"}
+                  </Button>
+                  <Button
+                    className={`pix-confirm-btn ${informado ? 'confirmed' : ''}`}
+                    onClick={informarPagamento}
+                    disabled={informando || informado}
+                  >
+                    {informando ? "Enviando..." : informado ? "✓ Pagamento informado" : "💰 Informar pagamento"}
+                  </Button>
+                </div>
+                <p className="pix-hint">
+                  Após realizar o PIX, clique em <strong>Informar pagamento</strong> para avisar a equipe.
+                </p>
+              </div>
+            </div>
           </div>
-        </Alert>
-      )}
+        )}
 
-      <Row className="g-4">
-        <Col xs={12} lg={7}>
-          <Card className="shadow-sm">
-            <Card.Body>
-              <Card.Title className="mb-3">Bebidas disponíveis</Card.Title>
+        <Row className="g-4">
+          <Col xs={12} lg={7}>
+            <div className="bebidas-section">
+              <h2 className="bebidas-section-title">
+                <span className="section-icon">🥤</span>
+                Bebidas disponíveis
+              </h2>
+              
               {loading && (
-                <div className="text-center py-4">
-                  <Spinner animation="border" />
+                <div className="bebidas-loading">
+                  <Spinner animation="border" variant="primary" />
+                  <span>Carregando bebidas...</span>
                 </div>
               )}
+              
               {!loading && bebidas.length === 0 && (
-                <Alert variant="info" className="mb-0">
-                  Nenhuma bebida disponível no momento.
-                </Alert>
+                <div className="bebidas-empty">
+                  <span className="empty-icon">🍹</span>
+                  <p>Nenhuma bebida disponível no momento.</p>
+                </div>
               )}
+              
               {!loading && bebidas.length > 0 && (
-                <Row className="g-3">
-                  {bebidas.map(bebida => (
-                    <Col xs={12} md={6} key={bebida.id}>
-                      <Card className="h-100 border">
-                        <Card.Body className="d-flex flex-column">
-                          <div className="d-flex gap-3 align-items-start mb-2">
-                            <img
-                              src={bebida.imagemUrl || placeholderImg}
-                              alt={bebida.nome}
-                              style={{ width: 72, height: 72, objectFit: "cover", borderRadius: 10 }}
-                              onError={e => {
-                                const img = e.currentTarget
-                                img.src = placeholderImg
-                              }}
-                            />
-                            <div className="flex-grow-1">
-                              <div className="d-flex justify-content-between align-items-start">
-                                <div>
-                                  <h5 className="mb-1">{bebida.nome}</h5>
-                                  <div className="text-muted">{money.format(bebida.preco)}</div>
-                                </div>
-                                <Badge bg={bebida.disponivel ? "success" : "secondary"}>
-                                  {bebida.disponivel ? "Disponível" : "Sem estoque"}
-                                </Badge>
-                              </div>
-                            </div>
-                          </div>
-                          <div className="mt-auto">
-                            <Button
-                              variant="primary"
-                              size="sm"
-                              disabled={!bebida.disponivel}
-                              onClick={() => addToCart(bebida)}
-                            >
-                              Adicionar ao carrinho
-                            </Button>
-                          </div>
-                        </Card.Body>
-                      </Card>
-                    </Col>
-                  ))}
-                </Row>
+                <div className="bebidas-grid">
+                  {bebidas.map(bebida => {
+                    const cartItem = cart[bebida.id]
+                    const qtyInCart = cartItem?.quantidade || 0
+                    
+                    return (
+                      <div 
+                        key={bebida.id} 
+                        className={`bebida-card ${!bebida.disponivel ? 'out-of-stock' : ''} ${qtyInCart > 0 ? 'in-cart' : ''}`}
+                      >
+                        <div className="bebida-image-wrapper">
+                          <img
+                            src={bebida.imagemUrl || placeholderImg}
+                            alt={bebida.nome}
+                            className="bebida-image"
+                            onError={e => {
+                              const img = e.currentTarget
+                              img.src = placeholderImg
+                            }}
+                          />
+                          {qtyInCart > 0 && (
+                            <div className="bebida-cart-badge">{qtyInCart}</div>
+                          )}
+                          <Badge className={`bebida-status ${bebida.disponivel ? 'available' : 'unavailable'}`}>
+                            {bebida.disponivel ? "Disponível" : "Sem estoque"}
+                          </Badge>
+                        </div>
+                        <div className="bebida-info">
+                          <h3 className="bebida-name">{bebida.nome}</h3>
+                          <div className="bebida-price">{money.format(bebida.preco)}</div>
+                        </div>
+                        <Button
+                          className="bebida-add-btn"
+                          disabled={!bebida.disponivel}
+                          onClick={() => addToCart(bebida)}
+                        >
+                          {qtyInCart > 0 ? "+ Adicionar mais" : "+ Adicionar"}
+                        </Button>
+                      </div>
+                    )
+                  })}
+                </div>
               )}
-            </Card.Body>
-          </Card>
-        </Col>
+            </div>
+          </Col>
 
-        <Col xs={12} lg={5}>
-          <Card className="shadow-sm">
-            <Card.Body>
-              <Card.Title className="mb-3">Carrinho</Card.Title>
-              {Object.keys(cart).length === 0 && (
-                <Alert variant="light" className="mb-0">
-                  Seu carrinho está vazio.
-                </Alert>
-              )}
-              {Object.keys(cart).length > 0 && (
+          <Col xs={12} lg={5}>
+            <div className="cart-section">
+              <h2 className="cart-title">
+                <span className="section-icon">🛒</span>
+                Carrinho
+                {cartCount > 0 && <span className="cart-count">{cartCount}</span>}
+              </h2>
+              
+              {Object.keys(cart).length === 0 ? (
+                <div className="cart-empty">
+                  <span className="cart-empty-icon">🛒</span>
+                  <p>Seu carrinho está vazio</p>
+                  <span className="cart-empty-hint">Adicione bebidas para começar</span>
+                </div>
+              ) : (
                 <>
-                  <Table responsive size="sm" className="align-middle">
-                    <thead>
-                      <tr>
-                        <th>Bebida</th>
-                        <th>Qtd</th>
-                        <th>Subtotal</th>
-                        <th></th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {Object.values(cart).map(item => (
-                        <tr key={item.bebida.id}>
-                          <td>{item.bebida.nome}</td>
-                          <td>
-                            <div className="d-flex align-items-center gap-2">
-                              <Button
-                                variant="outline-secondary"
-                                size="sm"
-                                onClick={() => adjustQty(item.bebida.id, -1)}
-                              >
-                                -
-                              </Button>
-                              <span>{item.quantidade}</span>
-                              <Button
-                                variant="outline-secondary"
-                                size="sm"
-                                onClick={() => adjustQty(item.bebida.id, 1)}
-                              >
-                                +
-                              </Button>
-                            </div>
-                          </td>
-                          <td>{money.format(item.bebida.preco * item.quantidade)}</td>
-                          <td className="text-end">
-                            <Button
-                              variant="link"
-                              size="sm"
-                              className="text-danger"
-                              onClick={() => removeFromCart(item.bebida.id)}
+                  <div className="cart-items">
+                    {Object.values(cart).map(item => (
+                      <div key={item.bebida.id} className="cart-item">
+                        <div className="cart-item-info">
+                          <span className="cart-item-name">{item.bebida.nome}</span>
+                          <span className="cart-item-price">{money.format(item.bebida.preco)} cada</span>
+                        </div>
+                        <div className="cart-item-controls">
+                          <div className="qty-controls">
+                            <button 
+                              className="qty-btn"
+                              onClick={() => adjustQty(item.bebida.id, -1)}
                             >
-                              Remover
-                            </Button>
-                          </td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </Table>
-
-                  <div className="d-flex justify-content-between align-items-center mb-3">
-                    <strong>Total</strong>
-                    <strong>{money.format(total)}</strong>
+                              −
+                            </button>
+                            <span className="qty-value">{item.quantidade}</span>
+                            <button 
+                              className="qty-btn"
+                              onClick={() => adjustQty(item.bebida.id, 1)}
+                            >
+                              +
+                            </button>
+                          </div>
+                          <span className="cart-item-subtotal">
+                            {money.format(item.bebida.preco * item.quantidade)}
+                          </span>
+                          <button 
+                            className="cart-item-remove"
+                            onClick={() => removeFromCart(item.bebida.id)}
+                          >
+                            ✕
+                          </button>
+                        </div>
+                      </div>
+                    ))}
                   </div>
 
-                  <Form.Group className="mb-3">
-                    <Form.Label>Nome completo</Form.Label>
-                    <Form.Control
-                      value={usuarioNome}
-                      onChange={e => setUsuarioNome(e.target.value)}
-                      placeholder="Ex: João Silva"
-                      required
-                    />
-                  </Form.Group>
-                  <Row className="g-2">
-                    <Col xs={12} md={6}>
-                      <Form.Group className="mb-3">
-                        <Form.Label>CPF</Form.Label>
-                        <Form.Control
-                          value={usuarioCpf}
-                          onChange={e => setUsuarioCpf(e.target.value)}
-                          placeholder="Somente números"
-                          required
-                        />
-                      </Form.Group>
-                    </Col>
-                    <Col xs={12} md={6}>
-                      <Form.Group className="mb-3">
-                        <Form.Label>Telefone</Form.Label>
-                        <Form.Control
-                          value={usuarioTelefone}
-                          onChange={e => setUsuarioTelefone(e.target.value)}
-                          placeholder="Ex: (83) 99999-9999"
-                          required
-                        />
-                      </Form.Group>
-                    </Col>
-                  </Row>
-                  <Form.Group className="mb-3">
-                    <Form.Label>Email</Form.Label>
-                    <Form.Control
-                      type="email"
-                      value={usuarioEmail}
-                      onChange={e => setUsuarioEmail(e.target.value)}
-                      placeholder="exemplo@email.com"
-                      required
-                    />
-                  </Form.Group>
-                  <Form.Group className="mb-3">
-                    <Form.Label>Data limite para pagamento</Form.Label>
-                    <Form.Control
-                      type="date"
-                      value={pagarAte}
-                      min={minDateStr}
-                      max={maxDateStr}
-                      onChange={e => setPagarAte(e.target.value)}
-                    />
-                    <Form.Text className="text-muted">
-                      Escolha uma data até 30 dias a partir de hoje (obrigatória para pagar depois).
-                    </Form.Text>
-                  </Form.Group>
+                  <div className="cart-total">
+                    <span>Total</span>
+                    <span className="total-value">{money.format(total)}</span>
+                  </div>
 
-                  <div className="d-grid gap-2">
-                    <Button
-                      variant="success"
-                      onClick={() => finalizarPedido(true)}
-                      disabled={processing === "depois" || !formOk}
-                    >
-                      {processing === "agora" ? "Processando..." : "Pagar agora"}
-                    </Button>
-                    <Button
-                      variant="outline-secondary"
-                      onClick={() => finalizarPedido(false)}
-                      disabled={processing === "agora" || !formOk || !pagarAte}
-                    >
-                      {processing === "depois" ? "Processando..." : "Pagar depois"}
-                    </Button>
+                  <div className="cart-form">
+                    <h3 className="cart-form-title">Seus dados</h3>
+                    
+                    <Form.Group className="cart-form-group">
+                      <Form.Label>Nome completo</Form.Label>
+                      <Form.Control
+                        value={usuarioNome}
+                        onChange={e => setUsuarioNome(e.target.value)}
+                        placeholder="Ex: João Silva"
+                        required
+                      />
+                    </Form.Group>
+                    
+                    <Row className="g-2">
+                      <Col xs={6}>
+                        <Form.Group className="cart-form-group">
+                          <Form.Label>CPF</Form.Label>
+                          <Form.Control
+                            value={usuarioCpf}
+                            onChange={e => setUsuarioCpf(e.target.value)}
+                            placeholder="Somente números"
+                            required
+                          />
+                        </Form.Group>
+                      </Col>
+                      <Col xs={6}>
+                        <Form.Group className="cart-form-group">
+                          <Form.Label>Telefone</Form.Label>
+                          <Form.Control
+                            value={usuarioTelefone}
+                            onChange={e => setUsuarioTelefone(e.target.value)}
+                            placeholder="(83) 99999-9999"
+                            required
+                          />
+                        </Form.Group>
+                      </Col>
+                    </Row>
+                    
+                    <Form.Group className="cart-form-group">
+                      <Form.Label>Email</Form.Label>
+                      <Form.Control
+                        type="email"
+                        value={usuarioEmail}
+                        onChange={e => setUsuarioEmail(e.target.value)}
+                        placeholder="exemplo@email.com"
+                        required
+                      />
+                    </Form.Group>
+                    
+                    <Form.Group className="cart-form-group">
+                      <Form.Label>Data limite para pagamento</Form.Label>
+                      <Form.Control
+                        type="date"
+                        value={pagarAte}
+                        min={minDateStr}
+                        max={maxDateStr}
+                        onChange={e => setPagarAte(e.target.value)}
+                      />
+                      <Form.Text>
+                        Escolha uma data (obrigatória para "Pagar depois")
+                      </Form.Text>
+                    </Form.Group>
+
+                    <div className="cart-actions">
+                      <Button
+                        className="cart-btn-primary"
+                        onClick={() => finalizarPedido(true)}
+                        disabled={processing === "depois" || !formOk}
+                      >
+                        {processing === "agora" ? (
+                          <>
+                            <Spinner size="sm" animation="border" /> Processando...
+                          </>
+                        ) : (
+                          <>💳 Pagar agora</>
+                        )}
+                      </Button>
+                      <Button
+                        className="cart-btn-secondary"
+                        onClick={() => finalizarPedido(false)}
+                        disabled={processing === "agora" || !formOk || !pagarAte}
+                      >
+                        {processing === "depois" ? (
+                          <>
+                            <Spinner size="sm" animation="border" /> Processando...
+                          </>
+                        ) : (
+                          <>📅 Pagar depois</>
+                        )}
+                      </Button>
+                    </div>
                   </div>
                 </>
               )}
-            </Card.Body>
-          </Card>
-        </Col>
-      </Row>
-    </Container>
+            </div>
+          </Col>
+        </Row>
+      </Container>
+    </div>
   )
 }
 

@@ -448,10 +448,17 @@ const CourseDetails: React.FC = () => {
                   )
                 })}
                 {remainingDates > 0 && !showAllDates && (
-                  <div className="course-date-card course-date-card-more">
+                  <div 
+                    className="course-date-card course-date-card-more"
+                    onClick={() => setShowAllDates(true)}
+                    role="button"
+                    tabIndex={0}
+                    onKeyDown={(e) => e.key === 'Enter' && setShowAllDates(true)}
+                    title="Clique para ver todas as datas"
+                  >
                     <div className="course-date-card-body">
                       <span className="course-date-more-count">+{remainingDates}</span>
-                      <span className="course-date-more-label">mais</span>
+                      <span className="course-date-more-label">clique para ver</span>
                     </div>
                   </div>
                 )}

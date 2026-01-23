@@ -1617,8 +1617,8 @@
 
 /* Calendar Day Cell */
 .galaxy-calendar-day {
-  min-height: 110px;
-  padding: 0.5rem;
+  min-height: 85px;
+  padding: 0.35rem;
   border-right: 1px solid var(--galaxy-border-light);
   background: transparent;
   cursor: pointer;

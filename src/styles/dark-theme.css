@@ -256,6 +256,54 @@ p {
   color: var(--pai-text-primary) !important;
 }
 
+/* Modal body text - ensuring all text is visible */
+.modal-body {
+  color: var(--pai-text-secondary) !important;
+}
+
+.modal-body p,
+.modal-body span,
+.modal-body div {
+  color: var(--pai-text-secondary) !important;
+}
+
+.modal-body .text-muted {
+  color: var(--pai-text-subtle) !important;
+}
+
+.modal-body strong {
+  color: var(--pai-text-primary) !important;
+}
+
+/* Modal tables - dark theme */
+.modal-body .table {
+  color: var(--pai-text-secondary) !important;
+  border-color: var(--pai-border-light) !important;
+  background: transparent !important;
+}
+
+.modal-body .table thead th {
+  background: var(--pai-bg-tertiary) !important;
+  color: var(--pai-text-primary) !important;
+  border-color: var(--pai-border-light) !important;
+  font-weight: 600;
+}
+
+.modal-body .table tbody td {
+  background: transparent !important;
+  color: var(--pai-text-secondary) !important;
+  border-color: var(--pai-border-light) !important;
+}
+
+.modal-body .table-striped tbody tr:nth-of-type(odd) td {
+  background: rgba(255, 255, 255, 0.02) !important;
+}
+
+.modal-body .table-hover tbody tr:hover td {
+  background: rgba(102, 126, 234, 0.1) !important;
+  color: var(--pai-text-primary) !important;
+}
+
 .btn-close {
   filter: invert(1);
 }

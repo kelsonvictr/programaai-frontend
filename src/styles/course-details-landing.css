@@ -459,11 +459,22 @@
 }
 
 .course-date-card-more {
-  background: linear-gradient(135deg, #94a3b8 0%, #64748b 100%);
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   display: flex;
   align-items: center;
   justify-content: center;
   min-height: 120px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.course-date-card-more:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+}
+
+.course-date-card-more:active {
+  transform: translateY(-1px);
 }
 
 .course-date-card-more .course-date-card-body {
