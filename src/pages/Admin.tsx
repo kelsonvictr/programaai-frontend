@@ -239,7 +239,8 @@ export default function Admin() {
   const [waitlistCursos, setWaitlistCursos] = useState<Record<string, WaitlistCursoGroup>>({})
   const [activeWaitlistCurso, setActiveWaitlistCurso] = useState<string>(ALL_CURSO_KEY)
 
-  const [agendamentoCache, setAgendamentoCache] = useState<Record<string, AgendamentoPagamento | null>>(
+  // agendamentoCache removed - not used in card-based UI but setAgendamentoCache still needed for modal operations
+  const [, setAgendamentoCache] = useState<Record<string, AgendamentoPagamento | null>>(
     {}
   )
   const [agendamentoModalOpen, setAgendamentoModalOpen] = useState(false)
@@ -666,13 +667,6 @@ export default function Admin() {
         return rest
       })
     }
-  }
-
-  const formatBrDate = (iso?: string | null) => {
-    if (!iso) return ''
-    const parts = iso.split('-')
-    if (parts.length !== 3) return iso
-    return `${parts[2]}/${parts[1]}/${parts[0]}`
   }
 
   const formatDateTime = (iso?: string | null) => {
