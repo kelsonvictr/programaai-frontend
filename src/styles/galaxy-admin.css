@@ -1,0 +1,1459 @@
+/* ============================================
+   GALAXY ADMIN - DARK THEME UX REDESIGN
+   ============================================ */
+
+/* CSS Variables for Admin */
+:root {
+  --galaxy-bg-primary: #0f172a;
+  --galaxy-bg-secondary: #1e293b;
+  --galaxy-bg-tertiary: #334155;
+  --galaxy-bg-card: rgba(30, 41, 59, 0.8);
+  --galaxy-border: rgba(148, 163, 184, 0.2);
+  --galaxy-text-primary: #f1f5f9;
+  --galaxy-text-secondary: #94a3b8;
+  --galaxy-text-muted: #64748b;
+  --galaxy-accent-blue: #3b82f6;
+  --galaxy-accent-purple: #8b5cf6;
+  --galaxy-accent-green: #10b981;
+  --galaxy-accent-amber: #f59e0b;
+  --galaxy-accent-red: #ef4444;
+  --galaxy-accent-cyan: #06b6d4;
+  --galaxy-gradient-primary: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%);
+  --galaxy-gradient-success: linear-gradient(135deg, #10b981 0%, #059669 100%);
+  --galaxy-gradient-warning: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+  --galaxy-gradient-danger: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+  --galaxy-shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.3);
+  --galaxy-shadow-md: 0 4px 12px rgba(0, 0, 0, 0.4);
+  --galaxy-shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.5);
+  --galaxy-shadow-glow: 0 0 20px rgba(59, 130, 246, 0.3);
+}
+
+/* ============================================
+   PAGE CONTAINER & LAYOUT
+   ============================================ */
+
+.galaxy-admin-page {
+  min-height: 100vh;
+  background: linear-gradient(180deg, #0a0e27 0%, #0f172a 50%, #1e293b 100%);
+  padding: 1rem;
+}
+
+.galaxy-admin-page .container-fluid {
+  max-width: 1800px;
+}
+
+/* ============================================
+   LOGIN FORM STYLING
+   ============================================ */
+
+.galaxy-login-container {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(180deg, #0a0e27 0%, #0f172a 50%, #1e293b 100%);
+}
+
+.galaxy-login-card {
+  background: var(--galaxy-bg-card);
+  backdrop-filter: blur(20px);
+  border: 1px solid var(--galaxy-border);
+  border-radius: 20px;
+  padding: 2.5rem;
+  width: 100%;
+  max-width: 420px;
+  box-shadow: var(--galaxy-shadow-lg);
+}
+
+.galaxy-login-card h2 {
+  color: var(--galaxy-text-primary);
+  font-weight: 700;
+  font-size: 1.75rem;
+  margin-bottom: 0.5rem;
+  text-align: center;
+}
+
+.galaxy-login-card .subtitle {
+  color: var(--galaxy-text-secondary);
+  text-align: center;
+  margin-bottom: 2rem;
+  font-size: 0.95rem;
+}
+
+.galaxy-login-card .form-label {
+  color: var(--galaxy-text-secondary);
+  font-weight: 500;
+  font-size: 0.9rem;
+  margin-bottom: 0.5rem;
+}
+
+.galaxy-login-card .form-control {
+  background: rgba(15, 23, 42, 0.6);
+  border: 1px solid var(--galaxy-border);
+  color: var(--galaxy-text-primary);
+  border-radius: 12px;
+  padding: 0.85rem 1rem;
+  font-size: 1rem;
+  transition: all 0.3s ease;
+}
+
+.galaxy-login-card .form-control:focus {
+  background: rgba(15, 23, 42, 0.8);
+  border-color: var(--galaxy-accent-blue);
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
+  color: var(--galaxy-text-primary);
+}
+
+.galaxy-login-card .form-control::placeholder {
+  color: var(--galaxy-text-muted);
+}
+
+.galaxy-login-btn {
+  width: 100%;
+  background: var(--galaxy-gradient-primary);
+  border: none;
+  color: #fff;
+  font-weight: 600;
+  padding: 0.9rem 1.5rem;
+  border-radius: 12px;
+  font-size: 1rem;
+  transition: all 0.3s ease;
+  margin-top: 1rem;
+}
+
+.galaxy-login-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--galaxy-shadow-glow);
+}
+
+.galaxy-login-btn:disabled {
+  opacity: 0.7;
+  transform: none;
+}
+
+/* ============================================
+   HEADER & NAVIGATION TABS
+   ============================================ */
+
+.galaxy-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+  padding-bottom: 1.5rem;
+  border-bottom: 1px solid var(--galaxy-border);
+}
+
+.galaxy-logo {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.galaxy-logo-icon {
+  width: 45px;
+  height: 45px;
+  background: var(--galaxy-gradient-primary);
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.5rem;
+}
+
+.galaxy-logo-text {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--galaxy-text-primary);
+}
+
+.galaxy-logo-text span {
+  background: var(--galaxy-gradient-primary);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.galaxy-nav-tabs {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.galaxy-nav-tab {
+  background: transparent;
+  border: 1px solid var(--galaxy-border);
+  color: var(--galaxy-text-secondary);
+  padding: 0.65rem 1.25rem;
+  border-radius: 10px;
+  font-weight: 600;
+  font-size: 0.9rem;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  transition: all 0.3s ease;
+  cursor: pointer;
+}
+
+.galaxy-nav-tab:hover {
+  background: rgba(59, 130, 246, 0.1);
+  border-color: var(--galaxy-accent-blue);
+  color: var(--galaxy-text-primary);
+}
+
+.galaxy-nav-tab.active {
+  background: var(--galaxy-gradient-primary);
+  border-color: transparent;
+  color: #fff;
+  box-shadow: var(--galaxy-shadow-glow);
+}
+
+.galaxy-nav-tab svg {
+  font-size: 1.1rem;
+}
+
+.galaxy-header-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.galaxy-btn-refresh {
+  background: rgba(59, 130, 246, 0.15);
+  border: 1px solid rgba(59, 130, 246, 0.3);
+  color: var(--galaxy-accent-blue);
+  padding: 0.6rem 1rem;
+  border-radius: 10px;
+  font-weight: 600;
+  font-size: 0.85rem;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  transition: all 0.3s ease;
+}
+
+.galaxy-btn-refresh:hover {
+  background: rgba(59, 130, 246, 0.25);
+  border-color: var(--galaxy-accent-blue);
+  color: var(--galaxy-accent-blue);
+}
+
+.galaxy-btn-logout {
+  background: rgba(239, 68, 68, 0.15);
+  border: 1px solid rgba(239, 68, 68, 0.3);
+  color: var(--galaxy-accent-red);
+  padding: 0.6rem 1rem;
+  border-radius: 10px;
+  font-weight: 600;
+  font-size: 0.85rem;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  transition: all 0.3s ease;
+}
+
+.galaxy-btn-logout:hover {
+  background: rgba(239, 68, 68, 0.25);
+  border-color: var(--galaxy-accent-red);
+}
+
+/* ============================================
+   STATS CARDS
+   ============================================ */
+
+.galaxy-stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.galaxy-stat-card {
+  background: var(--galaxy-bg-card);
+  backdrop-filter: blur(10px);
+  border: 1px solid var(--galaxy-border);
+  border-radius: 16px;
+  padding: 1.25rem 1.5rem;
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.galaxy-stat-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: var(--stat-gradient, var(--galaxy-gradient-primary));
+}
+
+.galaxy-stat-card:hover {
+  transform: translateY(-3px);
+  box-shadow: var(--galaxy-shadow-md);
+  border-color: rgba(59, 130, 246, 0.3);
+}
+
+.galaxy-stat-card.stat-blue {
+  --stat-gradient: linear-gradient(90deg, #3b82f6, #8b5cf6);
+}
+
+.galaxy-stat-card.stat-cyan {
+  --stat-gradient: linear-gradient(90deg, #06b6d4, #3b82f6);
+}
+
+.galaxy-stat-card.stat-green {
+  --stat-gradient: linear-gradient(90deg, #10b981, #06b6d4);
+}
+
+.galaxy-stat-card.stat-amber {
+  --stat-gradient: linear-gradient(90deg, #f59e0b, #ef4444);
+}
+
+.galaxy-stat-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 0.75rem;
+}
+
+.galaxy-stat-label {
+  color: var(--galaxy-text-secondary);
+  font-size: 0.85rem;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.galaxy-stat-icon {
+  width: 38px;
+  height: 38px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.1rem;
+  background: rgba(59, 130, 246, 0.15);
+  color: var(--galaxy-accent-blue);
+}
+
+.galaxy-stat-card.stat-cyan .galaxy-stat-icon {
+  background: rgba(6, 182, 212, 0.15);
+  color: var(--galaxy-accent-cyan);
+}
+
+.galaxy-stat-card.stat-green .galaxy-stat-icon {
+  background: rgba(16, 185, 129, 0.15);
+  color: var(--galaxy-accent-green);
+}
+
+.galaxy-stat-card.stat-amber .galaxy-stat-icon {
+  background: rgba(245, 158, 11, 0.15);
+  color: var(--galaxy-accent-amber);
+}
+
+.galaxy-stat-value {
+  font-size: 2rem;
+  font-weight: 700;
+  color: var(--galaxy-text-primary);
+  line-height: 1.2;
+}
+
+.galaxy-stat-value.currency {
+  font-size: 1.65rem;
+}
+
+.galaxy-stat-value small {
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: var(--galaxy-text-secondary);
+}
+
+/* ============================================
+   COURSE FILTER CHIPS
+   ============================================ */
+
+.galaxy-chips-container {
+  background: var(--galaxy-bg-card);
+  backdrop-filter: blur(10px);
+  border: 1px solid var(--galaxy-border);
+  border-radius: 16px;
+  padding: 1rem 1.25rem;
+  margin-bottom: 1.5rem;
+}
+
+.galaxy-chips-label {
+  color: var(--galaxy-text-secondary);
+  font-size: 0.8rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 0.75rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.galaxy-chips-wrapper {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.galaxy-chip {
+  background: rgba(15, 23, 42, 0.6);
+  border: 1px solid var(--galaxy-border);
+  color: var(--galaxy-text-secondary);
+  padding: 0.5rem 1rem;
+  border-radius: 999px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  cursor: pointer;
+  transition: all 0.25s ease;
+}
+
+.galaxy-chip:hover {
+  background: rgba(59, 130, 246, 0.15);
+  border-color: rgba(59, 130, 246, 0.4);
+  color: var(--galaxy-text-primary);
+}
+
+.galaxy-chip.active {
+  background: var(--galaxy-gradient-primary);
+  border-color: transparent;
+  color: #fff;
+  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.35);
+}
+
+.galaxy-chip .badge {
+  background: rgba(255, 255, 255, 0.2);
+  color: inherit;
+  font-size: 0.75rem;
+  padding: 0.2rem 0.5rem;
+  border-radius: 999px;
+  font-weight: 700;
+}
+
+.galaxy-chip.active .badge {
+  background: rgba(255, 255, 255, 0.3);
+}
+
+/* ============================================
+   DATA TABLES
+   ============================================ */
+
+.galaxy-table-container {
+  background: var(--galaxy-bg-card);
+  backdrop-filter: blur(10px);
+  border: 1px solid var(--galaxy-border);
+  border-radius: 16px;
+  overflow: hidden;
+}
+
+.galaxy-table-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1rem 1.25rem;
+  border-bottom: 1px solid var(--galaxy-border);
+}
+
+.galaxy-table-title {
+  color: var(--galaxy-text-primary);
+  font-size: 1.1rem;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.galaxy-table-actions {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.galaxy-table-wrapper {
+  overflow-x: auto;
+}
+
+.galaxy-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.9rem;
+}
+
+.galaxy-table thead {
+  background: rgba(15, 23, 42, 0.5);
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+
+.galaxy-table th {
+  color: var(--galaxy-text-secondary);
+  font-weight: 600;
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  padding: 1rem 0.75rem;
+  text-align: left;
+  white-space: nowrap;
+  border-bottom: 1px solid var(--galaxy-border);
+}
+
+.galaxy-table td {
+  color: var(--galaxy-text-primary);
+  padding: 0.9rem 0.75rem;
+  border-bottom: 1px solid rgba(148, 163, 184, 0.1);
+  vertical-align: middle;
+}
+
+.galaxy-table tbody tr {
+  transition: all 0.2s ease;
+}
+
+.galaxy-table tbody tr:hover {
+  background: rgba(59, 130, 246, 0.05);
+}
+
+.galaxy-table tbody tr:last-child td {
+  border-bottom: none;
+}
+
+/* Table Cell Variants */
+.galaxy-table .cell-datetime {
+  color: var(--galaxy-text-secondary);
+  font-size: 0.85rem;
+}
+
+.galaxy-table .cell-datetime .date {
+  color: var(--galaxy-text-primary);
+  font-weight: 600;
+}
+
+.galaxy-table .cell-name {
+  font-weight: 600;
+  color: var(--galaxy-text-primary);
+}
+
+.galaxy-table .cell-email {
+  color: var(--galaxy-accent-blue);
+  font-size: 0.85rem;
+}
+
+.galaxy-table .cell-phone a {
+  color: var(--galaxy-accent-green);
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  font-weight: 500;
+}
+
+.galaxy-table .cell-phone a:hover {
+  text-decoration: underline;
+}
+
+.galaxy-table .cell-value {
+  font-weight: 600;
+  font-family: 'JetBrains Mono', 'Fira Code', monospace;
+}
+
+.galaxy-table .cell-value.positive {
+  color: var(--galaxy-accent-green);
+}
+
+/* Payment Status Badge */
+.galaxy-payment-status {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.35rem 0.75rem;
+  border-radius: 999px;
+  font-size: 0.8rem;
+  font-weight: 600;
+}
+
+.galaxy-payment-status.aguardando {
+  background: rgba(245, 158, 11, 0.15);
+  color: var(--galaxy-accent-amber);
+}
+
+.galaxy-payment-status.aprovado {
+  background: rgba(16, 185, 129, 0.15);
+  color: var(--galaxy-accent-green);
+}
+
+.galaxy-payment-status.reprovado {
+  background: rgba(239, 68, 68, 0.15);
+  color: var(--galaxy-accent-red);
+}
+
+/* Toggle Switches */
+.galaxy-toggle {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.galaxy-toggle input[type="checkbox"] {
+  width: 44px;
+  height: 24px;
+  appearance: none;
+  background: rgba(100, 116, 139, 0.4);
+  border-radius: 999px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  position: relative;
+}
+
+.galaxy-toggle input[type="checkbox"]::before {
+  content: '';
+  position: absolute;
+  top: 3px;
+  left: 3px;
+  width: 18px;
+  height: 18px;
+  background: #fff;
+  border-radius: 50%;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.galaxy-toggle input[type="checkbox"]:checked {
+  background: var(--galaxy-accent-green);
+}
+
+.galaxy-toggle input[type="checkbox"]:checked::before {
+  transform: translateX(20px);
+}
+
+.galaxy-toggle input[type="checkbox"]:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* ============================================
+   FORMS & INPUTS
+   ============================================ */
+
+.galaxy-form-group {
+  margin-bottom: 1.25rem;
+}
+
+.galaxy-form-label {
+  display: block;
+  color: var(--galaxy-text-secondary);
+  font-size: 0.85rem;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+}
+
+.galaxy-form-input,
+.galaxy-form-select,
+.galaxy-form-textarea {
+  width: 100%;
+  background: rgba(15, 23, 42, 0.6);
+  border: 1px solid var(--galaxy-border);
+  color: var(--galaxy-text-primary);
+  border-radius: 10px;
+  padding: 0.75rem 1rem;
+  font-size: 0.95rem;
+  transition: all 0.3s ease;
+}
+
+.galaxy-form-input:focus,
+.galaxy-form-select:focus,
+.galaxy-form-textarea:focus {
+  outline: none;
+  border-color: var(--galaxy-accent-blue);
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15);
+  background: rgba(15, 23, 42, 0.8);
+}
+
+.galaxy-form-input::placeholder {
+  color: var(--galaxy-text-muted);
+}
+
+.galaxy-form-select {
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='%2394a3b8' viewBox='0 0 16 16'%3E%3Cpath d='M8 11L3 6h10l-5 5z'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 1rem center;
+  padding-right: 2.5rem;
+}
+
+.galaxy-form-input-sm {
+  padding: 0.5rem 0.75rem;
+  font-size: 0.85rem;
+  border-radius: 8px;
+}
+
+/* ============================================
+   BUTTONS
+   ============================================ */
+
+.galaxy-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.65rem 1.25rem;
+  border-radius: 10px;
+  font-weight: 600;
+  font-size: 0.9rem;
+  border: none;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.galaxy-btn-primary {
+  background: var(--galaxy-gradient-primary);
+  color: #fff;
+}
+
+.galaxy-btn-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--galaxy-shadow-glow);
+}
+
+.galaxy-btn-success {
+  background: var(--galaxy-gradient-success);
+  color: #fff;
+}
+
+.galaxy-btn-success:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 0 20px rgba(16, 185, 129, 0.3);
+}
+
+.galaxy-btn-danger {
+  background: var(--galaxy-gradient-danger);
+  color: #fff;
+}
+
+.galaxy-btn-danger:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 0 20px rgba(239, 68, 68, 0.3);
+}
+
+.galaxy-btn-outline {
+  background: transparent;
+  border: 1px solid var(--galaxy-border);
+  color: var(--galaxy-text-secondary);
+}
+
+.galaxy-btn-outline:hover {
+  background: rgba(59, 130, 246, 0.1);
+  border-color: var(--galaxy-accent-blue);
+  color: var(--galaxy-text-primary);
+}
+
+.galaxy-btn-icon {
+  width: 36px;
+  height: 36px;
+  padding: 0;
+  border-radius: 8px;
+  font-size: 1rem;
+}
+
+.galaxy-btn-sm {
+  padding: 0.45rem 0.85rem;
+  font-size: 0.8rem;
+  border-radius: 8px;
+}
+
+.galaxy-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none !important;
+}
+
+/* ============================================
+   DROPDOWNS
+   ============================================ */
+
+.galaxy-dropdown {
+  position: relative;
+  display: inline-block;
+}
+
+.galaxy-dropdown-menu {
+  position: absolute;
+  top: 100%;
+  right: 0;
+  z-index: 1000;
+  min-width: 180px;
+  background: var(--galaxy-bg-secondary);
+  border: 1px solid var(--galaxy-border);
+  border-radius: 12px;
+  padding: 0.5rem;
+  margin-top: 0.35rem;
+  box-shadow: var(--galaxy-shadow-lg);
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(-10px);
+  transition: all 0.2s ease;
+}
+
+.galaxy-dropdown.open .galaxy-dropdown-menu {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0);
+}
+
+.galaxy-dropdown-item {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  width: 100%;
+  padding: 0.65rem 0.85rem;
+  background: transparent;
+  border: none;
+  color: var(--galaxy-text-secondary);
+  font-size: 0.9rem;
+  text-align: left;
+  cursor: pointer;
+  border-radius: 8px;
+  transition: all 0.2s ease;
+}
+
+.galaxy-dropdown-item:hover {
+  background: rgba(59, 130, 246, 0.1);
+  color: var(--galaxy-text-primary);
+}
+
+.galaxy-dropdown-item svg {
+  font-size: 1rem;
+  opacity: 0.7;
+}
+
+.galaxy-dropdown-divider {
+  height: 1px;
+  background: var(--galaxy-border);
+  margin: 0.35rem 0;
+}
+
+/* ============================================
+   MODALS
+   ============================================ */
+
+.galaxy-modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.7);
+  backdrop-filter: blur(5px);
+  z-index: 1040;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+}
+
+.galaxy-modal {
+  background: var(--galaxy-bg-secondary);
+  border: 1px solid var(--galaxy-border);
+  border-radius: 20px;
+  width: 100%;
+  max-width: 500px;
+  max-height: 90vh;
+  overflow: hidden;
+  box-shadow: var(--galaxy-shadow-lg);
+}
+
+.galaxy-modal-lg {
+  max-width: 700px;
+}
+
+.galaxy-modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1.25rem 1.5rem;
+  border-bottom: 1px solid var(--galaxy-border);
+}
+
+.galaxy-modal-title {
+  color: var(--galaxy-text-primary);
+  font-size: 1.2rem;
+  font-weight: 700;
+  margin: 0;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.galaxy-modal-close {
+  width: 36px;
+  height: 36px;
+  background: rgba(239, 68, 68, 0.1);
+  border: none;
+  border-radius: 10px;
+  color: var(--galaxy-accent-red);
+  font-size: 1.25rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+}
+
+.galaxy-modal-close:hover {
+  background: rgba(239, 68, 68, 0.2);
+}
+
+.galaxy-modal-body {
+  padding: 1.5rem;
+  overflow-y: auto;
+  max-height: calc(90vh - 140px);
+}
+
+.galaxy-modal-footer {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 0.75rem;
+  padding: 1rem 1.5rem;
+  border-top: 1px solid var(--galaxy-border);
+}
+
+/* ============================================
+   ALERTS & NOTIFICATIONS
+   ============================================ */
+
+.galaxy-alert {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+  padding: 1rem 1.25rem;
+  border-radius: 12px;
+  margin-bottom: 1rem;
+}
+
+.galaxy-alert-info {
+  background: rgba(59, 130, 246, 0.1);
+  border: 1px solid rgba(59, 130, 246, 0.3);
+  color: var(--galaxy-accent-blue);
+}
+
+.galaxy-alert-success {
+  background: rgba(16, 185, 129, 0.1);
+  border: 1px solid rgba(16, 185, 129, 0.3);
+  color: var(--galaxy-accent-green);
+}
+
+.galaxy-alert-warning {
+  background: rgba(245, 158, 11, 0.1);
+  border: 1px solid rgba(245, 158, 11, 0.3);
+  color: var(--galaxy-accent-amber);
+}
+
+.galaxy-alert-danger {
+  background: rgba(239, 68, 68, 0.1);
+  border: 1px solid rgba(239, 68, 68, 0.3);
+  color: var(--galaxy-accent-red);
+}
+
+.galaxy-alert-icon {
+  font-size: 1.25rem;
+  flex-shrink: 0;
+}
+
+.galaxy-alert-content {
+  flex: 1;
+}
+
+.galaxy-alert-title {
+  font-weight: 600;
+  margin-bottom: 0.25rem;
+}
+
+.galaxy-alert-text {
+  font-size: 0.9rem;
+  opacity: 0.9;
+}
+
+/* ============================================
+   LOADING STATES
+   ============================================ */
+
+.galaxy-loading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 3rem;
+  color: var(--galaxy-text-secondary);
+}
+
+.galaxy-spinner {
+  width: 48px;
+  height: 48px;
+  border: 3px solid var(--galaxy-border);
+  border-top-color: var(--galaxy-accent-blue);
+  border-radius: 50%;
+  animation: galaxy-spin 0.8s linear infinite;
+  margin-bottom: 1rem;
+}
+
+@keyframes galaxy-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.galaxy-skeleton {
+  background: linear-gradient(
+    90deg,
+    rgba(148, 163, 184, 0.1) 25%,
+    rgba(148, 163, 184, 0.2) 50%,
+    rgba(148, 163, 184, 0.1) 75%
+  );
+  background-size: 200% 100%;
+  animation: galaxy-skeleton-shimmer 1.5s infinite;
+  border-radius: 8px;
+}
+
+@keyframes galaxy-skeleton-shimmer {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
+}
+
+/* ============================================
+   EMPTY STATES
+   ============================================ */
+
+.galaxy-empty {
+  text-align: center;
+  padding: 3rem 2rem;
+  color: var(--galaxy-text-secondary);
+}
+
+.galaxy-empty-icon {
+  font-size: 3.5rem;
+  opacity: 0.4;
+  margin-bottom: 1rem;
+}
+
+.galaxy-empty-title {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: var(--galaxy-text-primary);
+  margin-bottom: 0.5rem;
+}
+
+.galaxy-empty-text {
+  font-size: 0.95rem;
+  opacity: 0.8;
+  max-width: 400px;
+  margin: 0 auto;
+}
+
+/* ============================================
+   BEBIDAS SECTION SPECIFIC
+   ============================================ */
+
+.galaxy-bebidas-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 1rem;
+}
+
+.galaxy-bebida-card {
+  background: var(--galaxy-bg-card);
+  border: 1px solid var(--galaxy-border);
+  border-radius: 14px;
+  padding: 1.25rem;
+  transition: all 0.3s ease;
+}
+
+.galaxy-bebida-card:hover {
+  border-color: rgba(59, 130, 246, 0.3);
+  box-shadow: var(--galaxy-shadow-md);
+}
+
+.galaxy-bebida-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 0.75rem;
+}
+
+.galaxy-bebida-name {
+  font-weight: 600;
+  color: var(--galaxy-text-primary);
+  font-size: 1rem;
+}
+
+.galaxy-bebida-price {
+  font-weight: 700;
+  color: var(--galaxy-accent-green);
+  font-family: 'JetBrains Mono', monospace;
+}
+
+.galaxy-bebida-quantity {
+  font-size: 0.9rem;
+  color: var(--galaxy-text-secondary);
+}
+
+.galaxy-bebida-actions {
+  display: flex;
+  gap: 0.5rem;
+  margin-top: 1rem;
+}
+
+/* ============================================
+   CALENDAR OVERRIDES
+   ============================================ */
+
+.galaxy-calendar-container {
+  background: var(--galaxy-bg-card);
+  border: 1px solid var(--galaxy-border);
+  border-radius: 16px;
+  padding: 1.5rem;
+}
+
+.galaxy-calendar-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1.5rem;
+}
+
+.galaxy-calendar-nav {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.galaxy-calendar-nav-btn {
+  width: 40px;
+  height: 40px;
+  background: rgba(59, 130, 246, 0.15);
+  border: 1px solid rgba(59, 130, 246, 0.3);
+  border-radius: 10px;
+  color: var(--galaxy-accent-blue);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.galaxy-calendar-nav-btn:hover {
+  background: rgba(59, 130, 246, 0.25);
+}
+
+.galaxy-calendar-month {
+  font-size: 1.35rem;
+  font-weight: 700;
+  color: var(--galaxy-text-primary);
+}
+
+/* ============================================
+   RESPONSIVE
+   ============================================ */
+
+@media (max-width: 992px) {
+  .galaxy-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  
+  .galaxy-nav-tabs {
+    width: 100%;
+    overflow-x: auto;
+    flex-wrap: nowrap;
+    padding-bottom: 0.5rem;
+  }
+  
+  .galaxy-header-actions {
+    width: 100%;
+    justify-content: flex-end;
+  }
+  
+  .galaxy-stats-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 768px) {
+  .galaxy-admin-page {
+    padding: 0.75rem;
+  }
+  
+  .galaxy-stats-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .galaxy-stat-card {
+    padding: 1rem;
+  }
+  
+  .galaxy-stat-value {
+    font-size: 1.75rem;
+  }
+  
+  .galaxy-table {
+    font-size: 0.85rem;
+  }
+  
+  .galaxy-table th,
+  .galaxy-table td {
+    padding: 0.65rem 0.5rem;
+  }
+  
+  .galaxy-chips-wrapper {
+    gap: 0.35rem;
+  }
+  
+  .galaxy-chip {
+    padding: 0.4rem 0.75rem;
+    font-size: 0.8rem;
+  }
+  
+  .galaxy-modal {
+    border-radius: 16px;
+  }
+  
+  .galaxy-modal-body {
+    padding: 1rem;
+  }
+}
+
+@media (max-width: 576px) {
+  .galaxy-nav-tab {
+    padding: 0.5rem 0.85rem;
+    font-size: 0.85rem;
+  }
+  
+  .galaxy-nav-tab span {
+    display: none;
+  }
+  
+  .galaxy-nav-tab svg {
+    font-size: 1.25rem;
+  }
+  
+  .galaxy-login-card {
+    padding: 1.5rem;
+    border-radius: 16px;
+  }
+}
+
+/* ============================================
+   BOOTSTRAP OVERRIDES FOR ADMIN
+   ============================================ */
+
+.galaxy-admin-page .form-control,
+.galaxy-admin-page .form-select {
+  background: rgba(15, 23, 42, 0.6) !important;
+  border: 1px solid var(--galaxy-border) !important;
+  color: var(--galaxy-text-primary) !important;
+  border-radius: 10px !important;
+}
+
+.galaxy-admin-page .form-control:focus,
+.galaxy-admin-page .form-select:focus {
+  background: rgba(15, 23, 42, 0.8) !important;
+  border-color: var(--galaxy-accent-blue) !important;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15) !important;
+}
+
+.galaxy-admin-page .form-control::placeholder {
+  color: var(--galaxy-text-muted) !important;
+}
+
+.galaxy-admin-page .btn-group {
+  background: var(--galaxy-bg-card);
+  border-radius: 12px;
+  padding: 0.25rem;
+  border: 1px solid var(--galaxy-border);
+}
+
+.galaxy-admin-page .btn-group .btn {
+  border: none !important;
+  border-radius: 8px !important;
+  padding: 0.6rem 1.1rem;
+  font-weight: 600;
+  transition: all 0.2s ease;
+}
+
+.galaxy-admin-page .btn-group .btn:not(.btn-primary) {
+  background: transparent !important;
+  color: var(--galaxy-text-secondary) !important;
+}
+
+.galaxy-admin-page .btn-group .btn:not(.btn-primary):hover {
+  background: rgba(59, 130, 246, 0.1) !important;
+  color: var(--galaxy-text-primary) !important;
+}
+
+.galaxy-admin-page .btn-group .btn.btn-primary {
+  background: var(--galaxy-gradient-primary) !important;
+  color: #fff !important;
+}
+
+.galaxy-admin-page .table {
+  color: var(--galaxy-text-primary);
+}
+
+.galaxy-admin-page .table thead th {
+  background: rgba(15, 23, 42, 0.5);
+  color: var(--galaxy-text-secondary);
+  font-weight: 600;
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  border-bottom: 1px solid var(--galaxy-border);
+}
+
+.galaxy-admin-page .table tbody td {
+  border-color: rgba(148, 163, 184, 0.1);
+  vertical-align: middle;
+}
+
+.galaxy-admin-page .table tbody tr:hover {
+  background: rgba(59, 130, 246, 0.05);
+}
+
+.galaxy-admin-page .card {
+  background: var(--galaxy-bg-card) !important;
+  border: 1px solid var(--galaxy-border) !important;
+  border-radius: 16px !important;
+}
+
+.galaxy-admin-page .card-body {
+  color: var(--galaxy-text-primary);
+}
+
+.galaxy-admin-page .modal-content {
+  background: var(--galaxy-bg-secondary) !important;
+  border: 1px solid var(--galaxy-border) !important;
+  border-radius: 20px !important;
+}
+
+.galaxy-admin-page .modal-header {
+  border-color: var(--galaxy-border) !important;
+}
+
+.galaxy-admin-page .modal-header .modal-title {
+  color: var(--galaxy-text-primary);
+}
+
+.galaxy-admin-page .modal-header .btn-close {
+  filter: invert(1);
+}
+
+.galaxy-admin-page .modal-footer {
+  border-color: var(--galaxy-border) !important;
+}
+
+.galaxy-admin-page .dropdown-menu {
+  background: var(--galaxy-bg-secondary) !important;
+  border: 1px solid var(--galaxy-border) !important;
+  border-radius: 12px !important;
+  padding: 0.5rem !important;
+  box-shadow: var(--galaxy-shadow-lg) !important;
+}
+
+.galaxy-admin-page .dropdown-item {
+  color: var(--galaxy-text-secondary) !important;
+  border-radius: 8px !important;
+  padding: 0.6rem 0.85rem !important;
+  transition: all 0.2s ease !important;
+}
+
+.galaxy-admin-page .dropdown-item:hover {
+  background: rgba(59, 130, 246, 0.1) !important;
+  color: var(--galaxy-text-primary) !important;
+}
+
+.galaxy-admin-page .badge {
+  font-weight: 600;
+  padding: 0.4rem 0.65rem;
+  border-radius: 6px;
+}
+
+.galaxy-admin-page .badge.bg-success {
+  background: rgba(16, 185, 129, 0.2) !important;
+  color: var(--galaxy-accent-green) !important;
+}
+
+.galaxy-admin-page .badge.bg-warning {
+  background: rgba(245, 158, 11, 0.2) !important;
+  color: var(--galaxy-accent-amber) !important;
+}
+
+.galaxy-admin-page .badge.bg-danger {
+  background: rgba(239, 68, 68, 0.2) !important;
+  color: var(--galaxy-accent-red) !important;
+}
+
+.galaxy-admin-page .badge.bg-info {
+  background: rgba(6, 182, 212, 0.2) !important;
+  color: var(--galaxy-accent-cyan) !important;
+}
+
+.galaxy-admin-page .badge.bg-primary {
+  background: rgba(59, 130, 246, 0.2) !important;
+  color: var(--galaxy-accent-blue) !important;
+}
+
+.galaxy-admin-page .badge.bg-secondary {
+  background: rgba(100, 116, 139, 0.3) !important;
+  color: var(--galaxy-text-secondary) !important;
+}
+
+/* Form Check/Switch Overrides */
+.galaxy-admin-page .form-check-input {
+  background-color: rgba(100, 116, 139, 0.4) !important;
+  border-color: var(--galaxy-border) !important;
+}
+
+.galaxy-admin-page .form-check-input:checked {
+  background-color: var(--galaxy-accent-green) !important;
+  border-color: var(--galaxy-accent-green) !important;
+}
+
+.galaxy-admin-page .form-switch .form-check-input {
+  width: 44px;
+  height: 24px;
+}
+
+/* Spinner Override */
+.galaxy-admin-page .spinner-border {
+  color: var(--galaxy-accent-blue);
+}
+
+/* Text utilities */
+.galaxy-admin-page .text-muted {
+  color: var(--galaxy-text-muted) !important;
+}
+
+.galaxy-admin-page .text-success {
+  color: var(--galaxy-accent-green) !important;
+}
+
+.galaxy-admin-page .text-danger {
+  color: var(--galaxy-accent-red) !important;
+}
+
+.galaxy-admin-page .text-warning {
+  color: var(--galaxy-accent-amber) !important;
+}
+
+.galaxy-admin-page .text-info {
+  color: var(--galaxy-accent-cyan) !important;
+}

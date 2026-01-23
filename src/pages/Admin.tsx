@@ -1,5 +1,4 @@
 import { useState, useEffect, useMemo, useRef } from 'react'
-import type { CSSProperties } from 'react'
 import axios from 'axios'
 import { auth } from '../firebase'
 import { signInWithEmailAndPassword, onAuthStateChanged, signOut, type User } from 'firebase/auth'
@@ -19,8 +18,9 @@ import {
   ButtonGroup,
   Modal
 } from 'react-bootstrap'
-import { Check2, Clipboard, ClipboardCheck, Whatsapp, FileEarmarkPdf } from 'react-bootstrap-icons'
+import { Check2, Clipboard, ClipboardCheck, Whatsapp, FileEarmarkPdf, ArrowClockwise, BoxArrowRight, People, Laptop, Building, CurrencyDollar, Calendar3, Cup, ListUl, ClockHistory } from 'react-bootstrap-icons'
 import GalaxyCalendar from '../components/GalaxyCalendar'
+import '../styles/galaxy-admin.css'
 
 const API_BASE = import.meta.env.VITE_ADMIN_API as string
 const ENDPOINT = `${API_BASE}/galaxy/inscricoes-por-curso`
@@ -854,20 +854,6 @@ export default function Admin() {
     return typeof valor === 'number' && !Number.isNaN(valor) ? valor : 0
   }
   const keyBusy = (id: string, field: string) => `${id}:${field}`
-  const chipStyle = (isActive: boolean): CSSProperties => ({
-    borderRadius: 999,
-    border: `1px solid ${isActive ? '#0d6efd' : '#dee2e6'}`,
-    backgroundColor: isActive ? '#0d6efd' : '#f8f9fa',
-    color: isActive ? '#fff' : '#212529',
-    boxShadow: isActive ? '0 6px 18px rgba(13, 110, 253, 0.25)' : '0 2px 8px rgba(15, 23, 42, 0.08)',
-    display: 'inline-flex',
-    alignItems: 'center',
-    gap: '0.5rem',
-    padding: '0.45rem 1rem',
-    cursor: 'pointer',
-    transition: 'all 0.2s ease',
-    fontWeight: 600
-  })
   const pagamentoLink = (id: string) => `https://www.programaai.dev/pagamento/${id}`
   const buildWhatsappUrl = (value?: string | null) => {
     if (!value) return null
@@ -1133,190 +1119,188 @@ export default function Admin() {
 
   if (!user) {
     return (
-      <Container fluid className="py-5" style={{ maxWidth: 520 }}>
-        <h2 className="mb-4">Galaxy</h2>
-        <Form onSubmit={login}>
-          <Form.Group className="mb-3">
-            <Form.Label>Email</Form.Label>
-            <Form.Control value={email} onChange={e => setEmail(e.target.value)} required />
-          </Form.Group>
-          <Form.Group className="mb-3">
-            <Form.Label>Senha</Form.Label>
-            <Form.Control type="password" value={senha} onChange={e => setSenha(e.target.value)} required />
-          </Form.Group>
-          <Button type="submit">Entrar</Button>
-          {error && <Alert variant="danger" className="mt-3">{error}</Alert>}
-        </Form>
-      </Container>
+      <div className="galaxy-login-container">
+        <div className="galaxy-login-card">
+          <div className="galaxy-logo" style={{ justifyContent: 'center', marginBottom: '1.5rem' }}>
+            <div className="galaxy-logo-icon">🌌</div>
+            <span className="galaxy-logo-text"><span>Galaxy</span></span>
+          </div>
+          <p className="subtitle">Painel de Administração</p>
+          <Form onSubmit={login}>
+            <Form.Group className="mb-3">
+              <Form.Label className="galaxy-form-label">Email</Form.Label>
+              <Form.Control 
+                value={email} 
+                onChange={e => setEmail(e.target.value)} 
+                placeholder="seu@email.com"
+                required 
+              />
+            </Form.Group>
+            <Form.Group className="mb-3">
+              <Form.Label className="galaxy-form-label">Senha</Form.Label>
+              <Form.Control 
+                type="password" 
+                value={senha} 
+                onChange={e => setSenha(e.target.value)} 
+                placeholder="••••••••"
+                required 
+              />
+            </Form.Group>
+            <button type="submit" className="galaxy-login-btn">
+              Entrar
+            </button>
+            {error && <Alert variant="danger" className="mt-3">{error}</Alert>}
+          </Form>
+        </div>
+      </div>
     )
   }
 
   return (
-    <Container fluid className="py-4">
-      <div className="d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center gap-3 mb-4">
-        <div>
-          <h2 className="mb-1">Painel Galaxy</h2>
-          <div className="text-muted small">Última atualização: {ultimaAtualizacaoLabel}</div>
-        </div>
-        <div className="d-flex align-items-center gap-2">
-          <Button
-            variant="outline-secondary"
-            size="sm"
-            onClick={() => {
-              if (activeView === 'lista-espera') {
+    <div className="galaxy-admin-page">
+      <Container fluid className="py-4">
+        <div className="galaxy-header">
+          <div className="galaxy-logo">
+            <div className="galaxy-logo-icon">🌌</div>
+            <span className="galaxy-logo-text"><span>Galaxy</span></span>
+          </div>
+          
+          <div className="galaxy-nav-tabs">
+            <button
+              type="button"
+              className={`galaxy-nav-tab ${activeView === 'inscricoes' ? 'active' : ''}`}
+              onClick={() => setActiveView('inscricoes')}
+            >
+              <People /> <span>Inscrições</span>
+            </button>
+            <button
+              type="button"
+              className={`galaxy-nav-tab ${activeView === 'lista-espera' ? 'active' : ''}`}
+              onClick={() => {
+                setActiveView('lista-espera')
                 if (token) {
                   void fetchWaitlist(token)
                 }
-                return
-              }
-              if (activeView === 'bebidas') {
-                if (token) {
-                  void fetchBebidasAdmin(token)
+              }}
+            >
+              <ClockHistory /> <span>Lista de Espera</span>
+            </button>
+            <button
+              type="button"
+              className={`galaxy-nav-tab ${activeView === 'calendario' ? 'active' : ''}`}
+              onClick={() => setActiveView('calendario')}
+            >
+              <Calendar3 /> <span>Calendário</span>
+            </button>
+            <button
+              type="button"
+              className={`galaxy-nav-tab ${activeView === 'bebidas' ? 'active' : ''}`}
+              onClick={() => setActiveView('bebidas')}
+            >
+              <Cup /> <span>Bebidas</span>
+            </button>
+          </div>
+
+          <div className="galaxy-header-actions">
+            <span className="text-muted small d-none d-md-inline" style={{ marginRight: '0.5rem' }}>
+              Atualizado: {ultimaAtualizacaoLabel}
+            </span>
+            <button
+              type="button"
+              className="galaxy-btn-refresh"
+              onClick={() => {
+                if (activeView === 'lista-espera') {
+                  if (token) {
+                    void fetchWaitlist(token)
+                  }
+                  return
                 }
-                return
-              } else {
-                fetchInscricoes(token)
-              }
-            }}
-            disabled={isRefreshing}
-          >
-            {isRefreshing ? <Spinner size="sm" animation="border" /> : 'Atualizar'}
-          </Button>
-          <Button variant="secondary" size="sm" onClick={logout}>
-            Sair
-          </Button>
+                if (activeView === 'bebidas') {
+                  if (token) {
+                    void fetchBebidasAdmin(token)
+                  }
+                  return
+                } else {
+                  fetchInscricoes(token)
+                }
+              }}
+              disabled={isRefreshing}
+            >
+              {isRefreshing ? <Spinner size="sm" animation="border" /> : <><ArrowClockwise /> Atualizar</>}
+            </button>
+            <button type="button" className="galaxy-btn-logout" onClick={logout}>
+              <BoxArrowRight /> Sair
+            </button>
+          </div>
         </div>
-      </div>
-      <div className="mb-3">
-        <ButtonGroup size="sm">
-          <Button
-            variant={activeView === 'inscricoes' ? 'primary' : 'outline-primary'}
-            onClick={() => setActiveView('inscricoes')}
-          >
-            Inscrições
-          </Button>
-          <Button
-            variant={activeView === 'lista-espera' ? 'primary' : 'outline-primary'}
-            onClick={() => {
-              setActiveView('lista-espera')
-              if (token) {
-                void fetchWaitlist(token)
-              }
-            }}
-          >
-            Lista de espera
-          </Button>
-          <Button
-            variant={activeView === 'calendario' ? 'primary' : 'outline-primary'}
-            onClick={() => setActiveView('calendario')}
-          >
-            Calendário
-          </Button>
-          <Button
-            variant={activeView === 'bebidas' ? 'primary' : 'outline-primary'}
-            onClick={() => setActiveView('bebidas')}
-          >
-            Bebidas
-          </Button>
-        </ButtonGroup>
-      </div>
 
       {activeView === 'inscricoes' && (
         <>
-          <Row className="g-3 mb-4">
-            <Col xs={12} md={3}>
-              <Card className="h-100 shadow-sm border-0">
-                <Card.Body>
-                  <Card.Title className="text-uppercase text-muted fs-6 mb-1">
-                    Inscrições
-                  </Card.Title>
-                  <h3 className="fw-semibold mb-0">{globalResumo.totalInscritos}</h3>
-                </Card.Body>
-              </Card>
-            </Col>
-            <Col xs={12} md={3}>
-              <Card className="h-100 shadow-sm border-0">
-                <Card.Body>
-                  <Card.Title className="text-uppercase text-muted fs-6 mb-1">Remoto</Card.Title>
-                  <h3 className="fw-semibold mb-0">{globalResumo.qtdeRemoto}</h3>
-                </Card.Body>
-              </Card>
-            </Col>
-            <Col xs={12} md={3}>
-              <Card className="h-100 shadow-sm border-0">
-                <Card.Body>
-                  <Card.Title className="text-uppercase text-muted fs-6 mb-1">
-                    Presencial
-                  </Card.Title>
-                  <h3 className="fw-semibold mb-0">{globalResumo.qtdePresencial}</h3>
-                </Card.Body>
-              </Card>
-            </Col>
-            <Col xs={12} md={3}>
-              <Card className="h-100 shadow-sm border-0">
-                <Card.Body>
-                  <Card.Title className="text-uppercase text-muted fs-6 mb-1">
-                    Valor Líquido
-                  </Card.Title>
-                  <h3 className="fw-semibold mb-0">{money(globalResumo.totalValorLiquido)}</h3>
-                </Card.Body>
-              </Card>
-            </Col>
-          </Row>
+          <div className="galaxy-stats-grid">
+            <div className="galaxy-stat-card stat-blue">
+              <div className="galaxy-stat-header">
+                <span className="galaxy-stat-label">Inscrições</span>
+                <div className="galaxy-stat-icon"><People /></div>
+              </div>
+              <div className="galaxy-stat-value">{globalResumo.totalInscritos}</div>
+            </div>
+            <div className="galaxy-stat-card stat-cyan">
+              <div className="galaxy-stat-header">
+                <span className="galaxy-stat-label">Remoto</span>
+                <div className="galaxy-stat-icon"><Laptop /></div>
+              </div>
+              <div className="galaxy-stat-value">{globalResumo.qtdeRemoto}</div>
+            </div>
+            <div className="galaxy-stat-card stat-green">
+              <div className="galaxy-stat-header">
+                <span className="galaxy-stat-label">Presencial</span>
+                <div className="galaxy-stat-icon"><Building /></div>
+              </div>
+              <div className="galaxy-stat-value">{globalResumo.qtdePresencial}</div>
+            </div>
+            <div className="galaxy-stat-card stat-amber">
+              <div className="galaxy-stat-header">
+                <span className="galaxy-stat-label">Valor Líquido</span>
+                <div className="galaxy-stat-icon"><CurrencyDollar /></div>
+              </div>
+              <div className="galaxy-stat-value currency">{money(globalResumo.totalValorLiquido)}</div>
+            </div>
+          </div>
 
           {hasCursos && (
-            <div
-              className="d-flex flex-wrap align-items-center gap-3 mb-4"
-              role="tablist"
-              aria-label="Cursos disponíveis"
-            >
-              <button
-                type="button"
-                onClick={() => setActiveCurso(ALL_CURSO_KEY)}
-                style={chipStyle(activeCurso === ALL_CURSO_KEY)}
-                role="tab"
-                aria-selected={activeCurso === ALL_CURSO_KEY}
-              >
-                <span
-                  className="text-start"
-                  style={{ flex: '1 1 auto', minWidth: 0, whiteSpace: 'normal' }}
+            <div className="galaxy-chips-container">
+              <div className="galaxy-chips-label">
+                <ListUl /> Filtrar por curso
+              </div>
+              <div className="galaxy-chips-wrapper">
+                <button
+                  type="button"
+                  onClick={() => setActiveCurso(ALL_CURSO_KEY)}
+                  className={`galaxy-chip ${activeCurso === ALL_CURSO_KEY ? 'active' : ''}`}
+                  role="tab"
+                  aria-selected={activeCurso === ALL_CURSO_KEY}
                 >
                   Todos
-                </span>
-                <Badge
-                  bg={activeCurso === ALL_CURSO_KEY ? 'light' : 'secondary'}
-                  text={activeCurso === ALL_CURSO_KEY ? 'dark' : undefined}
-                >
-                  {globalResumo.totalInscritos}
-                </Badge>
-              </button>
-              {cursoEntries.map(([curso, group]) => {
-                const isActive = activeCurso === curso
-                return (
-                  <button
-                    key={curso}
-                    type="button"
-                    onClick={() => setActiveCurso(curso)}
-                    style={chipStyle(isActive)}
-                    title={curso}
-                    role="tab"
-                    aria-selected={isActive}
-                  >
-                    <span
-                      className="text-start"
-                      style={{ flex: '1 1 auto', minWidth: 0, whiteSpace: 'normal' }}
+                  <span className="badge">{globalResumo.totalInscritos}</span>
+                </button>
+                {cursoEntries.map(([curso, group]) => {
+                  const isActive = activeCurso === curso
+                  return (
+                    <button
+                      key={curso}
+                      type="button"
+                      onClick={() => setActiveCurso(curso)}
+                      className={`galaxy-chip ${isActive ? 'active' : ''}`}
+                      title={curso}
+                      role="tab"
+                      aria-selected={isActive}
                     >
                       {curso}
-                    </span>
-                    <Badge
-                      bg={isActive ? 'light' : 'secondary'}
-                      text={isActive ? 'dark' : undefined}
-                    >
-                      {group.totalInscritos}
-                    </Badge>
-                  </button>
-                )
-              })}
+                      <span className="badge">{group.totalInscritos}</span>
+                    </button>
+                  )
+                })}
+              </div>
             </div>
           )}
 
@@ -1327,10 +1311,12 @@ export default function Admin() {
           )}
 
           {cursosParaRender.map(([curso, group]) => (
-            <Card key={curso} className="shadow-sm border-0 mb-4">
-              <Card.Header className="bg-white py-3">
-                <div className="d-flex flex-wrap align-items-center gap-3">
-                  <h4 className="mb-0">{curso}</h4>
+            <div key={curso} className="galaxy-table-container mb-4">
+              <div className="galaxy-table-header">
+                <h4 className="galaxy-table-title">
+                  {curso}
+                </h4>
+                <div className="d-flex flex-wrap align-items-center gap-2">
                   <Badge bg="dark" pill>
                     Total: {group.totalInscritos}
                   </Badge>
@@ -1344,16 +1330,13 @@ export default function Admin() {
                     Líquido: {money(group.totalValorLiquido)}
                   </Badge>
                 </div>
-              </Card.Header>
-              <Card.Body className="p-0">
-                <div className="table-responsive">
-                  <Table
-                    striped
-                    hover
-                    size="sm"
-                    className="mb-0 align-middle"
-                    style={{ minWidth: 1100 }}
-                  >
+              </div>
+              <div className="galaxy-table-wrapper">
+                <Table
+                  hover
+                  className="galaxy-table mb-0"
+                  style={{ minWidth: 1100 }}
+                >
                     <thead
                       style={{ position: 'sticky', top: 0, zIndex: 1 }}
                       className="bg-light text-muted"
@@ -1839,8 +1822,7 @@ export default function Admin() {
                 </tbody>
               </Table>
             </div>
-          </Card.Body>
-        </Card>
+          </div>
           ))}
 
           {!hasCursos && !loading && (
@@ -1917,58 +1899,39 @@ export default function Admin() {
       {activeView === 'lista-espera' && (
         <>
           {waitlistHasCursos && (
-            <div
-              className="d-flex flex-wrap align-items-center gap-3 mb-4"
-              role="tablist"
-              aria-label="Cursos com lista de espera"
-            >
-              <button
-                type="button"
-                onClick={() => setActiveWaitlistCurso(ALL_CURSO_KEY)}
-                style={chipStyle(activeWaitlistCurso === ALL_CURSO_KEY)}
-                role="tab"
-                aria-selected={activeWaitlistCurso === ALL_CURSO_KEY}
-              >
-                <span
-                  className="text-start"
-                  style={{ flex: '1 1 auto', minWidth: 0, whiteSpace: 'normal' }}
+            <div className="galaxy-chips-container">
+              <div className="galaxy-chips-label">
+                <ListUl /> Filtrar por curso
+              </div>
+              <div className="galaxy-chips-wrapper">
+                <button
+                  type="button"
+                  onClick={() => setActiveWaitlistCurso(ALL_CURSO_KEY)}
+                  className={`galaxy-chip ${activeWaitlistCurso === ALL_CURSO_KEY ? 'active' : ''}`}
+                  role="tab"
+                  aria-selected={activeWaitlistCurso === ALL_CURSO_KEY}
                 >
                   Todos
-                </span>
-                <Badge
-                  bg={activeWaitlistCurso === ALL_CURSO_KEY ? 'light' : 'secondary'}
-                  text={activeWaitlistCurso === ALL_CURSO_KEY ? 'dark' : undefined}
-                >
-                  {waitlistResumo.total}
-                </Badge>
-              </button>
-              {waitlistCursoEntries.map(([curso, group]) => {
-                const isActive = activeWaitlistCurso === curso
-                return (
-                  <button
-                    key={curso}
-                    type="button"
-                    onClick={() => setActiveWaitlistCurso(curso)}
-                    style={chipStyle(isActive)}
-                    title={curso}
-                    role="tab"
-                    aria-selected={isActive}
-                  >
-                    <span
-                      className="text-start"
-                      style={{ flex: '1 1 auto', minWidth: 0, whiteSpace: 'normal' }}
+                  <span className="badge">{waitlistResumo.total}</span>
+                </button>
+                {waitlistCursoEntries.map(([curso, group]) => {
+                  const isActive = activeWaitlistCurso === curso
+                  return (
+                    <button
+                      key={curso}
+                      type="button"
+                      onClick={() => setActiveWaitlistCurso(curso)}
+                      className={`galaxy-chip ${isActive ? 'active' : ''}`}
+                      title={curso}
+                      role="tab"
+                      aria-selected={isActive}
                     >
                       {curso}
-                    </span>
-                    <Badge
-                      bg={isActive ? 'light' : 'secondary'}
-                      text={isActive ? 'dark' : undefined}
-                    >
-                      {group.total}
-                    </Badge>
-                  </button>
-                )
-              })}
+                      <span className="badge">{group.total}</span>
+                    </button>
+                  )
+                })}
+              </div>
             </div>
           )}
 
@@ -1979,55 +1942,48 @@ export default function Admin() {
           )}
 
           {waitlistCursosParaRender.map(([curso, group]) => (
-            <Card key={curso} className="shadow-sm border-0 mb-4">
-              <Card.Header className="bg-white py-3">
-                <div className="d-flex flex-wrap align-items-center gap-3">
-                  <h4 className="mb-0">{curso}</h4>
-                  <Badge bg="dark" pill>
-                    Total na lista de espera: {group.total}
-                  </Badge>
-                </div>
-              </Card.Header>
-              <Card.Body className="p-0">
-                <div className="table-responsive">
-                  <Table
-                    striped
-                    hover
-                    size="sm"
-                    className="mb-0 align-middle"
-                    style={{ minWidth: 720 }}
-                  >
-                    <thead
-                      style={{ position: 'sticky', top: 0, zIndex: 1 }}
-                      className="bg-light text-muted"
-                    >
-                      <tr style={{ whiteSpace: 'nowrap' }}>
-                        <th>Data/Hora</th>
-                        <th>Nome</th>
-                        <th>Email</th>
-                        <th>Telefone</th>
-                        <th>Como conheceu</th>
+            <div key={curso} className="galaxy-table-container mb-4">
+              <div className="galaxy-table-header">
+                <h4 className="galaxy-table-title">
+                  {curso}
+                </h4>
+                <Badge bg="dark" pill>
+                  Total na lista de espera: {group.total}
+                </Badge>
+              </div>
+              <div className="galaxy-table-wrapper">
+                <Table
+                  hover
+                  className="galaxy-table mb-0"
+                  style={{ minWidth: 720 }}
+                >
+                  <thead>
+                    <tr style={{ whiteSpace: 'nowrap' }}>
+                      <th>Data/Hora</th>
+                      <th>Nome</th>
+                      <th>Email</th>
+                      <th>Telefone</th>
+                      <th>Como conheceu</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {group.itens.map(item => (
+                      <tr key={item.id || `${curso}-${item.email}-${item.criadoEm}`}>
+                        <td className="cell-datetime" style={{ whiteSpace: 'nowrap' }}>
+                          {item.criadoEm
+                            ? new Date(item.criadoEm).toLocaleString('pt-BR')
+                            : '-'}
+                        </td>
+                        <td className="cell-name">{item.nome || '-'}</td>
+                        <td className="cell-email">{item.email || '-'}</td>
+                        <td>{item.telefone || '-'}</td>
+                        <td>{item.comoConheceu || '-'}</td>
                       </tr>
-                    </thead>
-                    <tbody>
-                      {group.itens.map(item => (
-                        <tr key={item.id || `${curso}-${item.email}-${item.criadoEm}`}>
-                          <td style={{ whiteSpace: 'nowrap' }}>
-                            {item.criadoEm
-                              ? new Date(item.criadoEm).toLocaleString('pt-BR')
-                              : '-'}
-                          </td>
-                          <td>{item.nome || '-'}</td>
-                          <td>{item.email || '-'}</td>
-                          <td>{item.telefone || '-'}</td>
-                          <td>{item.comoConheceu || '-'}</td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </Table>
-                </div>
-              </Card.Body>
-            </Card>
+                    ))}
+                  </tbody>
+                </Table>
+              </div>
+            </div>
           ))}
 
           {!waitlistHasCursos && !loading && (
@@ -2411,5 +2367,6 @@ export default function Admin() {
         <GalaxyCalendar apiBase={API_BASE} token={token} />
       )}
     </Container>
+    </div>
   )
 }
