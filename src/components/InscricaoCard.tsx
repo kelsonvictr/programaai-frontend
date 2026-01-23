@@ -1,6 +1,6 @@
 import React from 'react'
-import { Badge, Button, Form, InputGroup, Spinner, Dropdown, ButtonGroup } from 'react-bootstrap'
-import { Check2, Clipboard, ClipboardCheck, FileEarmarkPdf, Whatsapp } from 'react-bootstrap-icons'
+import { Badge, Button, Form, InputGroup, Spinner } from 'react-bootstrap'
+import { Check2, FileEarmarkPdf, Whatsapp } from 'react-bootstrap-icons'
 
 type MonthlyPaymentStatus = 'ok' | 'late'
 
@@ -45,19 +45,11 @@ type EditableField =
   | 'monthlyPayments'
   | 'valorPrevisto'
 
-type AgendamentoPagamento = {
-  id: string
-  inscricaoId: string
-  scheduledDate?: string | null
-  status?: string | null
-}
-
 interface InscricaoCardProps {
   inscricao: Inscricao
   curso: string
   busy: Record<string, boolean>
   copiedPaymentId: string | null
-  agendamentoCache: Record<string, AgendamentoPagamento | null>
   money: (value: number) => string
   buildWhatsappUrl: (phone?: string) => string | null
   isFullstackCourse: (curso?: string) => boolean
@@ -65,7 +57,6 @@ interface InscricaoCardProps {
   ensureMonthlyPayments: (payments?: MonthlyPaymentSlot[] | null) => MonthlyPaymentSlot[]
   sumMonthlyPayments: (payments: MonthlyPaymentSlot[]) => number
   formatDateTime: (date?: string | null) => string
-  formatBrDate: (date?: string) => string
   keyBusy: (id: string, field: string) => string
   toggleField: (id: string, currentValue: boolean | null | undefined, field: 'pago' | 'grupoWhatsapp' | 'remoto') => Promise<void>
   setLocalField: <K extends keyof Inscricao>(id: string, field: K, value: Inscricao[K]) => void
@@ -78,7 +69,6 @@ interface InscricaoCardProps {
   handleMonthlySave: (i: Inscricao) => Promise<void>
   gerarContrato: (id: string) => void
   copyPaymentLink: (id: string) => void
-  pagamentoLink: (id: string) => string
   openAgendamentoModal: (i: Inscricao) => void
   deletar: (id: string) => void
   recomputeAggregates: () => void
@@ -91,7 +81,6 @@ const InscricaoCard: React.FC<InscricaoCardProps> = ({
   curso,
   busy,
   copiedPaymentId,
-  agendamentoCache,
   money,
   buildWhatsappUrl,
   isFullstackCourse,
@@ -99,7 +88,6 @@ const InscricaoCard: React.FC<InscricaoCardProps> = ({
   ensureMonthlyPayments,
   sumMonthlyPayments,
   formatDateTime,
-  formatBrDate,
   keyBusy,
   toggleField,
   setLocalField,
@@ -112,7 +100,6 @@ const InscricaoCard: React.FC<InscricaoCardProps> = ({
   handleMonthlySave,
   gerarContrato,
   copyPaymentLink,
-  pagamentoLink,
   openAgendamentoModal,
   deletar,
   recomputeAggregates,

@@ -1338,7 +1338,6 @@ export default function Admin() {
                     curso={curso}
                     busy={busy}
                     copiedPaymentId={copiedPaymentId}
-                    agendamentoCache={agendamentoCache}
                     money={money}
                     keyBusy={keyBusy}
                     buildWhatsappUrl={buildWhatsappUrl}
@@ -1358,9 +1357,7 @@ export default function Admin() {
                     handleMonthlySave={handleMonthlySave}
                     gerarContrato={gerarContrato}
                     copyPaymentLink={copyPaymentLink}
-                    pagamentoLink={pagamentoLink}
                     openAgendamentoModal={openAgendamentoModal}
-                    formatBrDate={formatBrDate}
                     formatDateTime={formatDateTime}
                     deletar={deletar}
                     ASAAS_STATUS_LABELS={ASAAS_STATUS_LABELS}
