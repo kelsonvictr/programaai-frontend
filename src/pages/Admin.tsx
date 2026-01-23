@@ -10,16 +10,15 @@ import {
   Spinner,
   Alert,
   Badge,
-  InputGroup,
   Row,
   Col,
   Card,
-  Dropdown,
-  ButtonGroup,
   Modal
 } from 'react-bootstrap'
-import { Check2, Clipboard, ClipboardCheck, Whatsapp, FileEarmarkPdf, ArrowClockwise, BoxArrowRight, People, Laptop, Building, CurrencyDollar, Calendar3, Cup, ListUl, ClockHistory } from 'react-bootstrap-icons'
+import { ArrowClockwise, BoxArrowRight, People, Laptop, Building, CurrencyDollar, Calendar3, Cup, ListUl, ClockHistory } from 'react-bootstrap-icons'
 import GalaxyCalendar from '../components/GalaxyCalendar'
+import InscricaoCard from '../components/InscricaoCard'
+import WaitlistCard from '../components/WaitlistCard'
 import '../styles/galaxy-admin.css'
 
 const API_BASE = import.meta.env.VITE_ADMIN_API as string
@@ -1331,497 +1330,44 @@ export default function Admin() {
                   </Badge>
                 </div>
               </div>
-              <div className="galaxy-table-wrapper">
-                <Table
-                  hover
-                  className="galaxy-table mb-0"
-                  style={{ minWidth: 1100 }}
-                >
-                    <thead
-                      style={{ position: 'sticky', top: 0, zIndex: 1 }}
-                      className="galaxy-table-thead"
-                    >
-                      <tr style={{ whiteSpace: 'nowrap' }}>
-                        <th>Data/Hora</th>
-                        <th>Nome</th>
-                        <th>Email</th>
-                        <th>WhatsApp</th>
-                        <th className="text-end">Valor</th>
-                        <th style={{ minWidth: 260 }}>Pagamento</th>
-                        <th className="text-center">
-                          <div className="d-flex flex-column align-items-center">
-                            <span>Pago</span>
-                            <Badge bg="success">✓</Badge>
-                          </div>
-                        </th>
-                        <th className="text-center">
-                          <div className="d-flex flex-column align-items-center">
-                            <span>Grupo</span>
-                            <Badge bg="info">WA</Badge>
-                          </div>
-                        </th>
-                        <th className="text-center">
-                          <div className="d-flex flex-column align-items-center">
-                            <span>Remoto</span>
-                            <Badge bg="warning" text="dark">
-                              R
-                            </Badge>
-                          </div>
-                        </th>
-                        <th className="text-end">Valor Líquido Final</th>
-                        <th>Observações</th>
-                        <th className="text-center">Atalhos</th>
-                        <th className="text-center">Ações</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {group.inscricoes.map(i => {
-                        const pagoKey = keyBusy(i.id, 'pago')
-                        const grupoKey = keyBusy(i.id, 'grupoWhatsapp')
-                        const remotoKey = keyBusy(i.id, 'remoto')
-                        const vlKey = keyBusy(i.id, 'valorLiquidoFinal')
-                    const obsKey = keyBusy(i.id, 'observacoes')
-                    const contratoKey = keyBusy(i.id, 'contrato')
-                    const paymentModeBusyKey = keyBusy(i.id, 'paymentMode')
-                    const monthlyBusy = [
-                      keyBusy(i.id, 'monthlyPayments'),
-                      keyBusy(i.id, 'valorPrevisto'),
-                      paymentModeBusyKey,
-                      vlKey
-                    ].some(key => busy[key])
-
-                    const pagoChecked = !!i.pago
-                    const grupoChecked = !!i.grupoWhatsapp
-                    const remotoChecked = !!i.remoto
-
-                    const vl = typeof i.valorLiquidoFinal === 'number' ? i.valorLiquidoFinal : null
-                    const valorPrevisto = typeof i.valorPrevisto === 'number' ? i.valorPrevisto : null
-                    const obs = i.observacoes ?? ''
-                    const whatsappUrl = buildWhatsappUrl(i.whatsapp)
-                    const isFullstack = isFullstackCourse(i.curso || curso)
-                    const paymentMode = getPaymentMode(i)
-                    const normalizedMonthlyPayments = ensureMonthlyPayments(i.monthlyPayments)
-                    const showMonthlyDetails = isFullstack && paymentMode === 'monthly'
-                    const monthlyTotal = sumMonthlyPayments(normalizedMonthlyPayments)
-                    const asaasStatusRaw = (i.asaasPaymentStatus || '').toUpperCase()
-                    const asaasStatusLabel = asaasStatusRaw
-                      ? (ASAAS_STATUS_LABELS[asaasStatusRaw] || asaasStatusRaw)
-                      : ''
-                    const asaasStatusVariant = (asaasStatusRaw && ASAAS_STATUS_VARIANTS[asaasStatusRaw])
-                      ? ASAAS_STATUS_VARIANTS[asaasStatusRaw]
-                      : 'secondary'
-
-                    return (
-                      <tr key={i.id}>
-                        <td style={{ whiteSpace: 'nowrap' }}>
-                          {new Date(i.dataInscricao).toLocaleString()}
-                        </td>
-                        <td>{i.nomeCompleto}</td>
-                        <td>{i.email}</td>
-                        <td>
-                          <div className="d-flex align-items-center gap-2">
-                            <span>{i.whatsapp || '-'}</span>
-                            {whatsappUrl && (
-                              <Button
-                                variant="outline-success"
-                                size="sm"
-                                href={whatsappUrl}
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                title="Abrir conversa no WhatsApp"
-                              >
-                                <Whatsapp />
-                              </Button>
-                            )}
-                          </div>
-                        </td>
-                        <td className="text-end">{money(i.valorCurso)}</td>
-                        <td className="align-top" style={{ minWidth: 260 }}>
-                          {isFullstack ? (
-                            <div className="d-flex flex-column gap-2">
-                              <div>
-                                <div className="fw-semibold small mb-1">Forma de pagamento</div>
-                                <div className="d-flex flex-column gap-1">
-                                  <Form.Check
-                                    type="radio"
-                                    id={`pagamento-unico-${i.id}`}
-                                    label="Pagamento único"
-                                    name={`payment-mode-${i.id}`}
-                                    checked={paymentMode === 'one-time'}
-                                    onChange={() => handlePaymentModeChange(i, 'one-time')}
-                                    inline={false}
-                                  />
-                                  <Form.Check
-                                    type="radio"
-                                    id={`pagamento-mensal-${i.id}`}
-                                    label="Mensalidades (6x)"
-                                    name={`payment-mode-${i.id}`}
-                                    checked={paymentMode === 'monthly'}
-                                    onChange={() => handlePaymentModeChange(i, 'monthly')}
-                                    inline={false}
-                                  />
-                                </div>
-                              </div>
-
-                              {showMonthlyDetails && (
-                                <>
-                                  <div className="d-flex flex-wrap gap-2">
-                                    {normalizedMonthlyPayments.map(slot => (
-                                      <div
-                                        key={slot.index}
-                                        className="border rounded p-2 flex-grow-1"
-                                        style={{ minWidth: 150, maxWidth: '48%' }}
-                                      >
-                                        <div className="d-flex justify-content-between align-items-center mb-2">
-                                          <strong className="small mb-0">
-                                            Mensalidade {slot.index + 1}
-                                          </strong>
-                                          <div className="d-flex gap-1">
-                                            <Button
-                                              type="button"
-                                              variant={
-                                                slot.status === 'ok' ? 'success' : 'outline-success'
-                                              }
-                                              size="sm"
-                                              onClick={() => handleMonthlyStatusChange(i, slot.index, 'ok')}
-                                              title="Em dia"
-                                            >
-                                              ✓
-                                            </Button>
-                                            <Button
-                                              type="button"
-                                              variant={
-                                                slot.status === 'late' ? 'danger' : 'outline-danger'
-                                              }
-                                              size="sm"
-                                              onClick={() => handleMonthlyStatusChange(i, slot.index, 'late')}
-                                              title="Em atraso"
-                                            >
-                                              !
-                                            </Button>
-                                          </div>
-                                        </div>
-                                        <Form.Control
-                                          size="sm"
-                                          type="number"
-                                          min={0}
-                                          step="0.01"
-                                          value={slot.amount ?? ''}
-                                          placeholder="R$ 0,00"
-                                          onChange={e =>
-                                            handleMonthlyAmountChange(i, slot.index, e.target.value)
-                                          }
-                                        />
-                                      </div>
-                                    ))}
-                                  </div>
-
-                                  <div>
-                                    <Form.Label className="small mb-1">Valor previsto</Form.Label>
-                                    <InputGroup size="sm">
-                                      <InputGroup.Text>R$</InputGroup.Text>
-                                      <Form.Control
-                                        type="number"
-                                        min={0}
-                                        step="0.01"
-                                        value={valorPrevisto ?? ''}
-                                        onChange={e => handleValorPrevistoChange(i, e.target.value)}
-                                      />
-                                    </InputGroup>
-                                  </div>
-                                </>
-                              )}
-
-                              <div className="d-flex flex-column gap-1">
-                                <small className="text-muted">
-                                  {showMonthlyDetails
-                                    ? `Recebido até agora: ${money(monthlyTotal)}`
-                                    : 'Controle padrão de pagamento único'}
-                                </small>
-                                <Button
-                                  type="button"
-                                  variant="primary"
-                                  size="sm"
-                                  onClick={() => void handleMonthlySave(i)}
-                                  disabled={monthlyBusy}
-                                >
-                                  {monthlyBusy ? <Spinner size="sm" animation="border" /> : 'Salvar pagamentos'}
-                                </Button>
-                              </div>
-
-                              <div className="d-flex flex-column gap-1">
-                                <div className="fw-semibold small">Status Asaas</div>
-                                {asaasStatusLabel ? (
-                                  <Badge bg={asaasStatusVariant} className="align-self-start">
-                                    {asaasStatusLabel}
-                                  </Badge>
-                                ) : (
-                                  <small className="text-muted">Sem atualização</small>
-                                )}
-                                {i.asaasPaymentUpdatedAt && (
-                                  <small className="text-muted">
-                                    Atualizado: {formatDateTime(i.asaasPaymentUpdatedAt)}
-                                  </small>
-                                )}
-                              </div>
-                            </div>
-                          ) : (
-                            <div className="d-flex flex-column gap-1">
-                              <Badge bg="secondary" pill className="align-self-start">
-                                Pagamento único
-                              </Badge>
-                              <div className="d-flex flex-column gap-1">
-                                <div className="fw-semibold small">Status Asaas</div>
-                                {asaasStatusLabel ? (
-                                  <Badge bg={asaasStatusVariant} className="align-self-start">
-                                    {asaasStatusLabel}
-                                  </Badge>
-                                ) : (
-                                  <small className="text-muted">Sem atualização</small>
-                                )}
-                                {i.asaasPaymentUpdatedAt && (
-                                  <small className="text-muted">
-                                    Atualizado: {formatDateTime(i.asaasPaymentUpdatedAt)}
-                                  </small>
-                                )}
-                              </div>
-                            </div>
-                          )}
-                        </td>
-
-                        <td className="text-center">
-                          <div className="d-inline-flex align-items-center gap-2">
-                            <Form.Check
-                              type="switch"
-                              id={`pago-${i.id}`}
-                              checked={pagoChecked}
-                              disabled={!!busy[pagoKey]}
-                              onChange={() => toggleField(i.id, i.pago, 'pago')}
-                              title="Marcar pagamento"
-                            />
-                            {busy[pagoKey] && <Spinner size="sm" animation="border" />}
-                          </div>
-                        </td>
-
-                        <td className="text-center">
-                          <div className="d-inline-flex align-items-center gap-2">
-                            <Form.Check
-                              type="switch"
-                              id={`grupo-${i.id}`}
-                              checked={grupoChecked}
-                              disabled={!!busy[grupoKey]}
-                              onChange={() => toggleField(i.id, i.grupoWhatsapp, 'grupoWhatsapp')}
-                              title="Marcar entrada no grupo"
-                            />
-                            {busy[grupoKey] && <Spinner size="sm" animation="border" />}
-                          </div>
-                        </td>
-
-                        <td className="text-center">
-                          <div className="d-inline-flex align-items-center gap-2">
-                            <Form.Check
-                              type="switch"
-                              id={`remoto-${i.id}`}
-                              checked={remotoChecked}
-                              disabled={!!busy[remotoKey]}
-                              onChange={() => toggleField(i.id, i.remoto, 'remoto')}
-                              title="Marcar remoto"
-                            />
-                            {busy[remotoKey] && <Spinner size="sm" animation="border" />}
-                          </div>
-                        </td>
-
-                        <td className="text-end" style={{ minWidth: 220 }}>
-                          {showMonthlyDetails ? (
-                            <div className="text-start">
-                              <div className="small text-muted mb-1">Valor líquido (mensalidades)</div>
-                              <div className="d-flex align-items-center gap-2">
-                                <strong>{money(monthlyTotal)}</strong>
-                                {busy[vlKey] && <Spinner size="sm" animation="border" />}
-                              </div>
-                            </div>
-                          ) : (
-                            <InputGroup size="sm">
-                              <InputGroup.Text>R$</InputGroup.Text>
-                              <Form.Control
-                                type="number"
-                                step="0.01"
-                                min="0"
-                                value={vl ?? ''}
-                                placeholder="0,00"
-                                disabled={!!busy[vlKey]}
-                                onChange={e => {
-                                  const raw = e.target.value
-                                  const numericValue = raw === '' ? null : Number(raw)
-                                  const safeValue =
-                                    typeof numericValue === 'number' && Number.isNaN(numericValue)
-                                      ? null
-                                      : numericValue
-                                  setLocalField(i.id, 'valorLiquidoFinal', safeValue)
-                                  recomputeAggregates()
-                                }}
-                                onBlur={e => {
-                                  const raw = e.target.value
-                                  const numericValue = raw === '' ? null : Number(raw)
-                                  const safeValue =
-                                    typeof numericValue === 'number' && Number.isNaN(numericValue)
-                                      ? null
-                                      : numericValue
-                                  updateField(i.id, 'valorLiquidoFinal', safeValue)
-                                }}
-                              />
-                              <Button
-                                variant="outline-secondary"
-                                size="sm"
-                                disabled={!!busy[vlKey]}
-                                onClick={() =>
-                                  updateField(
-                                    i.id,
-                                    'valorLiquidoFinal',
-                                    getLocalFieldValue(i.id, 'valorLiquidoFinal')
-                                  )
-                                }
-                                title="Salvar valor"
-                              >
-                                <Check2 />
-                              </Button>
-                              {busy[vlKey] && (
-                                <InputGroup.Text>
-                                  <Spinner size="sm" animation="border" />
-                                </InputGroup.Text>
-                              )}
-                            </InputGroup>
-                          )}
-                        </td>
-
-                        <td style={{ minWidth: 260 }}>
-                          <InputGroup size="sm">
-                            <Form.Control
-                              type="text"
-                              value={obs}
-                              placeholder="Anotações internas…"
-                              disabled={!!busy[obsKey]}
-                              onChange={e => setLocalField(i.id, 'observacoes', e.target.value)}
-                              onBlur={e => updateField(i.id, 'observacoes', e.target.value || null)}
-                            />
-                            <Button
-                              variant="outline-secondary"
-                              size="sm"
-                              disabled={!!busy[obsKey]}
-                              onClick={() =>
-                                updateField(
-                                  i.id,
-                                  'observacoes',
-                                  getLocalFieldValue(i.id, 'observacoes')
-                                )
-                              }
-                              title="Salvar observações"
-                            >
-                              <Check2 />
-                            </Button>
-                            {busy[obsKey] && (
-                              <InputGroup.Text>
-                                <Spinner size="sm" animation="border" />
-                              </InputGroup.Text>
-                            )}
-                          </InputGroup>
-                        </td>
-
-                        <td className="text-center" style={{ minWidth: 190 }}>
-                          <Dropdown as={ButtonGroup} size="sm" align="end">
-                            <Button
-                              type="button"
-                              variant="outline-secondary"
-                              title="Gerar contrato em PDF"
-                              aria-label="Gerar contrato em PDF"
-                              disabled={!!busy[contratoKey]}
-                              onClick={() => gerarContrato(i.id)}
-                            >
-                              {busy[contratoKey] ? (
-                                <Spinner size="sm" animation="border" />
-                              ) : (
-                                <FileEarmarkPdf />
-                              )}
-                            </Button>
-                            <Button
-                              type="button"
-                              variant={copiedPaymentId === i.id ? 'success' : 'outline-secondary'}
-                              title={
-                                copiedPaymentId === i.id
-                                  ? 'Link copiado!'
-                                  : 'Copiar link de pagamento'
-                              }
-                              onClick={() => copyPaymentLink(i.id)}
-                            >
-                              {copiedPaymentId === i.id ? <ClipboardCheck /> : <Clipboard />}
-                            </Button>
-                            <Dropdown.Toggle
-                              split
-                              variant="outline-secondary"
-                              id={`detalhes-${i.id}`}
-                              title="Ver mais detalhes"
-                            />
-                            <Dropdown.Menu>
-                              <Dropdown.Header>Atalhos</Dropdown.Header>
-                              <Dropdown.Item as="button" type="button" onClick={() => void openAgendamentoModal(i)}>
-                                Agendar pagamento (email + SMS)
-                              </Dropdown.Item>
-                              <Dropdown.Item
-                                as="button"
-                                type="button"
-                                onClick={() => copyPaymentLink(i.id)}
-                              >
-                                Copiar link de pagamento
-                              </Dropdown.Item>
-                              <Dropdown.ItemText>
-                                <small className="text-muted">
-                                  {pagamentoLink(i.id).replace('https://', '')}
-                                </small>
-                              </Dropdown.ItemText>
-                              <Dropdown.Divider />
-                              <Dropdown.Header>Informações adicionais</Dropdown.Header>
-                              <Dropdown.ItemText>
-                                <strong>Onde estuda:</strong> {i.ondeEstuda || '—'}
-                              </Dropdown.ItemText>
-                              <Dropdown.ItemText>
-                                <strong>Cupom:</strong> {i.cupom || '—'}
-                              </Dropdown.ItemText>
-                              {i.asaasPaymentLinkUrl && (
-                                <>
-                                  <Dropdown.Divider />
-                                  <Dropdown.ItemText>
-                                    <strong>Link Asaas:</strong>
-                                    <div className="text-break">{i.asaasPaymentLinkUrl}</div>
-                                  </Dropdown.ItemText>
-                                </>
-                              )}
-                            </Dropdown.Menu>
-                          </Dropdown>
-                          {agendamentoCache[i.id]?.status === 'active' &&
-                            agendamentoCache[i.id]?.scheduledDate && (
-                              <div className="small text-muted mt-1">
-                                Agendado: {formatBrDate(agendamentoCache[i.id]?.scheduledDate)}
-                              </div>
-                            )}
-                        </td>
-
-                        <td className="text-center">
-                          <Button
-                            variant="outline-danger"
-                            size="sm"
-                            onClick={() => deletar(i.id)}
-                            disabled
-                            title="Excluir inscrição"
-                          >
-                            🗑️
-                          </Button>
-                        </td>
-                      </tr>
-                    )
-                  })}
-                </tbody>
-              </Table>
-            </div>
+              <div className="galaxy-cards-grid">
+                {group.inscricoes.map(i => (
+                  <InscricaoCard
+                    key={i.id}
+                    inscricao={i}
+                    curso={curso}
+                    busy={busy}
+                    copiedPaymentId={copiedPaymentId}
+                    agendamentoCache={agendamentoCache}
+                    money={money}
+                    keyBusy={keyBusy}
+                    buildWhatsappUrl={buildWhatsappUrl}
+                    isFullstackCourse={isFullstackCourse}
+                    getPaymentMode={getPaymentMode}
+                    ensureMonthlyPayments={ensureMonthlyPayments}
+                    sumMonthlyPayments={sumMonthlyPayments}
+                    getLocalFieldValue={getLocalFieldValue}
+                    setLocalField={setLocalField}
+                    recomputeAggregates={recomputeAggregates}
+                    toggleField={toggleField}
+                    updateField={updateField}
+                    handlePaymentModeChange={handlePaymentModeChange}
+                    handleMonthlyStatusChange={handleMonthlyStatusChange}
+                    handleMonthlyAmountChange={handleMonthlyAmountChange}
+                    handleValorPrevistoChange={handleValorPrevistoChange}
+                    handleMonthlySave={handleMonthlySave}
+                    gerarContrato={gerarContrato}
+                    copyPaymentLink={copyPaymentLink}
+                    pagamentoLink={pagamentoLink}
+                    openAgendamentoModal={openAgendamentoModal}
+                    formatBrDate={formatBrDate}
+                    formatDateTime={formatDateTime}
+                    deletar={deletar}
+                    ASAAS_STATUS_LABELS={ASAAS_STATUS_LABELS}
+                    ASAAS_STATUS_VARIANTS={ASAAS_STATUS_VARIANTS}
+                  />
+                ))}
+              </div>
           </div>
           ))}
 
@@ -1951,37 +1497,14 @@ export default function Admin() {
                   Total na lista de espera: {group.total}
                 </Badge>
               </div>
-              <div className="galaxy-table-wrapper">
-                <Table
-                  hover
-                  className="galaxy-table mb-0"
-                  style={{ minWidth: 720 }}
-                >
-                  <thead>
-                    <tr style={{ whiteSpace: 'nowrap' }}>
-                      <th>Data/Hora</th>
-                      <th>Nome</th>
-                      <th>Email</th>
-                      <th>Telefone</th>
-                      <th>Como conheceu</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {group.itens.map(item => (
-                      <tr key={item.id || `${curso}-${item.email}-${item.criadoEm}`}>
-                        <td className="cell-datetime" style={{ whiteSpace: 'nowrap' }}>
-                          {item.criadoEm
-                            ? new Date(item.criadoEm).toLocaleString('pt-BR')
-                            : '-'}
-                        </td>
-                        <td className="cell-name">{item.nome || '-'}</td>
-                        <td className="cell-email">{item.email || '-'}</td>
-                        <td>{item.telefone || '-'}</td>
-                        <td>{item.comoConheceu || '-'}</td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </Table>
+              <div className="galaxy-cards-grid">
+                {group.itens.map(item => (
+                  <WaitlistCard
+                    key={item.id || `${curso}-${item.email}-${item.criadoEm}`}
+                    item={item}
+                    curso={curso}
+                  />
+                ))}
               </div>
             </div>
           ))}

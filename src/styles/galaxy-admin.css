@@ -2342,3 +2342,432 @@
 .galaxy-admin-page .text-primary {
   color: var(--galaxy-accent-blue) !important;
 }
+
+/* =====================================================
+   INSCRICOES & LISTA DE ESPERA - CARDS LAYOUT
+   ===================================================== */
+
+.galaxy-cards-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(360px, 1fr));
+  gap: 1.25rem;
+  margin-top: 1.5rem;
+}
+
+.galaxy-inscription-card {
+  background: linear-gradient(145deg, rgba(30, 41, 59, 0.7), rgba(15, 23, 42, 0.8));
+  border: 1px solid rgba(148, 163, 184, 0.15);
+  border-radius: 16px;
+  padding: 1.25rem;
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.galaxy-inscription-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: linear-gradient(90deg, 
+    var(--galaxy-accent-blue) 0%, 
+    var(--galaxy-accent-purple) 50%, 
+    var(--galaxy-accent-cyan) 100%
+  );
+}
+
+.galaxy-inscription-card:hover {
+  border-color: rgba(59, 130, 246, 0.4);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+}
+
+.galaxy-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 1rem;
+  padding-bottom: 0.75rem;
+  border-bottom: 1px solid rgba(148, 163, 184, 0.15);
+}
+
+.galaxy-card-user-info {
+  flex: 1;
+}
+
+.galaxy-card-user-name {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--galaxy-text-primary);
+  margin-bottom: 0.25rem;
+  line-height: 1.3;
+}
+
+.galaxy-card-user-date {
+  font-size: 0.75rem;
+  color: var(--galaxy-text-subtle);
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+.galaxy-card-badges {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  align-items: flex-start;
+}
+
+.galaxy-card-badge {
+  padding: 0.25rem 0.65rem;
+  border-radius: 20px;
+  font-size: 0.7rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  white-space: nowrap;
+}
+
+.galaxy-card-badge.pago {
+  background: rgba(16, 185, 129, 0.2);
+  color: #34d399;
+  border: 1px solid rgba(16, 185, 129, 0.3);
+}
+
+.galaxy-card-badge.pendente {
+  background: rgba(245, 158, 11, 0.2);
+  color: #fbbf24;
+  border: 1px solid rgba(245, 158, 11, 0.3);
+}
+
+.galaxy-card-badge.grupo {
+  background: rgba(59, 130, 246, 0.2);
+  color: #60a5fa;
+  border: 1px solid rgba(59, 130, 246, 0.3);
+}
+
+.galaxy-card-badge.remoto {
+  background: rgba(139, 92, 246, 0.2);
+  color: #a78bfa;
+  border: 1px solid rgba(139, 92, 246, 0.3);
+}
+
+.galaxy-card-badge.presencial {
+  background: rgba(236, 72, 153, 0.2);
+  color: #f472b6;
+  border: 1px solid rgba(236, 72, 153, 0.3);
+}
+
+.galaxy-card-body {
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+}
+
+.galaxy-card-field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+}
+
+.galaxy-card-field-label {
+  font-size: 0.7rem;
+  color: var(--galaxy-text-subtle);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  font-weight: 600;
+}
+
+.galaxy-card-field-value {
+  color: var(--galaxy-text-primary);
+  font-size: 0.9rem;
+  word-break: break-word;
+}
+
+.galaxy-card-field-value.email {
+  color: var(--galaxy-accent-cyan);
+  font-size: 0.85rem;
+}
+
+.galaxy-card-field-value.phone {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.galaxy-card-field-value.value {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--galaxy-accent-green);
+}
+
+.galaxy-card-whatsapp-btn {
+  background: linear-gradient(135deg, #25d366, #128c7e);
+  border: none;
+  color: white;
+  padding: 0.35rem 0.65rem;
+  border-radius: 8px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+.galaxy-card-whatsapp-btn:hover {
+  background: linear-gradient(135deg, #2ae46e, #15a68a);
+  transform: translateY(-1px);
+}
+
+.galaxy-card-payment-section {
+  background: rgba(15, 23, 42, 0.6);
+  border: 1px solid rgba(148, 163, 184, 0.1);
+  border-radius: 10px;
+  padding: 0.85rem;
+  margin-top: 0.5rem;
+}
+
+.galaxy-card-payment-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.75rem;
+}
+
+.galaxy-card-payment-title {
+  font-size: 0.8rem;
+  color: var(--galaxy-text-secondary);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.galaxy-card-payment-mode {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  margin-bottom: 0.75rem;
+}
+
+.galaxy-card-monthly-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+  gap: 0.65rem;
+  margin-bottom: 0.75rem;
+}
+
+.galaxy-card-monthly-slot {
+  background: rgba(30, 41, 59, 0.6);
+  border: 1px solid rgba(148, 163, 184, 0.1);
+  border-radius: 8px;
+  padding: 0.65rem;
+}
+
+.galaxy-card-monthly-slot-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.5rem;
+}
+
+.galaxy-card-monthly-slot-title {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--galaxy-text-secondary);
+}
+
+.galaxy-card-monthly-status-btns {
+  display: flex;
+  gap: 0.25rem;
+}
+
+.galaxy-card-status-btn {
+  width: 24px;
+  height: 24px;
+  border-radius: 4px;
+  border: 1px solid;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.75rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.galaxy-card-status-btn.ok {
+  background: rgba(16, 185, 129, 0.2);
+  border-color: rgba(16, 185, 129, 0.4);
+  color: #34d399;
+}
+
+.galaxy-card-status-btn.ok.active {
+  background: var(--galaxy-accent-green);
+  color: white;
+}
+
+.galaxy-card-status-btn.late {
+  background: rgba(239, 68, 68, 0.2);
+  border-color: rgba(239, 68, 68, 0.4);
+  color: #f87171;
+}
+
+.galaxy-card-status-btn.late.active {
+  background: var(--galaxy-accent-red);
+  color: white;
+}
+
+.galaxy-card-toggles {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.85rem;
+  padding: 0.85rem 0;
+  border-top: 1px solid rgba(148, 163, 184, 0.1);
+  margin-top: 0.5rem;
+}
+
+.galaxy-card-toggle {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.galaxy-card-toggle-label {
+  font-size: 0.8rem;
+  color: var(--galaxy-text-secondary);
+  font-weight: 500;
+}
+
+.galaxy-card-footer {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-top: 0.85rem;
+  padding-top: 0.85rem;
+  border-top: 1px solid rgba(148, 163, 184, 0.1);
+}
+
+.galaxy-card-btn {
+  flex: 1;
+  min-width: 110px;
+  padding: 0.65rem 1rem;
+  border-radius: 8px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  border: none;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.4rem;
+}
+
+.galaxy-card-btn-primary {
+  background: linear-gradient(135deg, var(--galaxy-accent-blue), var(--galaxy-accent-purple));
+  color: white;
+}
+
+.galaxy-card-btn-primary:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+}
+
+.galaxy-card-btn-secondary {
+  background: rgba(100, 116, 139, 0.2);
+  border: 1px solid rgba(148, 163, 184, 0.3);
+  color: var(--galaxy-text-secondary);
+}
+
+.galaxy-card-btn-secondary:hover {
+  background: rgba(100, 116, 139, 0.3);
+  border-color: rgba(148, 163, 184, 0.5);
+}
+
+.galaxy-card-obs-field {
+  margin-top: 0.5rem;
+}
+
+.galaxy-card-obs-input {
+  width: 100%;
+  background: rgba(15, 23, 42, 0.8);
+  border: 1px solid rgba(148, 163, 184, 0.2);
+  color: var(--galaxy-text-primary);
+  border-radius: 8px;
+  padding: 0.65rem 0.85rem;
+  font-size: 0.85rem;
+  transition: all 0.2s ease;
+  resize: vertical;
+  min-height: 70px;
+}
+
+.galaxy-card-obs-input:focus {
+  outline: none;
+  border-color: var(--galaxy-accent-blue);
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15);
+}
+
+.galaxy-card-obs-input::placeholder {
+  color: var(--galaxy-text-subtle);
+}
+
+/* Waitlist Card */
+.galaxy-waitlist-card {
+  background: linear-gradient(145deg, rgba(30, 41, 59, 0.6), rgba(15, 23, 42, 0.7));
+  border: 1px solid rgba(148, 163, 184, 0.15);
+  border-radius: 14px;
+  padding: 1.1rem;
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.galaxy-waitlist-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, 
+    var(--galaxy-accent-purple) 0%, 
+    var(--galaxy-accent-blue) 100%
+  );
+}
+
+.galaxy-waitlist-card:hover {
+  border-color: rgba(139, 92, 246, 0.4);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .galaxy-cards-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .galaxy-card-monthly-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+@media (max-width: 480px) {
+  .galaxy-card-monthly-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .galaxy-card-footer {
+    flex-direction: column;
+  }
+  
+  .galaxy-card-btn {
+    width: 100%;
+  }
+}
