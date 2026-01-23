@@ -7,8 +7,10 @@
   --galaxy-bg-primary: #0f172a;
   --galaxy-bg-secondary: #1e293b;
   --galaxy-bg-tertiary: #334155;
-  --galaxy-bg-card: rgba(30, 41, 59, 0.8);
+  --galaxy-bg-card: rgba(30, 41, 59, 0.9);
+  --galaxy-bg-input: rgba(15, 23, 42, 0.8);
   --galaxy-border: rgba(148, 163, 184, 0.2);
+  --galaxy-border-light: rgba(148, 163, 184, 0.1);
   --galaxy-text-primary: #f1f5f9;
   --galaxy-text-secondary: #94a3b8;
   --galaxy-text-muted: #64748b;
@@ -1456,4 +1458,887 @@
 
 .galaxy-admin-page .text-info {
   color: var(--galaxy-accent-cyan) !important;
+}
+
+/* ============================================
+   GALAXY CALENDAR - COMPLETE REDESIGN
+   ============================================ */
+
+/* Calendar Main Container */
+.galaxy-calendar {
+  display: grid;
+  grid-template-columns: 1fr 380px;
+  gap: 1.5rem;
+}
+
+@media (max-width: 1200px) {
+  .galaxy-calendar {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Calendar Card */
+.galaxy-calendar-card {
+  background: var(--galaxy-bg-card);
+  border: 1px solid var(--galaxy-border);
+  border-radius: 20px;
+  overflow: hidden;
+}
+
+/* Calendar Header */
+.galaxy-calendar-header {
+  background: var(--galaxy-gradient-primary);
+  padding: 1.25rem 1.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.galaxy-calendar-title {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  color: #fff;
+  font-size: 1.25rem;
+  font-weight: 700;
+  text-transform: capitalize;
+}
+
+.galaxy-calendar-title-icon {
+  font-size: 1.5rem;
+}
+
+.galaxy-calendar-nav {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.galaxy-calendar-nav-btn {
+  width: 38px;
+  height: 38px;
+  background: rgba(255, 255, 255, 0.2);
+  border: none;
+  border-radius: 10px;
+  color: #fff;
+  font-size: 1.25rem;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.galaxy-calendar-nav-btn:hover {
+  background: rgba(255, 255, 255, 0.3);
+}
+
+/* Calendar Toolbar */
+.galaxy-calendar-toolbar {
+  padding: 1rem 1.5rem;
+  border-bottom: 1px solid var(--galaxy-border);
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.galaxy-calendar-toolbar-hint {
+  color: var(--galaxy-text-secondary);
+  font-size: 0.9rem;
+}
+
+.galaxy-calendar-toolbar-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 1rem;
+}
+
+.galaxy-calendar-btn {
+  background: rgba(59, 130, 246, 0.15);
+  border: 1px solid rgba(59, 130, 246, 0.3);
+  color: var(--galaxy-accent-blue);
+  padding: 0.5rem 1rem;
+  border-radius: 8px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.galaxy-calendar-btn:hover {
+  background: rgba(59, 130, 246, 0.25);
+}
+
+.galaxy-calendar-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* Calendar Grid */
+.galaxy-calendar-grid {
+  padding: 0;
+}
+
+.galaxy-calendar-weekdays {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  background: rgba(15, 23, 42, 0.5);
+  border-bottom: 1px solid var(--galaxy-border);
+}
+
+.galaxy-calendar-weekday {
+  padding: 0.85rem 0.5rem;
+  text-align: center;
+  font-size: 0.8rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: var(--galaxy-text-secondary);
+}
+
+.galaxy-calendar-weeks {
+  display: flex;
+  flex-direction: column;
+}
+
+.galaxy-calendar-week {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  border-bottom: 1px solid var(--galaxy-border-light);
+}
+
+.galaxy-calendar-week:last-child {
+  border-bottom: none;
+}
+
+/* Calendar Day Cell */
+.galaxy-calendar-day {
+  min-height: 110px;
+  padding: 0.5rem;
+  border-right: 1px solid var(--galaxy-border-light);
+  background: transparent;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+}
+
+.galaxy-calendar-day:last-child {
+  border-right: none;
+}
+
+.galaxy-calendar-day:hover {
+  background: rgba(59, 130, 246, 0.08);
+}
+
+.galaxy-calendar-day.empty {
+  background: rgba(15, 23, 42, 0.3);
+  cursor: default;
+}
+
+.galaxy-calendar-day.empty:hover {
+  background: rgba(15, 23, 42, 0.3);
+}
+
+.galaxy-calendar-day.today {
+  background: rgba(16, 185, 129, 0.1);
+  box-shadow: inset 0 0 0 2px rgba(16, 185, 129, 0.5);
+}
+
+.galaxy-calendar-day.selected {
+  background: rgba(59, 130, 246, 0.15);
+  box-shadow: inset 0 0 0 2px var(--galaxy-accent-blue);
+}
+
+.galaxy-calendar-day.has-selected-curso {
+  background: rgba(139, 92, 246, 0.1);
+}
+
+.galaxy-calendar-day.holiday {
+  background: rgba(239, 68, 68, 0.08);
+}
+
+/* Day Header */
+.galaxy-calendar-day-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  margin-bottom: 0.35rem;
+}
+
+.galaxy-calendar-day-number {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--galaxy-text-primary);
+  width: 28px;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 8px;
+}
+
+.galaxy-calendar-day.today .galaxy-calendar-day-number {
+  background: var(--galaxy-accent-green);
+  color: #fff;
+}
+
+.galaxy-calendar-day-today-badge {
+  font-size: 0.65rem;
+  font-weight: 700;
+  color: var(--galaxy-accent-green);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+/* Holiday Label */
+.galaxy-calendar-holiday {
+  font-size: 0.65rem;
+  color: var(--galaxy-accent-red);
+  margin-bottom: 0.35rem;
+  line-height: 1.2;
+  opacity: 0.9;
+}
+
+/* Course Chips in Calendar */
+.galaxy-calendar-day-events {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  flex: 1;
+  overflow: hidden;
+}
+
+.galaxy-calendar-event-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 3px 8px;
+  border-radius: 6px;
+  font-size: 0.68rem;
+  font-weight: 600;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 100%;
+  transition: all 0.2s ease;
+}
+
+.galaxy-calendar-event-chip:hover {
+  transform: scale(1.02);
+}
+
+.galaxy-calendar-more-events {
+  font-size: 0.7rem;
+  color: var(--galaxy-accent-blue);
+  font-weight: 600;
+  cursor: pointer;
+  padding: 2px 0;
+}
+
+.galaxy-calendar-more-events:hover {
+  text-decoration: underline;
+}
+
+/* Selected Day Panel */
+.galaxy-calendar-selected-day {
+  background: var(--galaxy-bg-card);
+  border: 1px solid var(--galaxy-border);
+  border-radius: 16px;
+  padding: 1.25rem;
+  margin: 1rem 1.5rem 1.5rem;
+}
+
+.galaxy-calendar-selected-day-title {
+  color: var(--galaxy-text-primary);
+  font-size: 1rem;
+  font-weight: 600;
+  margin-bottom: 1rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.galaxy-calendar-selected-day-empty {
+  color: var(--galaxy-text-muted);
+  font-size: 0.9rem;
+}
+
+.galaxy-calendar-selected-day-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.galaxy-calendar-selected-day-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.5rem 0;
+  border-bottom: 1px solid var(--galaxy-border-light);
+}
+
+.galaxy-calendar-selected-day-item:last-child {
+  border-bottom: none;
+}
+
+/* Sidebar */
+.galaxy-calendar-sidebar {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+/* Upcoming Classes Card */
+.galaxy-calendar-upcoming {
+  background: var(--galaxy-bg-card);
+  border: 1px solid var(--galaxy-border);
+  border-radius: 16px;
+  padding: 1.25rem;
+}
+
+.galaxy-calendar-section-title {
+  color: var(--galaxy-text-primary);
+  font-size: 1.1rem;
+  font-weight: 700;
+  margin-bottom: 1rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.galaxy-calendar-upcoming-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  max-height: 400px;
+  overflow-y: auto;
+}
+
+.galaxy-calendar-upcoming-item {
+  background: rgba(15, 23, 42, 0.5);
+  border: 1px solid var(--galaxy-border-light);
+  border-radius: 12px;
+  padding: 0.85rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  transition: all 0.2s ease;
+}
+
+.galaxy-calendar-upcoming-item:hover {
+  border-color: rgba(59, 130, 246, 0.3);
+  background: rgba(59, 130, 246, 0.05);
+}
+
+.galaxy-calendar-upcoming-info {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  flex: 1;
+  min-width: 0;
+}
+
+.galaxy-calendar-upcoming-date {
+  color: var(--galaxy-text-secondary);
+  font-size: 0.8rem;
+  font-weight: 500;
+}
+
+.galaxy-calendar-upcoming-btn {
+  background: rgba(59, 130, 246, 0.15);
+  border: 1px solid rgba(59, 130, 246, 0.3);
+  color: var(--galaxy-accent-blue);
+  padding: 0.4rem 0.75rem;
+  border-radius: 8px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.galaxy-calendar-upcoming-btn:hover {
+  background: rgba(59, 130, 246, 0.25);
+}
+
+/* Courses Management Card */
+.galaxy-calendar-courses {
+  background: var(--galaxy-bg-card);
+  border: 1px solid var(--galaxy-border);
+  border-radius: 16px;
+  padding: 1.25rem;
+}
+
+/* Search Input */
+.galaxy-calendar-search {
+  margin-bottom: 1rem;
+}
+
+.galaxy-calendar-search input {
+  width: 100%;
+  background: var(--galaxy-bg-input);
+  border: 1px solid var(--galaxy-border);
+  color: var(--galaxy-text-primary);
+  padding: 0.65rem 1rem;
+  border-radius: 10px;
+  font-size: 0.9rem;
+}
+
+.galaxy-calendar-search input:focus {
+  outline: none;
+  border-color: var(--galaxy-accent-blue);
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15);
+}
+
+.galaxy-calendar-search input::placeholder {
+  color: var(--galaxy-text-muted);
+}
+
+/* Add Course Form */
+.galaxy-calendar-add-form {
+  background: rgba(15, 23, 42, 0.5);
+  border: 1px solid var(--galaxy-border-light);
+  border-radius: 12px;
+  padding: 1rem;
+  margin-bottom: 1rem;
+}
+
+.galaxy-calendar-add-form-title {
+  color: var(--galaxy-text-secondary);
+  font-size: 0.8rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 0.75rem;
+}
+
+.galaxy-calendar-add-form-row {
+  display: flex;
+  gap: 0.75rem;
+  margin-bottom: 0.75rem;
+}
+
+.galaxy-calendar-add-form-input {
+  flex: 1;
+  background: var(--galaxy-bg-input);
+  border: 1px solid var(--galaxy-border);
+  color: var(--galaxy-text-primary);
+  padding: 0.5rem 0.75rem;
+  border-radius: 8px;
+  font-size: 0.85rem;
+}
+
+.galaxy-calendar-add-form-input:focus {
+  outline: none;
+  border-color: var(--galaxy-accent-blue);
+}
+
+.galaxy-calendar-add-form-input::placeholder {
+  color: var(--galaxy-text-muted);
+}
+
+.galaxy-calendar-color-picker {
+  width: 48px;
+  height: 36px;
+  padding: 2px;
+  border: 1px solid var(--galaxy-border);
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.galaxy-calendar-add-btn {
+  width: 100%;
+  background: var(--galaxy-gradient-primary);
+  border: none;
+  color: #fff;
+  padding: 0.6rem 1rem;
+  border-radius: 8px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.galaxy-calendar-add-btn:hover {
+  transform: translateY(-1px);
+  box-shadow: var(--galaxy-shadow-glow);
+}
+
+.galaxy-calendar-add-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+}
+
+/* Manual Date Form */
+.galaxy-calendar-manual-date {
+  background: rgba(139, 92, 246, 0.1);
+  border: 1px solid rgba(139, 92, 246, 0.3);
+  border-radius: 12px;
+  padding: 1rem;
+  margin-bottom: 1rem;
+}
+
+.galaxy-calendar-manual-date-label {
+  color: var(--galaxy-text-secondary);
+  font-size: 0.8rem;
+  margin-bottom: 0.5rem;
+}
+
+.galaxy-calendar-manual-date-label strong {
+  color: var(--galaxy-accent-purple);
+}
+
+.galaxy-calendar-manual-date-row {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.galaxy-calendar-manual-date-input {
+  flex: 1;
+  background: var(--galaxy-bg-input);
+  border: 1px solid var(--galaxy-border);
+  color: var(--galaxy-text-primary);
+  padding: 0.5rem 0.75rem;
+  border-radius: 8px;
+  font-size: 0.85rem;
+}
+
+.galaxy-calendar-manual-date-input:focus {
+  outline: none;
+  border-color: var(--galaxy-accent-purple);
+}
+
+/* Course List */
+.galaxy-calendar-course-section {
+  margin-bottom: 1rem;
+}
+
+.galaxy-calendar-course-section-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.75rem 0;
+  cursor: pointer;
+  border-bottom: 1px solid var(--galaxy-border-light);
+}
+
+.galaxy-calendar-course-section-title {
+  color: var(--galaxy-text-primary);
+  font-weight: 600;
+  font-size: 0.95rem;
+}
+
+.galaxy-calendar-course-section-toggle {
+  color: var(--galaxy-text-muted);
+  font-size: 1.25rem;
+  font-weight: 300;
+}
+
+.galaxy-calendar-course-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  padding-top: 0.75rem;
+  max-height: 300px;
+  overflow-y: auto;
+}
+
+/* Course Item */
+.galaxy-calendar-course-item {
+  background: rgba(15, 23, 42, 0.5);
+  border: 1px solid var(--galaxy-border-light);
+  border-radius: 12px;
+  padding: 0.85rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.galaxy-calendar-course-item:hover {
+  border-color: rgba(59, 130, 246, 0.3);
+  background: rgba(59, 130, 246, 0.05);
+}
+
+.galaxy-calendar-course-item.active {
+  border-color: var(--galaxy-accent-blue);
+  background: rgba(59, 130, 246, 0.1);
+  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.2);
+}
+
+.galaxy-calendar-course-item-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 0.75rem;
+}
+
+.galaxy-calendar-course-item-info {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.65rem;
+  flex: 1;
+  min-width: 0;
+}
+
+.galaxy-calendar-course-color {
+  width: 14px;
+  height: 14px;
+  border-radius: 4px;
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+.galaxy-calendar-course-details {
+  flex: 1;
+  min-width: 0;
+}
+
+.galaxy-calendar-course-name {
+  color: var(--galaxy-text-primary);
+  font-weight: 600;
+  font-size: 0.9rem;
+  margin-bottom: 0.25rem;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.galaxy-calendar-course-meta {
+  color: var(--galaxy-text-muted);
+  font-size: 0.8rem;
+}
+
+.galaxy-calendar-course-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-shrink: 0;
+}
+
+.galaxy-calendar-course-active-badge {
+  background: rgba(59, 130, 246, 0.2);
+  color: var(--galaxy-accent-blue);
+  padding: 0.25rem 0.5rem;
+  border-radius: 6px;
+  font-size: 0.7rem;
+  font-weight: 600;
+}
+
+.galaxy-calendar-course-delete {
+  background: rgba(239, 68, 68, 0.15);
+  border: 1px solid rgba(239, 68, 68, 0.3);
+  color: var(--galaxy-accent-red);
+  width: 30px;
+  height: 30px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.galaxy-calendar-course-delete:hover {
+  background: rgba(239, 68, 68, 0.25);
+}
+
+/* Empty States */
+.galaxy-calendar-empty {
+  color: var(--galaxy-text-muted);
+  font-size: 0.9rem;
+  text-align: center;
+  padding: 1.5rem 1rem;
+}
+
+/* Course Dates List */
+.galaxy-calendar-course-dates {
+  background: var(--galaxy-bg-card);
+  border: 1px solid var(--galaxy-border);
+  border-radius: 16px;
+  padding: 1.25rem;
+}
+
+.galaxy-calendar-course-dates-list {
+  max-height: 200px;
+  overflow-y: auto;
+}
+
+.galaxy-calendar-course-date-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.5rem 0;
+  border-bottom: 1px solid var(--galaxy-border-light);
+}
+
+.galaxy-calendar-course-date-item:last-child {
+  border-bottom: none;
+}
+
+.galaxy-calendar-course-date-info {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.galaxy-calendar-course-date-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 3px;
+}
+
+.galaxy-calendar-course-date-text {
+  color: var(--galaxy-text-primary);
+  font-size: 0.9rem;
+}
+
+.galaxy-calendar-course-date-remove {
+  background: transparent;
+  border: 1px solid rgba(239, 68, 68, 0.3);
+  color: var(--galaxy-accent-red);
+  width: 26px;
+  height: 26px;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-size: 1rem;
+}
+
+.galaxy-calendar-course-date-remove:hover {
+  background: rgba(239, 68, 68, 0.15);
+}
+
+/* Popover Override for Calendar */
+.galaxy-admin-page .popover {
+  background: var(--galaxy-bg-secondary) !important;
+  border: 1px solid var(--galaxy-border) !important;
+  border-radius: 12px !important;
+  box-shadow: var(--galaxy-shadow-lg) !important;
+}
+
+.galaxy-admin-page .popover-header {
+  background: rgba(15, 23, 42, 0.5) !important;
+  color: var(--galaxy-text-primary) !important;
+  border-color: var(--galaxy-border) !important;
+  border-radius: 12px 12px 0 0 !important;
+  font-weight: 600 !important;
+}
+
+.galaxy-admin-page .popover-body {
+  color: var(--galaxy-text-primary) !important;
+}
+
+.galaxy-admin-page .popover-arrow::before,
+.galaxy-admin-page .popover-arrow::after {
+  border-color: transparent !important;
+}
+
+/* Form Switch Label Color Fix */
+.galaxy-admin-page .form-check-label {
+  color: var(--galaxy-text-secondary) !important;
+}
+
+/* Alert Override */
+.galaxy-admin-page .alert-info {
+  background: rgba(59, 130, 246, 0.15) !important;
+  border-color: rgba(59, 130, 246, 0.3) !important;
+  color: var(--galaxy-accent-blue) !important;
+}
+
+.galaxy-admin-page .alert-danger {
+  background: rgba(239, 68, 68, 0.15) !important;
+  border-color: rgba(239, 68, 68, 0.3) !important;
+  color: var(--galaxy-accent-red) !important;
+}
+
+.galaxy-admin-page .alert-light {
+  background: rgba(100, 116, 139, 0.15) !important;
+  border-color: var(--galaxy-border) !important;
+  color: var(--galaxy-text-secondary) !important;
+}
+
+/* HR Override */
+.galaxy-admin-page hr {
+  border-color: var(--galaxy-border) !important;
+  opacity: 1;
+}
+
+/* Fix all bg-white and bg-light */
+.galaxy-admin-page .bg-white,
+.galaxy-admin-page .bg-light {
+  background: var(--galaxy-bg-tertiary) !important;
+}
+
+/* Fix card title */
+.galaxy-admin-page .card-title {
+  color: var(--galaxy-text-primary) !important;
+}
+
+/* Fix form label */
+.galaxy-admin-page .form-label {
+  color: var(--galaxy-text-secondary) !important;
+}
+
+/* Fix border colors */
+.galaxy-admin-page .border,
+.galaxy-admin-page .border-bottom,
+.galaxy-admin-page .border-end {
+  border-color: var(--galaxy-border) !important;
+}
+
+/* Fix rounded buttons with bg-white */
+.galaxy-admin-page button.bg-white,
+.galaxy-admin-page .border.rounded.bg-white {
+  background: var(--galaxy-bg-tertiary) !important;
+  border-color: var(--galaxy-border) !important;
+}
+
+/* Fix small text colors */
+.galaxy-admin-page .small,
+.galaxy-admin-page small {
+  color: inherit;
+}
+
+/* Fix fw-semibold colors */
+.galaxy-admin-page .fw-semibold {
+  color: var(--galaxy-text-primary);
+}
+
+/* Fix text-start buttons */
+.galaxy-admin-page button.text-start {
+  color: var(--galaxy-text-primary);
+}
+
+/* Specific calendar cell fixes */
+.galaxy-admin-page .flex-grow-1.border-end {
+  background: var(--galaxy-bg-tertiary) !important;
+}
+
+/* List items */
+.galaxy-admin-page .list-unstyled li {
+  color: var(--galaxy-text-primary);
+}
+
+/* Border rounded cards */
+.galaxy-admin-page .border.rounded {
+  border-color: var(--galaxy-border) !important;
+}
+
+.galaxy-admin-page .border.rounded.p-2 {
+  background: var(--galaxy-bg-tertiary) !important;
+}
+
+/* Text primary fix */
+.galaxy-admin-page .text-primary {
+  color: var(--galaxy-accent-blue) !important;
 }

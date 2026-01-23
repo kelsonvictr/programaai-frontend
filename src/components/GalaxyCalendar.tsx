@@ -1,17 +1,14 @@
 import { useEffect, useMemo, useState } from 'react'
 import axios from 'axios'
 import {
-  Badge,
   Button,
-  Card,
-  Col,
   Collapse,
   Form,
   OverlayTrigger,
   Popover,
-  Row,
   Spinner
 } from 'react-bootstrap'
+import { ChevronLeft, ChevronRight, Calendar2Check, Clock, Plus, Trash, Search } from 'react-bootstrap-icons'
 
 type CalendarioCurso = {
   id: string
@@ -22,7 +19,7 @@ type CalendarioCurso = {
 type CalendarioEvento = {
   id: string
   cursoId: string
-  data: string // YYYY-MM-DD
+  data: string
 }
 
 type CalendarioApiResp = {
@@ -35,11 +32,7 @@ type GalaxyCalendarProps = {
   token: string
 }
 
-const monthFormatter = new Intl.DateTimeFormat('pt-BR', {
-  month: 'long',
-  year: 'numeric'
-})
-
+const monthFormatter = new Intl.DateTimeFormat('pt-BR', { month: 'long', year: 'numeric' })
 const weekdayLabels = ['Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb', 'Dom']
 
 const buildDateKey = (year: number, month: number, day: number) => {
@@ -65,21 +58,8 @@ const formatDateShort = (value: string) => {
   return `${weekday} • ${formatDateLabel(value)}`
 }
 
-const hexToRgba = (hex: string, alpha: number) => {
-  const clean = (hex || '').replace('#', '')
-  if (clean.length !== 6) return `rgba(13, 110, 253, ${alpha})`
-  const r = parseInt(clean.slice(0, 2), 16)
-  const g = parseInt(clean.slice(2, 4), 16)
-  const b = parseInt(clean.slice(4, 6), 16)
-  return `rgba(${r}, ${g}, ${b}, ${alpha})`
-}
+type Holiday = { date: string; name: string }
 
-type Holiday = {
-  date: string
-  name: string
-}
-
-// cálculo da Páscoa (calendário gregoriano, rito ocidental)
 const getEasterDate = (year: number): { monthIndex: number; day: number } => {
   const a = year % 19
   const b = Math.floor(year / 100)
@@ -93,9 +73,8 @@ const getEasterDate = (year: number): { monthIndex: number; day: number } => {
   const k = c % 4
   const l = (32 + 2 * e + 2 * i - h - k) % 7
   const m = Math.floor((a + 11 * h + 22 * l) / 451)
-  const month = Math.floor((h + l - 7 * m + 114) / 31) // 3=março, 4=abril
+  const month = Math.floor((h + l - 7 * m + 114) / 31)
   const day = ((h + l - 7 * m + 114) % 31) + 1
-  // monthIndex baseado em 0
   return { monthIndex: month - 1, day }
 }
 
@@ -112,14 +91,8 @@ const getFixedBrazilHolidays = (year: number): Holiday[] => [
 ]
 
 const getJoaoPessoaHolidays = (year: number): Holiday[] => [
-  {
-    date: buildDateKey(year, 7, 5),
-    name: 'Aniversário de João Pessoa / Nossa Senhora das Neves'
-  },
-  {
-    date: buildDateKey(year, 5, 24),
-    name: 'São João (João Pessoa)'
-  }
+  { date: buildDateKey(year, 7, 5), name: 'Aniv. João Pessoa' },
+  { date: buildDateKey(year, 5, 24), name: 'São João' }
 ]
 
 export default function GalaxyCalendar(props: GalaxyCalendarProps) {
@@ -133,7 +106,7 @@ export default function GalaxyCalendar(props: GalaxyCalendarProps) {
 
   const [selectedCursoId, setSelectedCursoId] = useState<string | null>(null)
   const [cursoNome, setCursoNome] = useState('')
-  const [cursoCor, setCursoCor] = useState('#0d6efd')
+  const [cursoCor, setCursoCor] = useState('#3b82f6')
   const [manualDate, setManualDate] = useState('')
   const [searchTerm, setSearchTerm] = useState('')
   const [showOnlySelected, setShowOnlySelected] = useState(false)
@@ -159,9 +132,7 @@ export default function GalaxyCalendar(props: GalaxyCalendarProps) {
 
   const cursosById = useMemo(() => {
     const map: Record<string, CalendarioCurso> = {}
-    for (const c of cursos) {
-      map[c.id] = c
-    }
+    for (const c of cursos) map[c.id] = c
     return map
   }, [cursos])
 
@@ -182,20 +153,13 @@ export default function GalaxyCalendar(props: GalaxyCalendarProps) {
       const list = eventosByCursoId[curso.id] || []
       const future = list.filter(ev => ev.data >= todayKey)
       const nextDate = future.length ? future[0].data : null
-      return {
-        ...curso,
-        totalEventos: list.length,
-        nextDate,
-        isFinalizado: !nextDate
-      }
+      return { ...curso, totalEventos: list.length, nextDate, isFinalizado: !nextDate }
     })
   }, [cursos, eventosByCursoId, todayKey])
 
   const finalizadoByCursoId = useMemo(() => {
     const map: Record<string, boolean> = {}
-    for (const c of cursoStats) {
-      map[c.id] = c.isFinalizado
-    }
+    for (const c of cursoStats) map[c.id] = c.isFinalizado
     return map
   }, [cursoStats])
 
@@ -258,28 +222,12 @@ export default function GalaxyCalendar(props: GalaxyCalendarProps) {
     const list: Holiday[] = [
       ...getFixedBrazilHolidays(year),
       { date: buildDateKey(year, easter.monthIndex, easter.day), name: 'Páscoa' },
-      {
-        date: buildDateKey(
-          carnivalMonday.getFullYear(),
-          carnivalMonday.getMonth(),
-          carnivalMonday.getDate()
-        ),
-        name: 'Carnaval (segunda-feira)'
-      },
-      {
-        date: buildDateKey(
-          carnivalTuesday.getFullYear(),
-          carnivalTuesday.getMonth(),
-          carnivalTuesday.getDate()
-        ),
-        name: 'Carnaval'
-      },
+      { date: buildDateKey(carnivalMonday.getFullYear(), carnivalMonday.getMonth(), carnivalMonday.getDate()), name: 'Carnaval' },
+      { date: buildDateKey(carnivalTuesday.getFullYear(), carnivalTuesday.getMonth(), carnivalTuesday.getDate()), name: 'Carnaval' },
       ...getJoaoPessoaHolidays(year)
     ]
     const map: Record<string, string> = {}
-    for (const h of list) {
-      map[h.date] = h.name
-    }
+    for (const h of list) map[h.date] = h.name
     return map
   }, [currentMonth])
 
@@ -287,21 +235,17 @@ export default function GalaxyCalendar(props: GalaxyCalendarProps) {
     const year = currentMonth.getFullYear()
     const month = currentMonth.getMonth()
     const first = new Date(year, month, 1)
-    const firstWeekday = first.getDay() // 0 = domingo ... 6 = sábado
-    const offset = (firstWeekday + 6) % 7 // 0 = segunda
+    const firstWeekday = first.getDay()
+    const offset = (firstWeekday + 6) % 7
     const daysInMonth = new Date(year, month + 1, 0).getDate()
 
     const cells: Array<number | null> = []
     for (let i = 0; i < offset; i++) cells.push(null)
     for (let day = 1; day <= daysInMonth; day++) cells.push(day)
-
-    // completa a última linha para sempre ter 7 colunas
     while (cells.length % 7 !== 0) cells.push(null)
 
     const weeks: Array<Array<number | null>> = []
-    for (let i = 0; i < cells.length; i += 7) {
-      weeks.push(cells.slice(i, i + 7))
-    }
+    for (let i = 0; i < cells.length; i += 7) weeks.push(cells.slice(i, i + 7))
     return weeks
   }, [currentMonth])
 
@@ -315,9 +259,7 @@ export default function GalaxyCalendar(props: GalaxyCalendarProps) {
       })
       setCursos(data.cursos || [])
       setEventos(data.eventos || [])
-      if (!selectedCursoId && data.cursos?.length) {
-        setSelectedCursoId(data.cursos[0].id)
-      }
+      if (!selectedCursoId && data.cursos?.length) setSelectedCursoId(data.cursos[0].id)
     } catch (err) {
       console.error(err)
       setError('Erro ao carregar calendário')
@@ -332,13 +274,8 @@ export default function GalaxyCalendar(props: GalaxyCalendarProps) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [token])
 
-  const handlePrevMonth = () => {
-    setCurrentMonth(prev => new Date(prev.getFullYear(), prev.getMonth() - 1, 1))
-  }
-
-  const handleNextMonth = () => {
-    setCurrentMonth(prev => new Date(prev.getFullYear(), prev.getMonth() + 1, 1))
-  }
+  const handlePrevMonth = () => setCurrentMonth(prev => new Date(prev.getFullYear(), prev.getMonth() - 1, 1))
+  const handleNextMonth = () => setCurrentMonth(prev => new Date(prev.getFullYear(), prev.getMonth() + 1, 1))
 
   const handleAddCurso = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -349,11 +286,7 @@ export default function GalaxyCalendar(props: GalaxyCalendarProps) {
     setSaving(true)
     setError(null)
     try {
-      const { data } = await axios.post(
-        CALENDARIO_CURSO_ENDPOINT,
-        { nome, cor: cursoCor },
-        { headers: { Authorization: `Bearer ${token}` } }
-      )
+      const { data } = await axios.post(CALENDARIO_CURSO_ENDPOINT, { nome, cor: cursoCor }, { headers: { Authorization: `Bearer ${token}` } })
       const novoCurso: CalendarioCurso | undefined = data?.curso
       if (novoCurso) {
         setCursos(prev => [...prev, novoCurso])
@@ -370,23 +303,15 @@ export default function GalaxyCalendar(props: GalaxyCalendarProps) {
 
   const handleRemoverCurso = async (curso: CalendarioCurso) => {
     if (!token) return
-    const confirmado = window.confirm(
-      `Remover o curso "${curso.nome}" e todas as datas associadas?`
-    )
+    const confirmado = window.confirm(`Remover o curso "${curso.nome}" e todas as datas associadas?`)
     if (!confirmado) return
 
     setSaving(true)
     setError(null)
     try {
-      await axios.post(
-        CALENDARIO_CURSO_DELETE_ENDPOINT,
-        { id: curso.id },
-        { headers: { Authorization: `Bearer ${token}` } }
-      )
-
+      await axios.post(CALENDARIO_CURSO_DELETE_ENDPOINT, { id: curso.id }, { headers: { Authorization: `Bearer ${token}` } })
       setCursos(prev => prev.filter(c => c.id !== curso.id))
       setEventos(prev => prev.filter(ev => ev.cursoId !== curso.id))
-
       setManualDate('')
       setSelectedCursoId(prev => {
         if (prev === curso.id) {
@@ -411,13 +336,11 @@ export default function GalaxyCalendar(props: GalaxyCalendarProps) {
   }
 
   const handleDiaClick = (day: number | null) => {
-    if (!day) return
-    if (!token) return
+    if (!day || !token) return
     const year = currentMonth.getFullYear()
     const month = currentMonth.getMonth()
     const dateKey = buildDateKey(year, month, day)
     setSelectedDateKey(dateKey)
-
     if (!selectedCursoId) {
       setError('Selecione um curso para marcar as datas')
       return
@@ -429,33 +352,17 @@ export default function GalaxyCalendar(props: GalaxyCalendarProps) {
     setSaving(true)
     setError(null)
     try {
-      const { data } = await axios.post(
-        CALENDARIO_EVENTO_TOGGLE_ENDPOINT,
-        { cursoId, data: dateKey },
-        { headers: { Authorization: `Bearer ${token}` } }
-      )
-
+      const { data } = await axios.post(CALENDARIO_EVENTO_TOGGLE_ENDPOINT, { cursoId, data: dateKey }, { headers: { Authorization: `Bearer ${token}` } })
       const mode = data?.mode
       if (mode === 'removed') {
-        setEventos(prev =>
-          prev.filter(ev => !(ev.cursoId === cursoId && ev.data === dateKey))
-        )
+        setEventos(prev => prev.filter(ev => !(ev.cursoId === cursoId && ev.data === dateKey)))
       } else if (mode === 'added' && data?.evento) {
-        const novo: CalendarioEvento = data.evento
-        setEventos(prev => [...prev, novo])
+        setEventos(prev => [...prev, data.evento])
       } else {
-        // fallback otimista
         setEventos(prev => {
           const exists = prev.some(ev => ev.cursoId === cursoId && ev.data === dateKey)
-          if (exists) {
-            return prev.filter(ev => !(ev.cursoId === cursoId && ev.data === dateKey))
-          }
-          const novo: CalendarioEvento = {
-            id: `${cursoId}#${dateKey}`,
-            cursoId,
-            data: dateKey
-          }
-          return [...prev, novo]
+          if (exists) return prev.filter(ev => !(ev.cursoId === cursoId && ev.data === dateKey))
+          return [...prev, { id: `${cursoId}#${dateKey}`, cursoId, data: dateKey }]
         })
       }
     } catch (err) {
@@ -469,8 +376,8 @@ export default function GalaxyCalendar(props: GalaxyCalendarProps) {
   const year = currentMonth.getFullYear()
   const month = currentMonth.getMonth()
   const headerLabel = monthFormatter.format(currentMonth)
-
   const selectedCurso = selectedCursoId ? cursosById[selectedCursoId] : null
+
   const eventosCursoSelecionado = useMemo(() => {
     if (!selectedCursoId) return []
     const list = eventos.filter(ev => ev.cursoId === selectedCursoId)
@@ -480,7 +387,7 @@ export default function GalaxyCalendar(props: GalaxyCalendarProps) {
   const upcomingAulas = useMemo(() => {
     const future = eventos.filter(ev => ev.data >= todayKey)
     future.sort((a, b) => (a.data < b.data ? -1 : a.data > b.data ? 1 : 0))
-    return future.slice(0, 12)
+    return future.slice(0, 10)
   }, [eventos, todayKey])
 
   const selectedDayEventos = useMemo(() => {
@@ -497,624 +404,447 @@ export default function GalaxyCalendar(props: GalaxyCalendarProps) {
     return selectedDayEventos.some(ev => ev.cursoId === selectedCursoId)
   }, [selectedDateKey, selectedCursoId, selectedDayEventos])
 
-  const renderCursoChip = (curso: CalendarioCurso, compact = false) => {
-    const baseColor = curso.cor || '#0d6efd'
-    return (
-      <span
-        title={curso.nome}
-        style={{
-          display: 'inline-flex',
-          alignItems: 'center',
-          gap: 6,
-          padding: compact ? '2px 6px' : '4px 8px',
-          borderRadius: 999,
-          fontSize: compact ? '0.68rem' : '0.75rem',
-          fontWeight: 600,
-          color: baseColor,
-          backgroundColor: hexToRgba(baseColor, 0.12),
-          border: `1px solid ${hexToRgba(baseColor, 0.5)}`,
-          maxWidth: '100%',
-          whiteSpace: 'nowrap',
-          overflow: 'hidden',
-          textOverflow: 'ellipsis'
-        }}
-      >
-        {curso.nome}
-      </span>
-    )
-  }
+  const renderCursoChip = (curso: CalendarioCurso, compact = false) => (
+    <span
+      className="galaxy-calendar-event-chip"
+      title={curso.nome}
+      style={{
+        backgroundColor: curso.cor || '#3b82f6',
+        padding: compact ? '2px 6px' : '4px 10px',
+        fontSize: compact ? '0.68rem' : '0.78rem'
+      }}
+    >
+      {curso.nome}
+    </span>
+  )
 
   return (
-    <Row className="g-3">
-      <Col xs={12} md={8}>
-        <Card className="shadow-sm border-0 h-100">
-          <Card.Header className="bg-primary text-white d-flex justify-content-between align-items-center">
-            <div className="d-flex align-items-center gap-2">
-              <span role="img" aria-label="Calendário">
-                📅
-              </span>
-              <strong className="text-capitalize">{headerLabel}</strong>
-            </div>
-            <div className="d-flex align-items-center gap-2">
-              <Button
-                variant="light"
-                size="sm"
-                onClick={handlePrevMonth}
-                aria-label="Mês anterior"
-              >
-                ‹
-              </Button>
-              <Button
-                variant="light"
-                size="sm"
-                onClick={handleNextMonth}
-                aria-label="Próximo mês"
-              >
-                ›
-              </Button>
-            </div>
-          </Card.Header>
-          <Card.Body>
-            <div className="d-flex flex-wrap align-items-center justify-content-between gap-2 mb-3">
-              <div className="text-muted small">
-                Clique em um dia para marcar ou remover aulas do curso selecionado ao lado.
-              </div>
-              <div className="d-flex flex-wrap align-items-center gap-2">
-                <Button
-                  variant="outline-primary"
-                  size="sm"
-                  disabled={!upcomingAulas.length}
-                  onClick={() => {
-                    const next = upcomingAulas[0]
-                    if (next) goToDate(next.data, next.cursoId)
-                  }}
-                >
-                  Próxima aula
-                </Button>
-                <Form.Check
-                  type="switch"
-                  id="calendar-show-selected"
-                  label={showOnlySelected ? 'Somente curso selecionado' : 'Mostrar todos'}
-                  checked={showOnlySelected}
-                  onChange={e => setShowOnlySelected(e.target.checked)}
-                />
-                <Form.Check
-                  type="switch"
-                  id="calendar-show-finalizados"
-                  label="Mostrar finalizados"
-                  checked={showFinalizados}
-                  onChange={e => setShowFinalizados(e.target.checked)}
-                />
-              </div>
-            </div>
+    <div className="galaxy-calendar">
+      {/* Main Calendar */}
+      <div className="galaxy-calendar-card">
+        <div className="galaxy-calendar-header">
+          <div className="galaxy-calendar-title">
+            <Calendar2Check className="galaxy-calendar-title-icon" />
+            <span>{headerLabel}</span>
+          </div>
+          <div className="galaxy-calendar-nav">
+            <button type="button" className="galaxy-calendar-nav-btn" onClick={handlePrevMonth}>
+              <ChevronLeft />
+            </button>
+            <button type="button" className="galaxy-calendar-nav-btn" onClick={handleNextMonth}>
+              <ChevronRight />
+            </button>
+          </div>
+        </div>
 
-            <div className="border rounded overflow-hidden">
-              <div className="d-none d-md-flex bg-light border-bottom">
-                {weekdayLabels.map(label => (
-                  <div
-                    key={label}
-                    className="flex-grow-1 text-center py-2 fw-semibold small text-uppercase"
-                    style={{ width: `${100 / 7}%` }}
-                  >
-                    {label}
-                  </div>
-                ))}
-              </div>
-              <div className="d-md-none bg-light border-bottom d-flex">
-                {weekdayLabels.map(label => (
-                  <div
-                    key={label}
-                    className="flex-grow-1 text-center py-1 fw-semibold small text-uppercase"
-                    style={{ width: `${100 / 7}%` }}
-                  >
-                    {label[0]}
-                  </div>
-                ))}
-              </div>
+        <div className="galaxy-calendar-toolbar">
+          <span className="galaxy-calendar-toolbar-hint">
+            Clique em um dia para marcar ou remover aulas do curso selecionado.
+          </span>
+          <div className="galaxy-calendar-toolbar-actions">
+            <button
+              type="button"
+              className="galaxy-calendar-btn"
+              disabled={!upcomingAulas.length}
+              onClick={() => {
+                const next = upcomingAulas[0]
+                if (next) goToDate(next.data, next.cursoId)
+              }}
+            >
+              <Clock style={{ marginRight: 4 }} /> Próxima aula
+            </button>
+            <Form.Check
+              type="switch"
+              id="calendar-show-selected"
+              label={showOnlySelected ? 'Somente selecionado' : 'Mostrar todos'}
+              checked={showOnlySelected}
+              onChange={e => setShowOnlySelected(e.target.checked)}
+            />
+            <Form.Check
+              type="switch"
+              id="calendar-show-finalizados"
+              label="Finalizados"
+              checked={showFinalizados}
+              onChange={e => setShowFinalizados(e.target.checked)}
+            />
+          </div>
+        </div>
 
-              <div>
-                {calendarMatrix.map((week, wIndex) => (
-                  <div key={wIndex} className="d-flex border-bottom last:border-bottom-0">
-                    {week.map((day, dIndex) => {
-                      const key = `${wIndex}-${dIndex}-${day ?? 'empty'}`
-                      if (!day) {
-                        return (
-                          <div
-                            key={key}
-                            className="flex-grow-1 border-end last:border-end-0 bg-white"
-                            style={{ minHeight: 96, width: `${100 / 7}%` }}
-                          />
-                        )
-                      }
+        <div className="galaxy-calendar-grid">
+          <div className="galaxy-calendar-weekdays">
+            {weekdayLabels.map(label => (
+              <div key={label} className="galaxy-calendar-weekday">{label}</div>
+            ))}
+          </div>
 
-                      const dateKey = buildDateKey(year, month, day)
-                      const listaEventos = eventosPorData[dateKey] || []
-                      const hasEventos = listaEventos.length > 0
-                      const holidayName = holidaysByDate[dateKey]
-                      const hasSelectedCurso =
-                        selectedCursoId &&
-                        listaEventos.some(ev => ev.cursoId === selectedCursoId)
+          <div className="galaxy-calendar-weeks">
+            {calendarMatrix.map((week, wIndex) => (
+              <div key={wIndex} className="galaxy-calendar-week">
+                {week.map((day, dIndex) => {
+                  const key = `${wIndex}-${dIndex}-${day ?? 'empty'}`
+                  if (!day) {
+                    return <div key={key} className="galaxy-calendar-day empty" />
+                  }
 
-                      const cellBg = holidayName
-                        ? 'rgba(220, 53, 69, 0.06)'
-                        : hasSelectedCurso
-                          ? 'rgba(13, 110, 253, 0.06)'
-                          : hasEventos
-                            ? 'rgba(13, 110, 253, 0.03)'
-                            : '#ffffff'
+                  const dateKey = buildDateKey(year, month, day)
+                  const listaEventos = eventosPorData[dateKey] || []
+                  const holidayName = holidaysByDate[dateKey]
+                  const hasSelectedCurso = selectedCursoId && listaEventos.some(ev => ev.cursoId === selectedCursoId)
+                  const isToday = dateKey === todayKey
+                  const isSelected = selectedDateKey === dateKey
+                  const cursosDia = listaEventos.map(ev => cursosById[ev.cursoId]).filter(Boolean) as CalendarioCurso[]
+                  const chips = cursosDia.slice(0, 2)
+                  const remaining = cursosDia.length - chips.length
 
-                      const isToday = dateKey === todayKey
-                      const isSelected = selectedDateKey === dateKey
-                      const cursosDia = listaEventos
-                        .map(ev => cursosById[ev.cursoId])
-                        .filter(Boolean) as CalendarioCurso[]
-                      const chips = cursosDia.slice(0, 2)
-                      const remaining = cursosDia.length - chips.length
+                  let cellClass = 'galaxy-calendar-day'
+                  if (isToday) cellClass += ' today'
+                  if (isSelected) cellClass += ' selected'
+                  if (hasSelectedCurso) cellClass += ' has-selected-curso'
+                  if (holidayName) cellClass += ' holiday'
 
-                      return (
-                        <button
-                          key={key}
-                          type="button"
-                          className="flex-grow-1 border-end last:border-end-0 text-start p-2 position-relative"
-                          style={{
-                            minHeight: 96,
-                            width: `${100 / 7}%`,
-                            backgroundColor: cellBg,
-                            cursor: selectedCursoId ? 'pointer' : 'default',
-                            boxShadow: isSelected
-                              ? 'inset 0 0 0 2px rgba(13, 110, 253, 0.6)'
-                              : isToday
-                                ? 'inset 0 0 0 2px rgba(25, 135, 84, 0.35)'
-                                : 'none'
-                          }}
-                          onClick={() => handleDiaClick(day)}
-                          aria-pressed={isSelected}
-                        >
-                          <div className="d-flex justify-content-between align-items-start mb-1">
-                            <span className="fw-semibold small">{day}</span>
-                            {isToday && (
-                              <span className="small fw-semibold text-success">Hoje</span>
-                            )}
-                          </div>
-                          {holidayName && (
-                            <div className="small text-muted mb-1" style={{ fontSize: '0.7rem' }}>
-                              {holidayName}
-                            </div>
-                          )}
-                          <div className="d-flex flex-column gap-1">
-                            {chips.map(curso => (
-                              <div key={`${dateKey}-${curso.id}`}>{renderCursoChip(curso, true)}</div>
-                            ))}
-                            {remaining > 0 && (
-                              <OverlayTrigger
-                                trigger={['hover', 'click', 'focus']}
-                                placement="auto"
-                                overlay={
-                                  <Popover id={`popover-${dateKey}`}>
-                                    <Popover.Header as="h3">Aulas do dia</Popover.Header>
-                                    <Popover.Body>
-                                      <div className="d-flex flex-column gap-1">
-                                        {cursosDia.map(curso => (
-                                          <div key={`${dateKey}-${curso.id}`}>
-                                            {renderCursoChip(curso, true)}
-                                          </div>
-                                        ))}
-                                      </div>
-                                    </Popover.Body>
-                                  </Popover>
-                                }
-                              >
-                                <span
-                                  onClick={e => e.stopPropagation()}
-                                  className="small text-primary fw-semibold"
-                                  style={{ cursor: 'pointer' }}
-                                >
-                                  +{remaining} cursos
-                                </span>
-                              </OverlayTrigger>
-                            )}
-                          </div>
-                        </button>
-                      )
-                    })}
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            <div className="mt-3 d-flex flex-column gap-3">
-              {selectedDateKey && (
-                <Card className="border-0 shadow-sm">
-                  <Card.Body>
-                    <Card.Title className="fs-6 mb-2">
-                      Aulas do dia {formatDateLabel(selectedDateKey)}
-                    </Card.Title>
-                    {selectedDayEventos.length === 0 && (
-                      <div className="text-muted small">
-                        Nenhuma aula marcada neste dia.
+                  return (
+                    <button
+                      key={key}
+                      type="button"
+                      className={cellClass}
+                      onClick={() => handleDiaClick(day)}
+                    >
+                      <div className="galaxy-calendar-day-header">
+                        <span className="galaxy-calendar-day-number">{day}</span>
+                        {isToday && <span className="galaxy-calendar-day-today-badge">Hoje</span>}
                       </div>
-                    )}
-                    {selectedDayEventos.length > 0 && (
-                      <div className="d-flex flex-column gap-2">
-                        {selectedDayEventos.map(ev => {
-                          const curso = cursosById[ev.cursoId]
-                          if (!curso) return null
-                          return (
-                            <div
-                              key={ev.id}
-                              className="d-flex align-items-center justify-content-between gap-2"
-                            >
-                              {renderCursoChip(curso)}
-                              <Button
-                                variant="outline-danger"
-                                size="sm"
-                                onClick={() => toggleEvento(ev.cursoId, ev.data)}
-                              >
-                                Remover
-                              </Button>
-                            </div>
-                          )
-                        })}
+                      {holidayName && (
+                        <div className="galaxy-calendar-holiday">{holidayName}</div>
+                      )}
+                      <div className="galaxy-calendar-day-events">
+                        {chips.map(curso => (
+                          <div key={`${dateKey}-${curso.id}`}>{renderCursoChip(curso, true)}</div>
+                        ))}
+                        {remaining > 0 && (
+                          <OverlayTrigger
+                            trigger={['hover', 'click', 'focus']}
+                            placement="auto"
+                            overlay={
+                              <Popover id={`popover-${dateKey}`}>
+                                <Popover.Header as="h3">Aulas do dia</Popover.Header>
+                                <Popover.Body>
+                                  <div className="d-flex flex-column gap-1">
+                                    {cursosDia.map(curso => (
+                                      <div key={`${dateKey}-${curso.id}`}>{renderCursoChip(curso, true)}</div>
+                                    ))}
+                                  </div>
+                                </Popover.Body>
+                              </Popover>
+                            }
+                          >
+                            <span className="galaxy-calendar-more-events" onClick={e => e.stopPropagation()}>
+                              +{remaining} mais
+                            </span>
+                          </OverlayTrigger>
+                        )}
                       </div>
-                    )}
-                    {selectedCurso && (
-                      <div className="mt-3 d-flex align-items-center justify-content-between gap-2">
-                        <div className="text-muted small">
-                          Alternar aula de <strong>{selectedCurso.nome}</strong>
-                        </div>
-                        <Button
-                          variant={selectedDayHasSelectedCurso ? 'outline-danger' : 'outline-primary'}
-                          size="sm"
-                          onClick={() => toggleEvento(selectedCurso.id, selectedDateKey)}
-                        >
-                          {selectedDayHasSelectedCurso ? 'Desmarcar' : 'Marcar'}
-                        </Button>
-                      </div>
-                    )}
-                  </Card.Body>
-                </Card>
-              )}
-
-              {selectedCurso && (
-                <Card className="border-0 shadow-sm">
-                  <Card.Body>
-                    <Card.Title className="fs-6 mb-2">
-                      Datas do curso selecionado
-                    </Card.Title>
-                    {eventosCursoSelecionado.length === 0 && (
-                      <div className="text-muted small">
-                        Nenhuma data marcada ainda para <strong>{selectedCurso.nome}</strong>.
-                      </div>
-                    )}
-                    {eventosCursoSelecionado.length > 0 && (
-                      <ul className="list-unstyled mb-0 small">
-                        {eventosCursoSelecionado.map(ev => {
-                          const dateLabel = formatDateLabel(ev.data)
-                          return (
-                            <li
-                              key={ev.id}
-                              className="d-flex align-items-center justify-content-between py-1 border-bottom"
-                            >
-                              <div className="d-flex align-items-center gap-2">
-                                <span
-                                  style={{
-                                    width: 10,
-                                    height: 10,
-                                    borderRadius: '999px',
-                                    backgroundColor: selectedCurso.cor,
-                                    border: '1px solid rgba(15, 23, 42, 0.3)'
-                                  }}
-                                />
-                                <span>{dateLabel}</span>
-                              </div>
-                              <Button
-                                variant="outline-danger"
-                                size="sm"
-                                onClick={() => toggleEvento(selectedCurso.id, ev.data)}
-                              >
-                                ×
-                              </Button>
-                            </li>
-                          )
-                        })}
-                      </ul>
-                    )}
-                  </Card.Body>
-                </Card>
-              )}
-            </div>
-          </Card.Body>
-        </Card>
-      </Col>
-
-      <Col xs={12} md={4}>
-        <Card className="shadow-sm border-0 h-100">
-          <Card.Body>
-            <Card.Title className="mb-3">Próximas aulas</Card.Title>
-            {upcomingAulas.length === 0 && (
-              <div className="text-muted small mb-3">
-                Nenhuma aula futura cadastrada.
+                    </button>
+                  )
+                })}
               </div>
-            )}
-            {upcomingAulas.length > 0 && (
-              <div className="d-flex flex-column gap-2 mb-3">
-                {upcomingAulas.map(ev => {
+            ))}
+          </div>
+        </div>
+
+        {selectedDateKey && (
+          <div className="galaxy-calendar-selected-day">
+            <h5 className="galaxy-calendar-selected-day-title">
+              📆 Aulas de {formatDateLabel(selectedDateKey)}
+            </h5>
+            {selectedDayEventos.length === 0 ? (
+              <p className="galaxy-calendar-selected-day-empty">Nenhuma aula marcada neste dia.</p>
+            ) : (
+              <div className="galaxy-calendar-selected-day-list">
+                {selectedDayEventos.map(ev => {
                   const curso = cursosById[ev.cursoId]
                   if (!curso) return null
                   return (
-                    <div
-                      key={`${ev.id}-upcoming`}
-                      className="d-flex align-items-center justify-content-between gap-2 border rounded p-2 bg-white"
-                    >
-                      <div className="d-flex flex-column gap-1">
-                        <span className="small text-muted">{formatDateShort(ev.data)}</span>
-                        {renderCursoChip(curso, true)}
-                      </div>
-                      <Button
-                        variant="outline-primary"
-                        size="sm"
-                        onClick={() => goToDate(ev.data, ev.cursoId)}
-                      >
-                        Ir para data
+                    <div key={ev.id} className="galaxy-calendar-selected-day-item">
+                      {renderCursoChip(curso)}
+                      <Button variant="outline-danger" size="sm" onClick={() => toggleEvento(ev.cursoId, ev.data)}>
+                        Remover
                       </Button>
                     </div>
                   )
                 })}
               </div>
             )}
-
-            <hr />
-
-            <Card.Title className="mb-3">Cursos e Legendas</Card.Title>
-            <Form.Group className="mb-3">
-              <Form.Label>Buscar curso</Form.Label>
-              <Form.Control
-                type="search"
-                placeholder="Digite para filtrar"
-                value={searchTerm}
-                onChange={e => setSearchTerm(e.target.value)}
-              />
-            </Form.Group>
-            <div className="mb-3">
-              <Form onSubmit={handleAddCurso}>
-                <Form.Group className="mb-2">
-                  <Form.Label>Nome do curso</Form.Label>
-                  <Form.Control
-                    type="text"
-                    value={cursoNome}
-                    onChange={e => setCursoNome(e.target.value)}
-                    placeholder="Ex.: Programa.ai Turma 1"
-                  />
-                </Form.Group>
-                <Form.Group className="mb-3 d-flex align-items-center gap-2">
-                  <Form.Label className="mb-0">Cor</Form.Label>
-                  <Form.Control
-                    type="color"
-                    value={cursoCor}
-                    onChange={e => setCursoCor(e.target.value)}
-                    style={{ width: 56, padding: 2 }}
-                  />
-                </Form.Group>
-                <div className="d-flex justify-content-end">
-                  <Button type="submit" variant="primary" size="sm" disabled={saving}>
-                    {saving ? <Spinner size="sm" animation="border" /> : 'Adicionar curso'}
+            {selectedCurso && (
+              <div style={{ marginTop: '1rem', paddingTop: '1rem', borderTop: '1px solid rgba(148, 163, 184, 0.2)' }}>
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '0.75rem' }}>
+                  <span style={{ color: '#94a3b8', fontSize: '0.9rem' }}>
+                    Alternar aula de <strong style={{ color: selectedCurso.cor }}>{selectedCurso.nome}</strong>
+                  </span>
+                  <Button
+                    variant={selectedDayHasSelectedCurso ? 'outline-danger' : 'outline-primary'}
+                    size="sm"
+                    onClick={() => toggleEvento(selectedCurso.id, selectedDateKey)}
+                  >
+                    {selectedDayHasSelectedCurso ? 'Desmarcar' : 'Marcar'}
                   </Button>
                 </div>
-              </Form>
-            </div>
-
-            <hr />
-
-            {error && (
-              <div className="mb-3">
-                <span className="text-danger small">{error}</span>
               </div>
             )}
+          </div>
+        )}
+      </div>
 
-            <div className="mb-2 text-muted small">
-              Clique em um curso para deixá-lo ativo e marque as datas no calendário ou cadastre uma data específica abaixo.
-            </div>
-
-            {selectedCurso && (
-              <div className="mb-3">
-                <Form
-                  onSubmit={e => {
-                    e.preventDefault()
-                    if (!manualDate || !selectedCurso.id) return
-                    void toggleEvento(selectedCurso.id, manualDate)
-                  }}
-                >
-                  <Form.Label className="small mb-1">
-                    Adicionar data para <strong>{selectedCurso.nome}</strong>
-                  </Form.Label>
-                  <div className="d-flex align-items-center gap-2">
-                    <Form.Control
-                      type="date"
-                      value={manualDate}
-                      onChange={e => setManualDate(e.target.value)}
-                      style={{ maxWidth: 180 }}
-                    />
-                    <Button
-                      type="submit"
-                      variant="outline-primary"
-                      size="sm"
-                      disabled={saving || !manualDate}
+      {/* Sidebar */}
+      <div className="galaxy-calendar-sidebar">
+        {/* Upcoming Classes */}
+        <div className="galaxy-calendar-upcoming">
+          <h4 className="galaxy-calendar-section-title">
+            <Clock /> Próximas aulas
+          </h4>
+          {upcomingAulas.length === 0 ? (
+            <p className="galaxy-calendar-empty">Nenhuma aula futura cadastrada.</p>
+          ) : (
+            <div className="galaxy-calendar-upcoming-list">
+              {upcomingAulas.map(ev => {
+                const curso = cursosById[ev.cursoId]
+                if (!curso) return null
+                return (
+                  <div key={`${ev.id}-upcoming`} className="galaxy-calendar-upcoming-item">
+                    <div className="galaxy-calendar-upcoming-info">
+                      <span className="galaxy-calendar-upcoming-date">{formatDateShort(ev.data)}</span>
+                      {renderCursoChip(curso, true)}
+                    </div>
+                    <button
+                      type="button"
+                      className="galaxy-calendar-upcoming-btn"
+                      onClick={() => goToDate(ev.data, ev.cursoId)}
                     >
-                      {saving ? <Spinner size="sm" animation="border" /> : 'Adicionar data'}
-                    </Button>
+                      Ir para data
+                    </button>
                   </div>
-                </Form>
-              </div>
-            )}
+                )
+              })}
+            </div>
+          )}
+        </div>
 
-            <div className="d-flex flex-column gap-3">
-              <div>
-                <button
-                  type="button"
-                  className="w-100 text-start border-0 bg-transparent p-0 d-flex align-items-center justify-content-between"
-                  onClick={() => setActiveExpanded(prev => !prev)}
-                >
-                  <span className="fw-semibold">Ativos ({filteredActiveCursos.length})</span>
-                  <span className="text-muted small">{activeExpanded ? '−' : '+'}</span>
+        {/* Courses Management */}
+        <div className="galaxy-calendar-courses">
+          <h4 className="galaxy-calendar-section-title">
+            <Search /> Cursos
+          </h4>
+
+          <div className="galaxy-calendar-search">
+            <input
+              type="search"
+              placeholder="Buscar curso..."
+              value={searchTerm}
+              onChange={e => setSearchTerm(e.target.value)}
+            />
+          </div>
+
+          <div className="galaxy-calendar-add-form">
+            <div className="galaxy-calendar-add-form-title">
+              <Plus /> Novo Curso
+            </div>
+            <form onSubmit={handleAddCurso}>
+              <div className="galaxy-calendar-add-form-row">
+                <input
+                  className="galaxy-calendar-add-form-input"
+                  type="text"
+                  placeholder="Nome do curso"
+                  value={cursoNome}
+                  onChange={e => setCursoNome(e.target.value)}
+                />
+                <input
+                  className="galaxy-calendar-color-picker"
+                  type="color"
+                  value={cursoCor}
+                  onChange={e => setCursoCor(e.target.value)}
+                />
+              </div>
+              <button type="submit" className="galaxy-calendar-add-btn" disabled={saving || !cursoNome.trim()}>
+                {saving ? <Spinner size="sm" animation="border" /> : 'Adicionar'}
+              </button>
+            </form>
+          </div>
+
+          {error && <div style={{ color: '#ef4444', fontSize: '0.85rem', marginBottom: '1rem' }}>{error}</div>}
+
+          {selectedCurso && (
+            <div className="galaxy-calendar-manual-date">
+              <div className="galaxy-calendar-manual-date-label">
+                Adicionar data para <strong>{selectedCurso.nome}</strong>
+              </div>
+              <form
+                className="galaxy-calendar-manual-date-row"
+                onSubmit={e => {
+                  e.preventDefault()
+                  if (!manualDate || !selectedCurso.id) return
+                  void toggleEvento(selectedCurso.id, manualDate)
+                }}
+              >
+                <input
+                  className="galaxy-calendar-manual-date-input"
+                  type="date"
+                  value={manualDate}
+                  onChange={e => setManualDate(e.target.value)}
+                />
+                <button type="submit" className="galaxy-calendar-btn" disabled={saving || !manualDate}>
+                  {saving ? <Spinner size="sm" animation="border" /> : 'Adicionar'}
                 </button>
-                <Collapse in={activeExpanded}>
-                  <div className="mt-2 d-flex flex-column gap-2">
-                    {filteredActiveCursos.map(curso => {
-                      const isActive = selectedCursoId === curso.id
-                      return (
-                        <button
-                          key={curso.id}
-                          type="button"
-                          className="border rounded py-2 px-3 text-start bg-white"
-                          style={{
-                            boxShadow: isActive
-                              ? '0 6px 18px rgba(13, 110, 253, 0.2)'
-                              : '0 2px 8px rgba(15, 23, 42, 0.08)',
-                            borderColor: isActive ? '#0d6efd' : '#e5e7eb'
-                          }}
-                          onClick={() => setSelectedCursoId(curso.id)}
-                        >
-                          <div className="d-flex align-items-start justify-content-between gap-2">
-                            <div className="d-flex align-items-start gap-2">
-                              <span
-                                style={{
-                                  width: 14,
-                                  height: 14,
-                                  borderRadius: '999px',
-                                  backgroundColor: curso.cor,
-                                  border: '1px solid rgba(15, 23, 42, 0.12)'
-                                }}
-                              />
-                              <div>
-                                <div className="fw-semibold small">{curso.nome}</div>
-                                <div className="text-muted small">
-                                  {curso.totalEventos === 0
-                                    ? 'Nenhuma data marcada'
-                                    : `${curso.totalEventos} data${
-                                        curso.totalEventos > 1 ? 's' : ''
-                                      }`}
-                                  {curso.nextDate && ` • próxima: ${formatDateLabel(curso.nextDate)}`}
-                                </div>
-                              </div>
-                            </div>
-                            <div className="d-flex align-items-center gap-2">
-                              {isActive && <Badge bg="primary">Ativo</Badge>}
-                              <Button
-                                type="button"
-                                variant="outline-danger"
-                                size="sm"
-                                onClick={e => {
-                                  e.stopPropagation()
-                                  void handleRemoverCurso(curso)
-                                }}
-                                title="Remover curso"
-                              >
-                                🗑️
-                              </Button>
+              </form>
+            </div>
+          )}
+
+          {/* Active Courses */}
+          <div className="galaxy-calendar-course-section">
+            <button
+              type="button"
+              className="galaxy-calendar-course-section-header"
+              onClick={() => setActiveExpanded(prev => !prev)}
+            >
+              <span className="galaxy-calendar-course-section-title">Ativos ({filteredActiveCursos.length})</span>
+              <span className="galaxy-calendar-course-section-toggle">{activeExpanded ? '−' : '+'}</span>
+            </button>
+            <Collapse in={activeExpanded}>
+              <div className="galaxy-calendar-course-list">
+                {filteredActiveCursos.map(curso => {
+                  const isActive = selectedCursoId === curso.id
+                  return (
+                    <button
+                      key={curso.id}
+                      type="button"
+                      className={`galaxy-calendar-course-item ${isActive ? 'active' : ''}`}
+                      onClick={() => setSelectedCursoId(curso.id)}
+                    >
+                      <div className="galaxy-calendar-course-item-header">
+                        <div className="galaxy-calendar-course-item-info">
+                          <span className="galaxy-calendar-course-color" style={{ backgroundColor: curso.cor }} />
+                          <div className="galaxy-calendar-course-details">
+                            <div className="galaxy-calendar-course-name">{curso.nome}</div>
+                            <div className="galaxy-calendar-course-meta">
+                              {curso.totalEventos === 0 ? 'Sem datas' : `${curso.totalEventos} data${curso.totalEventos > 1 ? 's' : ''}`}
+                              {curso.nextDate && ` • próx: ${formatDateLabel(curso.nextDate)}`}
                             </div>
                           </div>
-                        </button>
-                      )
-                    })}
-                    {!filteredActiveCursos.length && !loading && (
-                      <div className="text-muted small">Nenhum curso ativo encontrado.</div>
-                    )}
-                  </div>
-                </Collapse>
-              </div>
-
-              {showFinalizados && (
-                <div>
-                  <button
-                    type="button"
-                    className="w-100 text-start border-0 bg-transparent p-0 d-flex align-items-center justify-content-between"
-                    onClick={() => setFinalizedExpanded(prev => !prev)}
-                  >
-                    <span className="fw-semibold">Finalizados ({filteredFinalCursos.length})</span>
-                    <span className="text-muted small">{finalizedExpanded ? '−' : '+'}</span>
-                  </button>
-                  <Collapse in={finalizedExpanded}>
-                    <div className="mt-2 d-flex flex-column gap-2">
-                      {filteredFinalCursos.map(curso => {
-                        const isActive = selectedCursoId === curso.id
-                        return (
+                        </div>
+                        <div className="galaxy-calendar-course-actions">
+                          {isActive && <span className="galaxy-calendar-course-active-badge">Ativo</span>}
                           <button
-                            key={curso.id}
                             type="button"
-                            className="border rounded py-2 px-3 text-start bg-white"
-                            style={{
-                              boxShadow: isActive
-                                ? '0 6px 18px rgba(13, 110, 253, 0.2)'
-                                : '0 2px 8px rgba(15, 23, 42, 0.08)',
-                              borderColor: isActive ? '#0d6efd' : '#e5e7eb'
-                            }}
-                            onClick={() => setSelectedCursoId(curso.id)}
+                            className="galaxy-calendar-course-delete"
+                            onClick={e => { e.stopPropagation(); void handleRemoverCurso(curso) }}
+                            title="Remover curso"
                           >
-                            <div className="d-flex align-items-start justify-content-between gap-2">
-                              <div className="d-flex align-items-start gap-2">
-                                <span
-                                  style={{
-                                    width: 14,
-                                    height: 14,
-                                    borderRadius: '999px',
-                                    backgroundColor: curso.cor,
-                                    border: '1px solid rgba(15, 23, 42, 0.12)'
-                                  }}
-                                />
-                                <div>
-                                  <div className="fw-semibold small">{curso.nome}</div>
-                                  <div className="text-muted small">
-                                    {curso.totalEventos === 0
-                                      ? 'Nenhuma data marcada'
-                                      : `${curso.totalEventos} data${
-                                          curso.totalEventos > 1 ? 's' : ''
-                                        }`}
-                                  </div>
-                                </div>
-                              </div>
-                              <div className="d-flex align-items-center gap-2">
-                                {isActive && <Badge bg="primary">Ativo</Badge>}
-                                <Button
-                                  type="button"
-                                  variant="outline-danger"
-                                  size="sm"
-                                  onClick={e => {
-                                    e.stopPropagation()
-                                    void handleRemoverCurso(curso)
-                                  }}
-                                  title="Remover curso"
-                                >
-                                  🗑️
-                                </Button>
+                            <Trash />
+                          </button>
+                        </div>
+                      </div>
+                    </button>
+                  )
+                })}
+                {!filteredActiveCursos.length && !loading && (
+                  <p className="galaxy-calendar-empty">Nenhum curso ativo encontrado.</p>
+                )}
+              </div>
+            </Collapse>
+          </div>
+
+          {/* Finalized Courses */}
+          {showFinalizados && (
+            <div className="galaxy-calendar-course-section">
+              <button
+                type="button"
+                className="galaxy-calendar-course-section-header"
+                onClick={() => setFinalizedExpanded(prev => !prev)}
+              >
+                <span className="galaxy-calendar-course-section-title">Finalizados ({filteredFinalCursos.length})</span>
+                <span className="galaxy-calendar-course-section-toggle">{finalizedExpanded ? '−' : '+'}</span>
+              </button>
+              <Collapse in={finalizedExpanded}>
+                <div className="galaxy-calendar-course-list">
+                  {filteredFinalCursos.map(curso => {
+                    const isActive = selectedCursoId === curso.id
+                    return (
+                      <button
+                        key={curso.id}
+                        type="button"
+                        className={`galaxy-calendar-course-item ${isActive ? 'active' : ''}`}
+                        onClick={() => setSelectedCursoId(curso.id)}
+                      >
+                        <div className="galaxy-calendar-course-item-header">
+                          <div className="galaxy-calendar-course-item-info">
+                            <span className="galaxy-calendar-course-color" style={{ backgroundColor: curso.cor }} />
+                            <div className="galaxy-calendar-course-details">
+                              <div className="galaxy-calendar-course-name">{curso.nome}</div>
+                              <div className="galaxy-calendar-course-meta">
+                                {curso.totalEventos === 0 ? 'Sem datas' : `${curso.totalEventos} data${curso.totalEventos > 1 ? 's' : ''}`}
                               </div>
                             </div>
-                          </button>
-                        )
-                      })}
-                      {!filteredFinalCursos.length && !loading && (
-                        <div className="text-muted small">Nenhum curso finalizado encontrado.</div>
-                      )}
-                    </div>
-                  </Collapse>
+                          </div>
+                          <div className="galaxy-calendar-course-actions">
+                            {isActive && <span className="galaxy-calendar-course-active-badge">Ativo</span>}
+                            <button
+                              type="button"
+                              className="galaxy-calendar-course-delete"
+                              onClick={e => { e.stopPropagation(); void handleRemoverCurso(curso) }}
+                              title="Remover curso"
+                            >
+                              <Trash />
+                            </button>
+                          </div>
+                        </div>
+                      </button>
+                    )
+                  })}
+                  {!filteredFinalCursos.length && !loading && (
+                    <p className="galaxy-calendar-empty">Nenhum curso finalizado.</p>
+                  )}
                 </div>
-              )}
-
-              {!cursos.length && !loading && (
-                <div className="text-muted small">
-                  Nenhum curso cadastrado ainda. Crie um curso acima e comece a planejar o calendário
-                  de aulas.
-                </div>
-              )}
-
-              {loading && (
-                <div className="d-flex justify-content-center py-3">
-                  <Spinner animation="border" />
-                </div>
-              )}
+              </Collapse>
             </div>
-          </Card.Body>
-        </Card>
-      </Col>
-    </Row>
+          )}
+
+          {/* Selected Course Dates */}
+          {selectedCurso && eventosCursoSelecionado.length > 0 && (
+            <div className="galaxy-calendar-course-dates">
+              <h5 className="galaxy-calendar-section-title" style={{ fontSize: '0.95rem' }}>
+                Datas de {selectedCurso.nome}
+              </h5>
+              <div className="galaxy-calendar-course-dates-list">
+                {eventosCursoSelecionado.map(ev => (
+                  <div key={ev.id} className="galaxy-calendar-course-date-item">
+                    <div className="galaxy-calendar-course-date-info">
+                      <span className="galaxy-calendar-course-date-dot" style={{ backgroundColor: selectedCurso.cor }} />
+                      <span className="galaxy-calendar-course-date-text">{formatDateLabel(ev.data)}</span>
+                    </div>
+                    <button
+                      type="button"
+                      className="galaxy-calendar-course-date-remove"
+                      onClick={() => toggleEvento(selectedCurso.id, ev.data)}
+                    >
+                      ×
+                    </button>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {!cursos.length && !loading && (
+            <p className="galaxy-calendar-empty">
+              Nenhum curso cadastrado. Crie um curso acima para começar.
+            </p>
+          )}
+
+          {loading && (
+            <div className="d-flex justify-content-center py-3">
+              <Spinner animation="border" />
+            </div>
+          )}
+        </div>
+      </div>
+    </div>
   )
 }
