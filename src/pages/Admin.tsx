@@ -1318,7 +1318,7 @@ export default function Admin() {
               <div className="galaxy-logo-icon">🌌</div>
               <span className="galaxy-logo-text"><span>Galaxy</span></span>
             </div>
-            <p className="subtitle">Painel de Administração</p>
+            <p className="subtitle"></p>
             <Form onSubmit={login}>
               <Form.Group className="mb-3">
                 <Form.Label className="galaxy-form-label">Email</Form.Label>
