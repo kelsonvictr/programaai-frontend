@@ -2102,7 +2102,7 @@ export default function Admin() {
       )}
 
       {activeView === 'cursos' && user && token && (
-        <GalaxyCourseManager token={token} adminEmail={user.email || ''} />
+        <GalaxyCourseManager token={token} />
       )}
 
       {activeView === 'calendario' && (

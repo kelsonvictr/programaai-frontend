@@ -19,7 +19,6 @@ import { TECH_ICONS, BG_GRADIENTS } from '../config/courseVisuals'
 
 const API_BASE = import.meta.env.VITE_ADMIN_API as string
 const CURSOS_ENDPOINT = `${API_BASE}/galaxy/cursos`
-const SEND_2FA_ENDPOINT = `${API_BASE}/galaxy/cursos/2fa/send`
 
 interface Curso {
   id: string
@@ -54,10 +53,9 @@ interface Curso {
 
 interface GalaxyCourseManagerProps {
   token: string
-  adminEmail: string
 }
 
-const GalaxyCourseManager: React.FC<GalaxyCourseManagerProps> = ({ token, adminEmail }) => {
+const GalaxyCourseManager: React.FC<GalaxyCourseManagerProps> = ({ token }) => {
   const [cursos, setCursos] = useState<Curso[]>([])
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
@@ -86,14 +84,6 @@ const GalaxyCourseManager: React.FC<GalaxyCourseManagerProps> = ({ token, adminE
     faq: []
   })
   
-  // 2FA
-  const [show2FAModal, setShow2FAModal] = useState(false)
-  const [code2FA, setCode2FA] = useState('')
-  const [pendingAction, setPendingAction] = useState<{
-    type: 'create' | 'update' | 'delete'
-    data?: any
-  } | null>(null)
-  
   // Preview do card
   const [showPreview, setShowPreview] = useState(false)
 
@@ -117,24 +107,26 @@ const GalaxyCourseManager: React.FC<GalaxyCourseManagerProps> = ({ token, adminE
     }
   }
 
-  const request2FACode = async () => {
+  const handleCreate = async () => {
+    setLoading(true)
     setError(null)
+    setShowModal(false)
+
     try {
       await axios.post(
-        SEND_2FA_ENDPOINT,
-        { adminEmail, operation: 'course_management' },
+        CURSOS_ENDPOINT,
+        formData,
         { headers: { Authorization: `Bearer ${token}` } }
       )
-      setSuccess('✉️ Código 2FA enviado para seu email!')
-      setShow2FAModal(true)
+      setSuccess('✅ Curso criado com sucesso!')
+      await loadCursos()
+      resetForm()
     } catch (err: any) {
-      setError(err.response?.data?.error || 'Erro ao enviar código 2FA')
+      console.error('Erro ao criar curso:', err)
+      setError(err.response?.data?.error || 'Erro ao criar curso')
+    } finally {
+      setLoading(false)
     }
-  }
-
-  const handleCreate = () => {
-    setPendingAction({ type: 'create' })
-    request2FACode()
   }
 
   const handleUpdate = (curso: Curso) => {
@@ -144,61 +136,50 @@ const GalaxyCourseManager: React.FC<GalaxyCourseManagerProps> = ({ token, adminE
     setShowModal(true)
   }
 
-  const submitUpdate = () => {
-    setPendingAction({ type: 'update', data: formData })
-    setShowModal(false)
-    request2FACode()
-  }
-
-  const handleDelete = (curso: Curso) => {
-    if (confirm(`Tem certeza que deseja desativar o curso "${curso.title}"?`)) {
-      setPendingAction({ type: 'delete', data: curso.id })
-      request2FACode()
-    }
-  }
-
-  const execute2FAAction = async () => {
-    if (!pendingAction || !code2FA) return
+  const submitUpdate = async () => {
+    if (!selectedCurso) return
 
     setLoading(true)
     setError(null)
-    setShow2FAModal(false)
+    setShowModal(false)
 
     try {
-      if (pendingAction.type === 'create') {
-        await axios.post(
-          CURSOS_ENDPOINT,
-          { adminEmail, code2fa: code2FA, curso: formData },
-          { headers: { Authorization: `Bearer ${token}` } }
-        )
-        setSuccess('✅ Curso criado com sucesso!')
-      } else if (pendingAction.type === 'update') {
-        await axios.put(
-          `${CURSOS_ENDPOINT}/${selectedCurso?.id}`,
-          { adminEmail, code2fa: code2FA, curso: pendingAction.data },
-          { headers: { Authorization: `Bearer ${token}` } }
-        )
-        setSuccess('✅ Curso atualizado com sucesso!')
-      } else if (pendingAction.type === 'delete') {
-        await axios.delete(
-          `${CURSOS_ENDPOINT}/${pendingAction.data}`,
-          {
-            headers: { Authorization: `Bearer ${token}` },
-            data: { adminEmail, code2fa: code2FA }
-          }
-        )
-        setSuccess('✅ Curso desativado com sucesso!')
-      }
-
+      await axios.put(
+        `${CURSOS_ENDPOINT}/${selectedCurso.id}`,
+        formData,
+        { headers: { Authorization: `Bearer ${token}` } }
+      )
+      setSuccess('✅ Curso atualizado com sucesso!')
       await loadCursos()
       resetForm()
     } catch (err: any) {
-      console.error('Erro na operação:', err)
-      setError(err.response?.data?.error || 'Erro ao executar operação')
+      console.error('Erro ao atualizar curso:', err)
+      setError(err.response?.data?.error || 'Erro ao atualizar curso')
     } finally {
       setLoading(false)
-      setCode2FA('')
-      setPendingAction(null)
+    }
+  }
+
+  const handleDelete = async (curso: Curso) => {
+    if (!confirm(`Tem certeza que deseja desativar o curso "${curso.title}"?`)) {
+      return
+    }
+
+    setLoading(true)
+    setError(null)
+
+    try {
+      await axios.delete(
+        `${CURSOS_ENDPOINT}/${curso.id}`,
+        { headers: { Authorization: `Bearer ${token}` } }
+      )
+      setSuccess('✅ Curso desativado com sucesso!')
+      await loadCursos()
+    } catch (err: any) {
+      console.error('Erro ao desativar curso:', err)
+      setError(err.response?.data?.error || 'Erro ao desativar curso')
+    } finally {
+      setLoading(false)
     }
   }
 
@@ -668,44 +649,6 @@ const GalaxyCourseManager: React.FC<GalaxyCourseManagerProps> = ({ token, adminE
           >
             <Save className="me-2" />
             {editMode ? 'Salvar Alterações' : 'Criar Curso'}
-          </Button>
-        </Modal.Footer>
-      </Modal>
-
-      {/* Modal 2FA */}
-      <Modal show={show2FAModal} onHide={() => setShow2FAModal(false)} centered>
-        <Modal.Header closeButton>
-          <Modal.Title>🔐 Verificação 2FA</Modal.Title>
-        </Modal.Header>
-        <Modal.Body>
-          <Alert variant="info">
-            Um código de 6 dígitos foi enviado para <strong>{adminEmail}</strong>.
-            O código expira em 5 minutos.
-          </Alert>
-          <Form.Group>
-            <Form.Label>Digite o código recebido por email:</Form.Label>
-            <Form.Control
-              type="text"
-              value={code2FA}
-              onChange={(e) => setCode2FA(e.target.value.replace(/\D/g, '').slice(0, 6))}
-              placeholder="000000"
-              maxLength={6}
-              className="text-center fs-4 tracking-widest"
-              autoFocus
-            />
-          </Form.Group>
-        </Modal.Body>
-        <Modal.Footer>
-          <Button variant="secondary" onClick={() => setShow2FAModal(false)}>
-            Cancelar
-          </Button>
-          <Button
-            variant="primary"
-            onClick={execute2FAAction}
-            disabled={code2FA.length !== 6 || loading}
-          >
-            {loading ? <Spinner animation="border" size="sm" className="me-2" /> : null}
-            Confirmar
           </Button>
         </Modal.Footer>
       </Modal>
