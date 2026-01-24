@@ -367,39 +367,6 @@ const CourseDetails: React.FC = () => {
             </div>
 
             <div className="course-hero-actions">
-              <div className="course-price-box">
-                <div className="course-price-header">
-                  <span className="course-price-label">Investimento</span>
-                  <span className="course-price-value">{course.price} <span className="course-price-subnote">(Valor total do curso)</span></span>
-                </div>
-                {course.ativo && (
-                  <span className="text-warning small fw-semibold">
-                    ⏳ Vagas limitadas para esta turma
-                  </span>
-                )}
-                {course.obsPrice && (
-                  <div className="course-price-note">{course.obsPrice}</div>
-                )}
-              {(() => {
-                const { base, parcela12 } = calcularValores(course.price)
-                return (
-                  <div className="course-price-breakdown">
-                    <span>Pix à vista: R$ {base.toFixed(2).replace(".", ",")}</span>
-                    <span>12x de R$ {parcela12.toFixed(2).replace(".", ",")}</span>
-                  </div>
-                )
-              })()}
-              <div className="course-price-info">{nextDateLabel}</div>
-              <button
-                type="button"
-                className="course-link course-link--onDark"
-                onClick={() => setShowParcelamento(true)}
-                aria-label="Ver parcelamento e condições"
-              >
-                Ver parcelamento e condições
-              </button>
-            </div>
-
               <div className="course-hero-cta">
                 <Button
                   as="a"
@@ -424,6 +391,22 @@ const CourseDetails: React.FC = () => {
             </div>
           </div>
         </section>
+
+        {videoSrc && (
+          <section className="course-section-card course-video-section">
+            <div className="course-section-header-center">
+              <h2 className="course-section-title">Veja a experiência do curso</h2>
+              <p className="course-section-subtitle">
+                Conheça como são as aulas, o ambiente e a metodologia presencial que vai acelerar seu aprendizado
+              </p>
+            </div>
+            <ModernVideoPlayer 
+              videoSrc={videoSrc}
+              posterSrc={videoPoster}
+              title="Apresentação do Curso"
+            />
+          </section>
+        )}
 
         <section className="course-section-card course-details-section">
           <div className="course-details-header">
@@ -498,22 +481,6 @@ const CourseDetails: React.FC = () => {
             </div>
           </div>
         </section>
-
-        {videoSrc && (
-          <section className="course-section-card course-video-section">
-            <div className="course-section-header-center">
-              <h2 className="course-section-title">Veja a experiência do curso</h2>
-              <p className="course-section-subtitle">
-                Conheça como são as aulas, o ambiente e a metodologia presencial que vai acelerar seu aprendizado
-              </p>
-            </div>
-            <ModernVideoPlayer 
-              videoSrc={videoSrc}
-              posterSrc={videoPoster}
-              title="Apresentação do Curso"
-            />
-          </section>
-        )}
 
         {course.oQueVaiAprender && (
           <section className="course-section-card">
@@ -738,6 +705,47 @@ const CourseDetails: React.FC = () => {
           seu <strong>notebook pessoal</strong>. Essa abordagem é excelente pois garante que o{" "}
           <strong>ambiente de desenvolvimento</strong> configurado em sala estará prontinho para você continuar praticando em casa!
         </Alert>
+
+        <section className="course-section-card course-pricing-section">
+          <div className="course-pricing-header">
+            <h2 className="course-section-title">Investimento no seu futuro</h2>
+            <p className="course-section-subtitle">
+              Garanta sua vaga com as melhores condições de pagamento
+            </p>
+          </div>
+          <div className="course-price-box">
+            <div className="course-price-header">
+              <span className="course-price-label">Investimento</span>
+              <span className="course-price-value">{course.price} <span className="course-price-subnote">(Valor total do curso)</span></span>
+            </div>
+            {course.ativo && (
+              <span className="text-warning small fw-semibold">
+                ⏳ Vagas limitadas para esta turma
+              </span>
+            )}
+            {course.obsPrice && (
+              <div className="course-price-note">{course.obsPrice}</div>
+            )}
+            {(() => {
+              const { base, parcela12 } = calcularValores(course.price)
+              return (
+                <div className="course-price-breakdown">
+                  <span>Pix à vista: R$ {base.toFixed(2).replace(".", ",")}</span>
+                  <span>12x de R$ {parcela12.toFixed(2).replace(".", ",")}</span>
+                </div>
+              )
+            })()}
+            <div className="course-price-info">{nextDateLabel}</div>
+            <button
+              type="button"
+              className="course-link"
+              onClick={() => setShowParcelamento(true)}
+              aria-label="Ver parcelamento e condições"
+            >
+              Ver parcelamento e condições
+            </button>
+          </div>
+        </section>
 
         <section className="course-section-card course-final-cta">
           <div>

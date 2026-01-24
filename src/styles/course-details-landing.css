@@ -1140,3 +1140,48 @@
     grid-template-columns: 1fr;
   }
 }
+
+/* Seção de Preço Standalone */
+.course-pricing-section {
+  background: linear-gradient(135deg, rgba(79, 70, 229, 0.08) 0%, rgba(67, 56, 202, 0.04) 100%);
+  border: 2px solid rgba(129, 140, 248, 0.3);
+  text-align: center;
+}
+
+.course-pricing-header {
+  margin-bottom: 2rem;
+}
+
+.course-pricing-section .course-price-box {
+  max-width: 500px;
+  margin: 0 auto;
+  background: rgba(15, 23, 42, 0.8);
+  border: 1px solid rgba(148, 163, 184, 0.4);
+  padding: 2rem;
+}
+
+.course-pricing-section .course-price-header {
+  flex-direction: column;
+  text-align: center;
+  gap: 0.5rem;
+}
+
+.course-pricing-section .course-price-value {
+  font-size: 2.5rem;
+  color: #fbbf24;
+}
+
+.course-pricing-section .course-link {
+  color: #60a5fa;
+  text-align: center;
+}
+
+@media (max-width: 768px) {
+  .course-pricing-section .course-price-box {
+    padding: 1.5rem;
+  }
+  
+  .course-pricing-section .course-price-value {
+    font-size: 2rem;
+  }
+}

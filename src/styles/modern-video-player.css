@@ -2,7 +2,7 @@
 .modern-video-player {
   position: relative;
   width: 100%;
-  max-width: 900px;
+  max-width: 400px; /* Ajustado para vídeo vertical */
   margin: 0 auto;
   border-radius: 20px;
   overflow: hidden;
@@ -14,7 +14,7 @@
   width: 100%;
   height: auto;
   display: block;
-  aspect-ratio: 16 / 9;
+  aspect-ratio: 9 / 16; /* Formato vertical para stories/reels */
   object-fit: cover;
 }
 
