@@ -2771,3 +2771,208 @@
     width: 100%;
   }
 }
+
+/* ============================================
+   GALAXY COURSE MANAGER MODAL STYLING
+   ============================================ */
+
+/* Modal específico para gerenciamento de cursos */
+.galaxy-course-manager .modal-content {
+  background: linear-gradient(145deg, #1e293b 0%, #0f172a 100%) !important;
+  border: 1px solid rgba(59, 130, 246, 0.2) !important;
+}
+
+.galaxy-course-manager .modal-body {
+  background: rgba(15, 23, 42, 0.5) !important;
+  padding: 1.5rem;
+}
+
+/* Accordion styling */
+.galaxy-course-manager .accordion-item {
+  background: rgba(30, 41, 59, 0.5) !important;
+  border: 1px solid rgba(148, 163, 184, 0.15) !important;
+  border-radius: 12px !important;
+  margin-bottom: 1rem;
+  overflow: hidden;
+}
+
+.galaxy-course-manager .accordion-header {
+  background: transparent !important;
+}
+
+.galaxy-course-manager .accordion-button {
+  background: rgba(30, 41, 59, 0.8) !important;
+  color: var(--galaxy-text-primary) !important;
+  border: none !important;
+  padding: 1rem 1.25rem;
+  font-weight: 600;
+  font-size: 1rem;
+  transition: all 0.3s ease;
+}
+
+.galaxy-course-manager .accordion-button:hover {
+  background: rgba(59, 130, 246, 0.1) !important;
+}
+
+.galaxy-course-manager .accordion-button:not(.collapsed) {
+  background: rgba(59, 130, 246, 0.15) !important;
+  color: var(--galaxy-accent-blue) !important;
+  box-shadow: none !important;
+}
+
+.galaxy-course-manager .accordion-button:focus {
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2) !important;
+  border-color: transparent !important;
+}
+
+.galaxy-course-manager .accordion-button::after {
+  filter: brightness(0) invert(1);
+}
+
+.galaxy-course-manager .accordion-body {
+  background: rgba(15, 23, 42, 0.4) !important;
+  border-top: 1px solid rgba(148, 163, 184, 0.1) !important;
+  padding: 1.5rem;
+}
+
+/* Form controls dentro do modal de cursos */
+.galaxy-course-manager .form-control,
+.galaxy-course-manager .form-select {
+  background: rgba(15, 23, 42, 0.9) !important;
+  border: 1px solid rgba(148, 163, 184, 0.25) !important;
+  color: var(--galaxy-text-primary) !important;
+  border-radius: 10px;
+  padding: 0.75rem 1rem;
+  font-size: 0.95rem;
+  transition: all 0.3s ease;
+}
+
+.galaxy-course-manager .form-control:focus,
+.galaxy-course-manager .form-select:focus {
+  background: rgba(15, 23, 42, 0.95) !important;
+  border-color: var(--galaxy-accent-blue) !important;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2) !important;
+  color: var(--galaxy-text-primary) !important;
+}
+
+.galaxy-course-manager .form-control::placeholder {
+  color: var(--galaxy-text-muted) !important;
+  opacity: 0.7;
+}
+
+.galaxy-course-manager .form-label {
+  color: var(--galaxy-text-secondary) !important;
+  font-weight: 600;
+  font-size: 0.9rem;
+  margin-bottom: 0.5rem;
+  display: block;
+}
+
+.galaxy-course-manager .form-text {
+  color: var(--galaxy-text-muted) !important;
+  font-size: 0.85rem;
+}
+
+/* Select dropdown styling */
+.galaxy-course-manager .form-select option {
+  background: var(--galaxy-bg-secondary) !important;
+  color: var(--galaxy-text-primary) !important;
+}
+
+/* Alert dentro do modal */
+.galaxy-course-manager .alert {
+  background: rgba(59, 130, 246, 0.1) !important;
+  border: 1px solid rgba(59, 130, 246, 0.3) !important;
+  color: var(--galaxy-text-primary) !important;
+  border-radius: 10px;
+}
+
+.galaxy-course-manager .alert strong {
+  color: var(--galaxy-accent-blue) !important;
+}
+
+/* Preview do card dinâmico */
+.galaxy-course-manager .bg-dark {
+  background: rgba(10, 14, 39, 0.8) !important;
+  border: 1px solid rgba(148, 163, 184, 0.2) !important;
+}
+
+.galaxy-course-manager h6.text-white {
+  color: var(--galaxy-text-primary) !important;
+  font-weight: 600;
+}
+
+/* Card admin da lista */
+.course-card-admin {
+  background: linear-gradient(145deg, rgba(30, 41, 59, 0.8), rgba(15, 23, 42, 0.9)) !important;
+  border: 1px solid rgba(148, 163, 184, 0.2) !important;
+  border-radius: 12px;
+  transition: all 0.3s ease;
+}
+
+.course-card-admin:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+  border-color: rgba(59, 130, 246, 0.4) !important;
+}
+
+.course-card-admin.inactive {
+  opacity: 0.6;
+  background: linear-gradient(145deg, rgba(30, 41, 59, 0.4), rgba(15, 23, 42, 0.5)) !important;
+}
+
+.course-card-admin .card-title {
+  color: var(--galaxy-text-primary) !important;
+  font-weight: 700;
+}
+
+.course-card-admin .card-body {
+  padding: 1.25rem;
+}
+
+.course-card-admin .btn-link {
+  color: var(--galaxy-text-secondary) !important;
+  text-decoration: none;
+  padding: 0.25rem 0.5rem;
+  transition: all 0.2s ease;
+}
+
+.course-card-admin .btn-link:hover {
+  color: var(--galaxy-accent-blue) !important;
+  background: rgba(59, 130, 246, 0.1);
+  border-radius: 6px;
+}
+
+.course-card-admin .btn-link.text-danger {
+  color: var(--galaxy-accent-red) !important;
+}
+
+.course-card-admin .btn-link.text-danger:hover {
+  color: #ff6b6b !important;
+  background: rgba(239, 68, 68, 0.1);
+}
+
+/* Badge melhorado */
+.course-card-admin .badge {
+  font-weight: 600;
+  padding: 0.4rem 0.8rem;
+  border-radius: 8px;
+  text-transform: uppercase;
+  font-size: 0.75rem;
+  letter-spacing: 0.5px;
+}
+
+.course-card-admin .badge.bg-success {
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%) !important;
+  box-shadow: 0 2px 8px rgba(16, 185, 129, 0.3);
+}
+
+.course-card-admin .badge.bg-secondary {
+  background: linear-gradient(135deg, #64748b 0%, #475569 100%) !important;
+}
+
+.course-card-admin .badge.bg-info {
+  background: linear-gradient(135deg, #06b6d4 0%, #0891b2 100%) !important;
+  box-shadow: 0 2px 8px rgba(6, 182, 212, 0.3);
+}
+
