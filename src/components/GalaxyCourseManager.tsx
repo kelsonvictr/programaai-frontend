@@ -13,7 +13,7 @@ import {
   Modal,
   Accordion
 } from 'react-bootstrap'
-import { PlusCircle, Pencil, Eye, EyeSlash, Save, X } from 'react-bootstrap-icons'
+import { PlusCircle, Pencil, Eye, EyeSlash, Save, X, Trash, CalendarPlus } from 'react-bootstrap-icons'
 import DynamicCourseCard from './DynamicCourseCard'
 import { TECH_ICONS, BG_GRADIENTS } from '../config/courseVisuals'
 
@@ -68,6 +68,7 @@ const GalaxyCourseManager: React.FC<GalaxyCourseManagerProps> = ({ token }) => {
   
   // Formulário
   const [formData, setFormData] = useState<Partial<Curso>>({
+    id: '',
     ativo: true,
     title: '',
     description: '',
@@ -86,6 +87,15 @@ const GalaxyCourseManager: React.FC<GalaxyCourseManagerProps> = ({ token }) => {
   
   // Preview do card
   const [showPreview, setShowPreview] = useState(false)
+  
+  // Campos temporários para adicionar itens em arrays
+  const [tempData, setTempData] = useState('')
+  const [tempModulo, setTempModulo] = useState('')
+  const [tempPreRequisito, setTempPreRequisito] = useState('')
+  const [tempPublicoAlvo, setTempPublicoAlvo] = useState('')
+  const [tempAprendizado, setTempAprendizado] = useState('')
+  const [tempFaqPergunta, setTempFaqPergunta] = useState('')
+  const [tempFaqResposta, setTempFaqResposta] = useState('')
 
   useEffect(() => {
     loadCursos()
@@ -185,6 +195,7 @@ const GalaxyCourseManager: React.FC<GalaxyCourseManagerProps> = ({ token }) => {
 
   const resetForm = () => {
     setFormData({
+      id: '',
       ativo: true,
       title: '',
       description: '',
@@ -203,21 +214,80 @@ const GalaxyCourseManager: React.FC<GalaxyCourseManagerProps> = ({ token }) => {
     setSelectedCurso(null)
     setEditMode(false)
     setShowModal(false)
+    // Limpar campos temporários
+    setTempData('')
+    setTempModulo('')
+    setTempPreRequisito('')
+    setTempPublicoAlvo('')
+    setTempAprendizado('')
+    setTempFaqPergunta('')
+    setTempFaqResposta('')
   }
 
-  // Funções preparadas para gerenciar campos de array (datas, módulos, etc) - descomente quando necessário
-  /* 
-  const handleArrayFieldAdd = (field: keyof Curso, value: string) => {
-    if (!value.trim()) return
-    const currentArray = (formData[field] as string[]) || []
-    setFormData({ ...formData, [field]: [...currentArray, value.trim()] })
+  // Funções para gerenciar arrays
+  const addData = () => {
+    if (!tempData.trim()) return
+    setFormData({ ...formData, datas: [...(formData.datas || []), tempData.trim()] })
+    setTempData('')
   }
 
-  const handleArrayFieldRemove = (field: keyof Curso, index: number) => {
-    const currentArray = (formData[field] as string[]) || []
-    setFormData({ ...formData, [field]: currentArray.filter((_, i) => i !== index) })
+  const removeData = (index: number) => {
+    setFormData({ ...formData, datas: formData.datas?.filter((_, i) => i !== index) })
   }
-  */
+
+  const addModulo = () => {
+    if (!tempModulo.trim()) return
+    setFormData({ ...formData, modulos: [...(formData.modulos || []), tempModulo.trim()] })
+    setTempModulo('')
+  }
+
+  const removeModulo = (index: number) => {
+    setFormData({ ...formData, modulos: formData.modulos?.filter((_, i) => i !== index) })
+  }
+
+  const addPreRequisito = () => {
+    if (!tempPreRequisito.trim()) return
+    setFormData({ ...formData, prerequisitos: [...(formData.prerequisitos || []), tempPreRequisito.trim()] })
+    setTempPreRequisito('')
+  }
+
+  const removePreRequisito = (index: number) => {
+    setFormData({ ...formData, prerequisitos: formData.prerequisitos?.filter((_, i) => i !== index) })
+  }
+
+  const addPublicoAlvo = () => {
+    if (!tempPublicoAlvo.trim()) return
+    setFormData({ ...formData, publicoAlvo: [...(formData.publicoAlvo || []), tempPublicoAlvo.trim()] })
+    setTempPublicoAlvo('')
+  }
+
+  const removePublicoAlvo = (index: number) => {
+    setFormData({ ...formData, publicoAlvo: formData.publicoAlvo?.filter((_, i) => i !== index) })
+  }
+
+  const addAprendizado = () => {
+    if (!tempAprendizado.trim()) return
+    setFormData({ ...formData, oQueVaiAprender: [...(formData.oQueVaiAprender || []), tempAprendizado.trim()] })
+    setTempAprendizado('')
+  }
+
+  const removeAprendizado = (index: number) => {
+    setFormData({ ...formData, oQueVaiAprender: formData.oQueVaiAprender?.filter((_, i) => i !== index) })
+  }
+
+  const addFaq = () => {
+    if (!tempFaqPergunta.trim() || !tempFaqResposta.trim()) return
+    setFormData({
+      ...formData,
+      faq: [...(formData.faq || []), { pergunta: tempFaqPergunta.trim(), resposta: tempFaqResposta.trim() }]
+    })
+    setTempFaqPergunta('')
+    setTempFaqResposta('')
+  }
+
+  const removeFaq = (index: number) => {
+    setFormData({ ...formData, faq: formData.faq?.filter((_, i) => i !== index) })
+  }
 
   const isCardDynamic = () => {
     return !!(formData.technologiaIcone || formData.bgGradient)
@@ -336,8 +406,47 @@ const GalaxyCourseManager: React.FC<GalaxyCourseManagerProps> = ({ token }) => {
               <Accordion.Item eventKey="0">
                 <Accordion.Header>📋 Informações Básicas</Accordion.Header>
                 <Accordion.Body>
+                  {/* Campo ID - só editável em criação */}
+                  {!editMode && (
+                    <Alert variant="warning" className="mb-3">
+                      <small>
+                        <strong>⚠️ ID do Curso:</strong> Defina um ID único para a URL (ex: "prog-do-zero-turma-02").
+                        Use apenas letras minúsculas, números e hífens. <strong>Não poderá ser alterado depois!</strong>
+                      </small>
+                    </Alert>
+                  )}
+                  
                   <Row>
-                    <Col md={8}>
+                    <Col md={editMode ? 12 : 4}>
+                      {!editMode && (
+                        <Form.Group className="mb-3">
+                          <Form.Label>ID do Curso (para URL) *</Form.Label>
+                          <Form.Control
+                            type="text"
+                            value={formData.id || ''}
+                            onChange={(e) => {
+                              // Sanitizar: apenas letras minúsculas, números e hífens
+                              const sanitized = e.target.value
+                                .toLowerCase()
+                                .replace(/[^a-z0-9-]/g, '')
+                              setFormData({ ...formData, id: sanitized })
+                            }}
+                            placeholder="prog-do-zero-turma-02"
+                            required
+                            pattern="[a-z0-9-]+"
+                          />
+                          <Form.Text className="text-muted">
+                            URL: /curso/{formData.id || 'id-do-curso'}
+                          </Form.Text>
+                        </Form.Group>
+                      )}
+                      {editMode && (
+                        <Alert variant="info" className="mb-3">
+                          <small><strong>ID:</strong> {formData.id} (não pode ser alterado)</small>
+                        </Alert>
+                      )}
+                    </Col>
+                    <Col md={editMode ? 8 : 5}>
                       <Form.Group className="mb-3">
                         <Form.Label>Título *</Form.Label>
                         <Form.Control
@@ -348,7 +457,7 @@ const GalaxyCourseManager: React.FC<GalaxyCourseManagerProps> = ({ token }) => {
                         />
                       </Form.Group>
                     </Col>
-                    <Col md={4}>
+                    <Col md={editMode ? 4 : 3}>
                       <Form.Group className="mb-3">
                         <Form.Label>Status</Form.Label>
                         <Form.Select
@@ -634,6 +743,247 @@ const GalaxyCourseManager: React.FC<GalaxyCourseManagerProps> = ({ token }) => {
                   </Form.Group>
                 </Accordion.Body>
               </Accordion.Item>
+
+              {/* Datas do Curso */}
+              <Accordion.Item eventKey="2">
+                <Accordion.Header>
+                  📅 Datas do Curso {formData.datas && formData.datas.length > 0 && <Badge bg="success" className="ms-2">{formData.datas.length}</Badge>}
+                </Accordion.Header>
+                <Accordion.Body>
+                  <Form.Group className="mb-3">
+                    <Form.Label>Adicionar Data</Form.Label>
+                    <div className="d-flex gap-2">
+                      <Form.Control
+                        type="text"
+                        value={tempData}
+                        onChange={(e) => setTempData(e.target.value)}
+                        placeholder="28/01/2026 (quarta-feira)"
+                        onKeyDown={(e) => e.key === 'Enter' && (e.preventDefault(), addData())}
+                      />
+                      <Button variant="primary" onClick={addData}>
+                        <CalendarPlus />
+                      </Button>
+                    </div>
+                  </Form.Group>
+
+                  {formData.datas && formData.datas.length > 0 && (
+                    <div className="border rounded p-3 bg-dark">
+                      <h6 className="text-white mb-3">Datas Cadastradas:</h6>
+                      {formData.datas.map((data, index) => (
+                        <div key={index} className="d-flex justify-content-between align-items-center mb-2 p-2 bg-secondary rounded">
+                          <span className="text-white">{data}</span>
+                          <Button variant="danger" size="sm" onClick={() => removeData(index)}>
+                            <Trash />
+                          </Button>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </Accordion.Body>
+              </Accordion.Item>
+
+              {/* Módulos do Curso */}
+              <Accordion.Item eventKey="3">
+                <Accordion.Header>
+                  📚 Módulos do Curso {formData.modulos && formData.modulos.length > 0 && <Badge bg="success" className="ms-2">{formData.modulos.length}</Badge>}
+                </Accordion.Header>
+                <Accordion.Body>
+                  <Form.Group className="mb-3">
+                    <Form.Label>Adicionar Módulo</Form.Label>
+                    <div className="d-flex gap-2">
+                      <Form.Control
+                        type="text"
+                        value={tempModulo}
+                        onChange={(e) => setTempModulo(e.target.value)}
+                        placeholder="Introdução à Programação e Estrutura Sequencial"
+                        onKeyDown={(e) => e.key === 'Enter' && (e.preventDefault(), addModulo())}
+                      />
+                      <Button variant="primary" onClick={addModulo}>
+                        <PlusCircle />
+                      </Button>
+                    </div>
+                  </Form.Group>
+
+                  {formData.modulos && formData.modulos.length > 0 && (
+                    <div className="border rounded p-3 bg-dark">
+                      <h6 className="text-white mb-3">Módulos Cadastrados:</h6>
+                      {formData.modulos.map((modulo, index) => (
+                        <div key={index} className="d-flex justify-content-between align-items-center mb-2 p-2 bg-secondary rounded">
+                          <span className="text-white">{index + 1}. {modulo}</span>
+                          <Button variant="danger" size="sm" onClick={() => removeModulo(index)}>
+                            <Trash />
+                          </Button>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </Accordion.Body>
+              </Accordion.Item>
+
+              {/* Pré-requisitos */}
+              <Accordion.Item eventKey="4">
+                <Accordion.Header>
+                  ✅ Pré-requisitos {formData.prerequisitos && formData.prerequisitos.length > 0 && <Badge bg="success" className="ms-2">{formData.prerequisitos.length}</Badge>}
+                </Accordion.Header>
+                <Accordion.Body>
+                  <Form.Group className="mb-3">
+                    <Form.Label>Adicionar Pré-requisito</Form.Label>
+                    <div className="d-flex gap-2">
+                      <Form.Control
+                        type="text"
+                        value={tempPreRequisito}
+                        onChange={(e) => setTempPreRequisito(e.target.value)}
+                        placeholder="Não é necessário conhecimento prévio em programação"
+                        onKeyDown={(e) => e.key === 'Enter' && (e.preventDefault(), addPreRequisito())}
+                      />
+                      <Button variant="primary" onClick={addPreRequisito}>
+                        <PlusCircle />
+                      </Button>
+                    </div>
+                  </Form.Group>
+
+                  {formData.prerequisitos && formData.prerequisitos.length > 0 && (
+                    <div className="border rounded p-3 bg-dark">
+                      <h6 className="text-white mb-3">Pré-requisitos Cadastrados:</h6>
+                      {formData.prerequisitos.map((pre, index) => (
+                        <div key={index} className="d-flex justify-content-between align-items-center mb-2 p-2 bg-secondary rounded">
+                          <span className="text-white">• {pre}</span>
+                          <Button variant="danger" size="sm" onClick={() => removePreRequisito(index)}>
+                            <Trash />
+                          </Button>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </Accordion.Body>
+              </Accordion.Item>
+
+              {/* Público-alvo */}
+              <Accordion.Item eventKey="5">
+                <Accordion.Header>
+                  👥 Público-alvo {formData.publicoAlvo && formData.publicoAlvo.length > 0 && <Badge bg="success" className="ms-2">{formData.publicoAlvo.length}</Badge>}
+                </Accordion.Header>
+                <Accordion.Body>
+                  <Form.Group className="mb-3">
+                    <Form.Label>Adicionar Público-alvo</Form.Label>
+                    <div className="d-flex gap-2">
+                      <Form.Control
+                        type="text"
+                        value={tempPublicoAlvo}
+                        onChange={(e) => setTempPublicoAlvo(e.target.value)}
+                        placeholder="Iniciantes absolutos em programação"
+                        onKeyDown={(e) => e.key === 'Enter' && (e.preventDefault(), addPublicoAlvo())}
+                      />
+                      <Button variant="primary" onClick={addPublicoAlvo}>
+                        <PlusCircle />
+                      </Button>
+                    </div>
+                  </Form.Group>
+
+                  {formData.publicoAlvo && formData.publicoAlvo.length > 0 && (
+                    <div className="border rounded p-3 bg-dark">
+                      <h6 className="text-white mb-3">Público-alvo Cadastrado:</h6>
+                      {formData.publicoAlvo.map((pub, index) => (
+                        <div key={index} className="d-flex justify-content-between align-items-center mb-2 p-2 bg-secondary rounded">
+                          <span className="text-white">• {pub}</span>
+                          <Button variant="danger" size="sm" onClick={() => removePublicoAlvo(index)}>
+                            <Trash />
+                          </Button>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </Accordion.Body>
+              </Accordion.Item>
+
+              {/* O que vai aprender */}
+              <Accordion.Item eventKey="6">
+                <Accordion.Header>
+                  🎯 O que vai aprender {formData.oQueVaiAprender && formData.oQueVaiAprender.length > 0 && <Badge bg="success" className="ms-2">{formData.oQueVaiAprender.length}</Badge>}
+                </Accordion.Header>
+                <Accordion.Body>
+                  <Form.Group className="mb-3">
+                    <Form.Label>Adicionar Aprendizado</Form.Label>
+                    <div className="d-flex gap-2">
+                      <Form.Control
+                        type="text"
+                        value={tempAprendizado}
+                        onChange={(e) => setTempAprendizado(e.target.value)}
+                        placeholder="Entender os fundamentos de programação e lógica"
+                        onKeyDown={(e) => e.key === 'Enter' && (e.preventDefault(), addAprendizado())}
+                      />
+                      <Button variant="primary" onClick={addAprendizado}>
+                        <PlusCircle />
+                      </Button>
+                    </div>
+                  </Form.Group>
+
+                  {formData.oQueVaiAprender && formData.oQueVaiAprender.length > 0 && (
+                    <div className="border rounded p-3 bg-dark">
+                      <h6 className="text-white mb-3">Aprendizados Cadastrados:</h6>
+                      {formData.oQueVaiAprender.map((apr, index) => (
+                        <div key={index} className="d-flex justify-content-between align-items-center mb-2 p-2 bg-secondary rounded">
+                          <span className="text-white">✓ {apr}</span>
+                          <Button variant="danger" size="sm" onClick={() => removeAprendizado(index)}>
+                            <Trash />
+                          </Button>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </Accordion.Body>
+              </Accordion.Item>
+
+              {/* FAQ */}
+              <Accordion.Item eventKey="7">
+                <Accordion.Header>
+                  ❓ FAQ - Perguntas Frequentes {formData.faq && formData.faq.length > 0 && <Badge bg="success" className="ms-2">{formData.faq.length}</Badge>}
+                </Accordion.Header>
+                <Accordion.Body>
+                  <Form.Group className="mb-2">
+                    <Form.Label>Pergunta</Form.Label>
+                    <Form.Control
+                      type="text"
+                      value={tempFaqPergunta}
+                      onChange={(e) => setTempFaqPergunta(e.target.value)}
+                      placeholder="Preciso levar notebook?"
+                    />
+                  </Form.Group>
+                  
+                  <Form.Group className="mb-3">
+                    <Form.Label>Resposta</Form.Label>
+                    <div className="d-flex gap-2">
+                      <Form.Control
+                        as="textarea"
+                        rows={2}
+                        value={tempFaqResposta}
+                        onChange={(e) => setTempFaqResposta(e.target.value)}
+                        placeholder="Sim, é necessário levar notebook com PyCharm instalado."
+                      />
+                      <Button variant="primary" onClick={addFaq} style={{height: '70px'}}>
+                        <PlusCircle />
+                      </Button>
+                    </div>
+                  </Form.Group>
+
+                  {formData.faq && formData.faq.length > 0 && (
+                    <div className="border rounded p-3 bg-dark">
+                      <h6 className="text-white mb-3">FAQs Cadastrados:</h6>
+                      {formData.faq.map((item, index) => (
+                        <div key={index} className="mb-3 p-3 bg-secondary rounded">
+                          <div className="d-flex justify-content-between align-items-start mb-2">
+                            <strong className="text-warning">P: {item.pergunta}</strong>
+                            <Button variant="danger" size="sm" onClick={() => removeFaq(index)}>
+                              <Trash />
+                            </Button>
+                          </div>
+                          <p className="text-white mb-0">R: {item.resposta}</p>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </Accordion.Body>
+              </Accordion.Item>
             </Accordion>
           </Form>
         </Modal.Body>
@@ -645,7 +995,7 @@ const GalaxyCourseManager: React.FC<GalaxyCourseManagerProps> = ({ token }) => {
           <Button
             variant="primary"
             onClick={editMode ? submitUpdate : handleCreate}
-            disabled={!formData.title || !formData.description || !formData.professor}
+            disabled={!formData.id || !formData.title || !formData.description || !formData.professor}
           >
             <Save className="me-2" />
             {editMode ? 'Salvar Alterações' : 'Criar Curso'}
