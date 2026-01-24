@@ -13,7 +13,7 @@ import {
   Modal,
   Accordion
 } from 'react-bootstrap'
-import { PlusCircle, Pencil, Trash, Eye, EyeSlash, Save, X } from 'react-bootstrap-icons'
+import { PlusCircle, Pencil, Eye, EyeSlash, Save, X } from 'react-bootstrap-icons'
 import DynamicCourseCard from './DynamicCourseCard'
 import { TECH_ICONS, BG_GRADIENTS } from '../config/courseVisuals'
 
@@ -89,7 +89,6 @@ const GalaxyCourseManager: React.FC<GalaxyCourseManagerProps> = ({ token, adminE
   // 2FA
   const [show2FAModal, setShow2FAModal] = useState(false)
   const [code2FA, setCode2FA] = useState('')
-  const [sending2FA, setSending2FA] = useState(false)
   const [pendingAction, setPendingAction] = useState<{
     type: 'create' | 'update' | 'delete'
     data?: any
@@ -119,7 +118,6 @@ const GalaxyCourseManager: React.FC<GalaxyCourseManagerProps> = ({ token, adminE
   }
 
   const request2FACode = async () => {
-    setSending2FA(true)
     setError(null)
     try {
       await axios.post(
@@ -131,8 +129,6 @@ const GalaxyCourseManager: React.FC<GalaxyCourseManagerProps> = ({ token, adminE
       setShow2FAModal(true)
     } catch (err: any) {
       setError(err.response?.data?.error || 'Erro ao enviar código 2FA')
-    } finally {
-      setSending2FA(false)
     }
   }
 
@@ -169,24 +165,22 @@ const GalaxyCourseManager: React.FC<GalaxyCourseManagerProps> = ({ token, adminE
     setShow2FAModal(false)
 
     try {
-      let response
-      
       if (pendingAction.type === 'create') {
-        response = await axios.post(
+        await axios.post(
           CURSOS_ENDPOINT,
           { adminEmail, code2fa: code2FA, curso: formData },
           { headers: { Authorization: `Bearer ${token}` } }
         )
         setSuccess('✅ Curso criado com sucesso!')
       } else if (pendingAction.type === 'update') {
-        response = await axios.put(
+        await axios.put(
           `${CURSOS_ENDPOINT}/${selectedCurso?.id}`,
           { adminEmail, code2fa: code2FA, curso: pendingAction.data },
           { headers: { Authorization: `Bearer ${token}` } }
         )
         setSuccess('✅ Curso atualizado com sucesso!')
       } else if (pendingAction.type === 'delete') {
-        response = await axios.delete(
+        await axios.delete(
           `${CURSOS_ENDPOINT}/${pendingAction.data}`,
           {
             headers: { Authorization: `Bearer ${token}` },
@@ -230,6 +224,8 @@ const GalaxyCourseManager: React.FC<GalaxyCourseManagerProps> = ({ token, adminE
     setShowModal(false)
   }
 
+  // Funções preparadas para gerenciar campos de array (datas, módulos, etc) - descomente quando necessário
+  /* 
   const handleArrayFieldAdd = (field: keyof Curso, value: string) => {
     if (!value.trim()) return
     const currentArray = (formData[field] as string[]) || []
@@ -240,6 +236,7 @@ const GalaxyCourseManager: React.FC<GalaxyCourseManagerProps> = ({ token, adminE
     const currentArray = (formData[field] as string[]) || []
     setFormData({ ...formData, [field]: currentArray.filter((_, i) => i !== index) })
   }
+  */
 
   const isCardDynamic = () => {
     return !!(formData.technologiaIcone || formData.bgGradient)
