@@ -15,10 +15,11 @@ import {
   Card,
   Modal
 } from 'react-bootstrap'
-import { ArrowClockwise, BoxArrowRight, People, Laptop, Building, CurrencyDollar, Calendar3, Cup, ListUl, ClockHistory } from 'react-bootstrap-icons'
+import { ArrowClockwise, BoxArrowRight, People, Laptop, Building, CurrencyDollar, Calendar3, Cup, ListUl, ClockHistory, BookHalf } from 'react-bootstrap-icons'
 import GalaxyCalendar from '../components/GalaxyCalendar'
 import InscricaoCard from '../components/InscricaoCard'
 import WaitlistCard from '../components/WaitlistCard'
+import GalaxyCourseManager from '../components/GalaxyCourseManager'
 import '../styles/galaxy-admin.css'
 
 const API_BASE = import.meta.env.VITE_ADMIN_API as string
@@ -232,7 +233,7 @@ export default function Admin() {
 
   const ALL_CURSO_KEY = '__all__'
   const [activeCurso, setActiveCurso] = useState<string>(ALL_CURSO_KEY)
-  const [activeView, setActiveView] = useState<'inscricoes' | 'calendario' | 'lista-espera' | 'bebidas'>(
+  const [activeView, setActiveView] = useState<'inscricoes' | 'calendario' | 'lista-espera' | 'bebidas' | 'cursos'>(
     'inscricoes'
   )
 
@@ -1192,6 +1193,13 @@ export default function Admin() {
             >
               <Cup /> <span>Bebidas</span>
             </button>
+            <button
+              type="button"
+              className={`galaxy-nav-tab ${activeView === 'cursos' ? 'active' : ''}`}
+              onClick={() => setActiveView('cursos')}
+            >
+              <BookHalf /> <span>Cursos</span>
+            </button>
           </div>
 
           <div className="galaxy-header-actions">
@@ -1875,6 +1883,10 @@ export default function Admin() {
             </Col>
           </Row>
         </>
+      )}
+
+      {activeView === 'cursos' && user && token && (
+        <GalaxyCourseManager token={token} adminEmail={user.email || ''} />
       )}
 
       {activeView === 'calendario' && (

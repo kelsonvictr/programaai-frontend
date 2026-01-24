@@ -70,6 +70,10 @@ interface Course {
   prerequisitos?: string[]
   faq?: { pergunta: string; resposta: string }[]
   ativo: boolean
+  // Novos campos para cards dinâmicos
+  technologiaIcone?: string
+  bgGradient?: string
+  descricaoCurta?: string
 }
 
 const CourseDetails: React.FC = () => {

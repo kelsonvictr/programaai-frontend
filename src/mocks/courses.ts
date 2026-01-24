@@ -20,9 +20,67 @@ export interface Course {
   publicoAlvo?: string[]
   oQueVaiAprender?: string[]
   modulos?: string[]
+  // Novos campos para cards dinâmicos
+  technologiaIcone?: string // Ex: "python", "react", "java"
+  bgGradient?: string // Ex: "blue-purple", "green-teal"
+  descricaoCurta?: string // Descrição curta para o card (máx 80 chars)
 }
 
 export const courses: Course[] = [
+  // EXEMPLO DE CURSO COM CARD DINÂMICO (para teste)
+  {
+    id: 999,
+    title: "Curso Programação para Iniciantes com Python - TESTE CARD DINÂMICO",
+    description: "Curso prático e presencial de 24 horas para quem nunca programou ou deseja revisar fundamentos de lógica e programação. Utilizando Python e o ambiente PyCharm, os alunos vão aprender estrutura sequencial, variáveis, condicionais, laços, listas, funções e pequenos projetos práticos.",
+    descricaoCurta: "Aprenda programação do zero com Python em 24 horas",
+    duration: "24 horas (12 encontros)",
+    price: "R$399,99",
+    obsPrice: "PREÇO PROMOCIONAL!",
+    imageUrl: "/coursecard-progdozero.png", // Mantém para fallback
+    bannerSite: "/banners/banner-site-progdozero.png",
+    bannerMobile: "/banners/banner-mobile-progdozero.png",
+    professor: "Kelson Almeida",
+    profFoto: "/professores/kelson.jpeg",
+    linkedin: "https://www.linkedin.com/in/kelson-almeida/",
+    datas: [
+      "28/01/2026 (quarta-feira)",
+      "29/01/2026 (quinta-feira)",
+      "02/02/2026 (segunda-feira)",
+      "05/02/2026 (quinta-feira)",
+      "09/02/2026 (segunda-feira)",
+      "12/02/2026 (quinta-feira)",
+      "23/02/2026 (segunda-feira)",
+      "26/02/2026 (quinta-feira)",
+      "02/03/2026 (segunda-feira)",
+      "05/03/2026 (quinta-feira)",
+      "09/03/2026 (segunda-feira)",
+      "12/03/2026 (quinta-feira)"
+    ],
+    horario: "19h00 - 21h00",
+    modalidade: "PRESENCIAL",
+    bio: "Kelson Almeida é Desenvolvedor Sênior na NTT Data, atuando no banco Itaú. Professor universitário na UNIESP - Centro Universitário e Mestre em Informática pela UFPB.",
+    // NOVOS ATRIBUTOS PARA CARD DINÂMICO
+    technologiaIcone: "python",
+    bgGradient: "blue-purple",
+    prerequisitos: [
+      "Não é necessário conhecimento prévio em programação",
+      "Trazer seu notebook com PyCharm instalado"
+    ],
+    publicoAlvo: [
+      "Iniciantes absolutos em programação",
+      "Estudantes que querem reforçar lógica e fundamentos"
+    ],
+    oQueVaiAprender: [
+      "Entender os fundamentos de programação e lógica",
+      "Escrever programas básicos em Python",
+      "Utilizar estruturas de decisão e repetição"
+    ],
+    modulos: [
+      "Introdução à Programação e Estrutura Sequencial",
+      "Variáveis, Operadores e Entrada/Saída",
+      "Condicionais e Repetições"
+    ]
+  },
   {
     id: 5,
     title: "Bootcamp: Meu Primeiro App com TypeScript e React Native (Turma 01)",

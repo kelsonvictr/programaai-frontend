@@ -33,6 +33,10 @@ interface Course {
   oQueVaiAprender?: string[]
   modulos?: string[]
   ativo: boolean
+  // Novos campos para cards dinâmicos
+  technologiaIcone?: string
+  bgGradient?: string
+  descricaoCurta?: string
 }
 
 const Courses: React.FC = () => {
