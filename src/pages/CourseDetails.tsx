@@ -408,6 +408,56 @@ const CourseDetails: React.FC = () => {
           </section>
         )}
 
+        <section className="course-certification-banner">
+          <div className="certification-container">
+            <div className="certification-badge-wrapper">
+              <div className="certification-pulse-ring"></div>
+              <div className="certification-badge">
+                <div id="selo-ec"></div>
+                <script src="https://e-certificado.com/js/selo_ec290x90_w.js"></script>
+              </div>
+            </div>
+            <div className="certification-content">
+              <div className="certification-header">
+                <span className="certification-stamp">✓ CERTIFICADO OFICIAL</span>
+                <h3 className="certification-title">Certificado Reconhecido Nacionalmente</h3>
+              </div>
+              <p className="certification-description">
+                Ao concluir o curso, você recebe um <strong>certificado digital autenticado</strong> pela plataforma 
+                e-Certificado.com, com validade em todo território nacional. Comprove suas habilidades no seu 
+                currículo, LinkedIn e em processos seletivos com um documento oficial que atesta sua qualificação.
+              </p>
+              <div className="certification-features">
+                <div className="certification-feature">
+                  <div className="certification-feature-icon">🎓</div>
+                  <div className="certification-feature-text">
+                    <strong>Certificado Digital</strong>
+                    <span>Autenticidade verificada online</span>
+                  </div>
+                </div>
+                <div className="certification-feature">
+                  <div className="certification-feature-icon">🔒</div>
+                  <div className="certification-feature-text">
+                    <strong>Segurança Total</strong>
+                    <span>Protegido contra falsificação</span>
+                  </div>
+                </div>
+                <div className="certification-feature">
+                  <div className="certification-feature-icon">🌟</div>
+                  <div className="certification-feature-text">
+                    <strong>Reconhecimento</strong>
+                    <span>Válido em todo Brasil</span>
+                  </div>
+                </div>
+              </div>
+              <div className="certification-guarantee">
+                <FaCheckCircle className="certification-guarantee-icon" />
+                <span>Seu investimento retorna em forma de credencial profissional reconhecida pelo mercado</span>
+              </div>
+            </div>
+          </div>
+        </section>
+
         <section className="course-section-card course-details-section">
           <div className="course-details-header">
             <h2 className="course-section-title">Detalhes da turma</h2>
