@@ -366,24 +366,31 @@ export default function Admin() {
       const cred = await signInWithEmailAndPassword(auth, email, senha)
       const fbToken = await cred.user.getIdToken()
       
-      // Passo 2: Solicitar código 2FA
+      console.log('[2FA] Firebase login OK, requesting 2FA code...', cred.user.email)
+      
+      // Passo 2: Solicitar código 2FA (OBRIGATÓRIO)
       setSending2FALogin(true)
       const response = await axios.post(
         `${API_BASE}/galaxy/auth/request-2fa`,
         { email: cred.user.email, firebaseToken: fbToken }
       )
       
+      console.log('[2FA] Code request response:', response.data)
       setSending2FALogin(false)
       
-      if (response.data.message) {
-        // Código enviado! Mostrar modal para inserir código
-        setUser(cred.user)
-        setShow2FALogin(true)
-        setError(null)
-      }
+      // Código enviado! Mostrar modal OBRIGATORIAMENTE
+      setUser(cred.user)
+      setShow2FALogin(true)
+      setError(null)
+      console.log('[2FA] Modal opened, waiting for code...')
       
     } catch (err: any) {
       setSending2FALogin(false)
+      console.error('[2FA] Login error:', err)
+      
+      // Fazer logout do Firebase em caso de erro
+      await signOut(auth)
+      
       if (err.response?.data?.detail) {
         setError(err.response.data.detail)
       } else if (err instanceof Error) {
@@ -1177,7 +1184,68 @@ export default function Admin() {
     return Array.from(mapa.entries()).sort((a, b) => a[0].localeCompare(b[0], 'pt-BR'))
   }, [pedidosBebidas, agendamentosBebidas])
 
-  if (!user) {
+  // Renderizar modal 2FA (precisa estar fora do if (!user) para não desaparecer após setUser)
+  const render2FAModal = () => (
+    <Modal show={show2FALogin} onHide={cancel2FALogin} centered backdrop="static" keyboard={false}>
+      <Modal.Header>
+        <Modal.Title>🔐 Autenticação de Dois Fatores</Modal.Title>
+      </Modal.Header>
+      <Modal.Body>
+        <Alert variant="info">
+          <strong>✉️ Código enviado!</strong>
+          <br />
+          Verifique seu email e insira o código de 6 dígitos abaixo.
+          <br />
+          <small className="text-muted">O código expira em 5 minutos.</small>
+        </Alert>
+        
+        <Form.Group className="mb-3">
+          <Form.Label>Código de Verificação</Form.Label>
+          <Form.Control
+            type="text"
+            value={code2FALogin}
+            onChange={e => setCode2FALogin(e.target.value.replace(/\D/g, '').slice(0, 6))}
+            placeholder="000000"
+            maxLength={6}
+            style={{
+              fontSize: '24px',
+              textAlign: 'center',
+              letterSpacing: '8px',
+              fontWeight: 'bold'
+            }}
+            autoFocus
+            disabled={loading}
+          />
+          <Form.Text className="text-muted">
+            Digite apenas números (6 dígitos)
+          </Form.Text>
+        </Form.Group>
+
+        {error && <Alert variant="danger">{error}</Alert>}
+      </Modal.Body>
+      <Modal.Footer>
+        <Button variant="outline-secondary" onClick={cancel2FALogin} disabled={loading}>
+          Cancelar
+        </Button>
+        <Button 
+          variant="primary" 
+          onClick={verify2FALogin} 
+          disabled={loading || code2FALogin.length !== 6}
+        >
+          {loading ? (
+            <>
+              <Spinner size="sm" animation="border" className="me-2" />
+              Verificando...
+            </>
+          ) : (
+            'Verificar Código'
+          )}
+        </Button>
+      </Modal.Footer>
+    </Modal>
+  )
+
+  if (!user || (user && !token)) {
     return (
       <>
         <div className="galaxy-login-container">
@@ -1228,64 +1296,8 @@ export default function Admin() {
           </div>
         </div>
 
-        {/* Modal 2FA Login */}
-        <Modal show={show2FALogin} onHide={cancel2FALogin} centered>
-          <Modal.Header closeButton>
-            <Modal.Title>🔐 Autenticação de Dois Fatores</Modal.Title>
-          </Modal.Header>
-          <Modal.Body>
-            <Alert variant="info">
-              <strong>✉️ Código enviado!</strong>
-              <br />
-              Verifique seu email e insira o código de 6 dígitos abaixo.
-              <br />
-              <small className="text-muted">O código expira em 5 minutos.</small>
-            </Alert>
-            
-            <Form.Group className="mb-3">
-              <Form.Label>Código de Verificação</Form.Label>
-              <Form.Control
-                type="text"
-                value={code2FALogin}
-                onChange={e => setCode2FALogin(e.target.value.replace(/\D/g, '').slice(0, 6))}
-                placeholder="000000"
-                maxLength={6}
-                style={{
-                  fontSize: '24px',
-                  textAlign: 'center',
-                  letterSpacing: '8px',
-                  fontWeight: 'bold'
-                }}
-                autoFocus
-                disabled={loading}
-              />
-              <Form.Text className="text-muted">
-                Digite apenas números (6 dígitos)
-              </Form.Text>
-            </Form.Group>
-
-            {error && <Alert variant="danger">{error}</Alert>}
-          </Modal.Body>
-          <Modal.Footer>
-            <Button variant="outline-secondary" onClick={cancel2FALogin} disabled={loading}>
-              Cancelar
-            </Button>
-            <Button 
-              variant="primary" 
-              onClick={verify2FALogin} 
-              disabled={loading || code2FALogin.length !== 6}
-            >
-              {loading ? (
-                <>
-                  <Spinner size="sm" animation="border" className="me-2" />
-                  Verificando...
-                </>
-              ) : (
-                'Verificar Código'
-              )}
-            </Button>
-          </Modal.Footer>
-        </Modal>
+        {/* Modal 2FA */}
+        {render2FAModal()}
       </>
     )
   }
