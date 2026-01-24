@@ -342,12 +342,37 @@ export default function Admin() {
 
   useEffect(() => {
     onAuthStateChanged(auth, async u => {
+      setLoading(true)
       setUser(u)
+      
       if (u) {
-        const t = await u.getIdToken()
-        setToken(t)
-        fetchInscricoes(t)
+        console.log('[Auth] Firebase user authenticated:', u.email)
+        
+        // Buscar session token do 2FA (não mais Firebase token)
+        const storedSessionToken = localStorage.getItem('galaxySessionToken')
+        
+        if (storedSessionToken) {
+          console.log('[Auth] ✅ Session token found - restoring session')
+          
+          // Configurar axios com session token
+          axios.defaults.headers.common['Authorization'] = `Bearer ${storedSessionToken}`
+          setToken(storedSessionToken)
+          
+          // Buscar dados
+          fetchInscricoes(storedSessionToken)
+        } else {
+          console.log('[Auth] ⚠️ No session token - 2FA required')
+          // Usuário precisa fazer 2FA
+        }
+      } else {
+        console.log('[Auth] No Firebase user - logged out')
+        setToken('')
+        localStorage.removeItem('galaxySessionToken')
+        localStorage.removeItem('galaxyEmail')
+        delete axios.defaults.headers.common['Authorization']
       }
+      
+      setLoading(false)
     })
   }, [])
 
@@ -408,20 +433,37 @@ export default function Admin() {
     setLoading(true)
     
     try {
+      console.log('[2FA] Verifying code...')
+      
       const response = await axios.post(
         `${API_BASE}/galaxy/auth/verify-2fa`,
         { email, code: code2FALogin }
       )
       
-      if (response.data.token) {
-        // 2FA validado! Usar o token
-        setToken(response.data.token)
+      const { sessionToken, email: verifiedEmail } = response.data
+      
+      if (sessionToken) {
+        console.log('[2FA] ✅ Session token received')
+        
+        // Armazenar session token (não mais Firebase token)
+        localStorage.setItem('galaxySessionToken', sessionToken)
+        localStorage.setItem('galaxyEmail', verifiedEmail)
+        
+        // Configurar axios com session token
+        axios.defaults.headers.common['Authorization'] = `Bearer ${sessionToken}`
+        
+        setToken(sessionToken)
         setShow2FALogin(false)
         setCode2FALogin('')
-        fetchInscricoes(response.data.token)
+        
+        console.log('[2FA] ✅ Session token stored, 2FA complete')
+        
+        // Buscar dados com session token
+        fetchInscricoes(sessionToken)
       }
       
     } catch (err: any) {
+      console.error('[2FA] Verification failed:', err)
       if (err.response?.data?.detail) {
         setError(err.response.data.detail)
       } else {
@@ -432,15 +474,35 @@ export default function Admin() {
     }
   }
 
-  const cancel2FALogin = () => {
+  const cancel2FALogin = async () => {
+    console.log('[2FA] Cancelled - signing out')
+    
+    // Fazer logout do Firebase
+    await signOut(auth)
+    
+    // Limpar estados
     setShow2FALogin(false)
     setCode2FALogin('')
     setUser(null)
     setError(null)
+    
+    // Limpar storage
+    localStorage.removeItem('galaxySessionToken')
+    localStorage.removeItem('galaxyEmail')
+    delete axios.defaults.headers.common['Authorization']
   }
 
   const logout = async () => {
+    console.log('[Auth] Logging out...')
+    
     await signOut(auth)
+    
+    // Limpar session token e dados do localStorage
+    localStorage.removeItem('galaxySessionToken')
+    localStorage.removeItem('galaxyEmail')
+    delete axios.defaults.headers.common['Authorization']
+    
+    // Limpar states
     setCursos({})
     setWaitlistCursos({})
     setToken('')
@@ -452,6 +514,8 @@ export default function Admin() {
     setAgendamentosBebidas([])
     resetBebidaForm()
     resetBebidaPreview()
+    
+    console.log('[Auth] ✅ Logout complete')
   }
 
   const fetchInscricoes = async (jwt: string) => {
