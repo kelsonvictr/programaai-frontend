@@ -226,6 +226,11 @@ export default function Admin() {
   const [token, setToken] = useState<string>('')
   const [lastUpdated, setLastUpdated] = useState<Date | null>(null)
 
+  // 2FA Login
+  const [show2FALogin, setShow2FALogin] = useState(false)
+  const [code2FALogin, setCode2FALogin] = useState('')
+  const [sending2FALogin, setSending2FALogin] = useState(false)
+
   // loading por toggle/atualização (chaves: "id:field")
   const [busy, setBusy] = useState<Record<string, boolean>>({})
   const [copiedPaymentId, setCopiedPaymentId] = useState<string | null>(null)
@@ -354,16 +359,77 @@ export default function Admin() {
   const login = async (e: React.FormEvent) => {
     e.preventDefault()
     setError(null)
+    setLoading(true)
+    
     try {
+      // Passo 1: Autenticar no Firebase
       const cred = await signInWithEmailAndPassword(auth, email, senha)
-      const t = await cred.user.getIdToken()
-      setToken(t)
-      setUser(cred.user)
-      fetchInscricoes(t)
-    } catch (err: unknown) {
-      if (err instanceof Error) setError(err.message)
-      else setError('Erro ao efetuar login')
+      const fbToken = await cred.user.getIdToken()
+      
+      // Passo 2: Solicitar código 2FA
+      setSending2FALogin(true)
+      const response = await axios.post(
+        `${API_BASE}/galaxy/auth/request-2fa`,
+        { email: cred.user.email, firebaseToken: fbToken }
+      )
+      
+      setSending2FALogin(false)
+      
+      if (response.data.message) {
+        // Código enviado! Mostrar modal para inserir código
+        setUser(cred.user)
+        setShow2FALogin(true)
+        setError(null)
+      }
+      
+    } catch (err: any) {
+      setSending2FALogin(false)
+      if (err.response?.data?.detail) {
+        setError(err.response.data.detail)
+      } else if (err instanceof Error) {
+        setError(err.message)
+      } else {
+        setError('Erro ao efetuar login')
+      }
+    } finally {
+      setLoading(false)
     }
+  }
+
+  const verify2FALogin = async () => {
+    setError(null)
+    setLoading(true)
+    
+    try {
+      const response = await axios.post(
+        `${API_BASE}/galaxy/auth/verify-2fa`,
+        { email, code: code2FALogin }
+      )
+      
+      if (response.data.token) {
+        // 2FA validado! Usar o token
+        setToken(response.data.token)
+        setShow2FALogin(false)
+        setCode2FALogin('')
+        fetchInscricoes(response.data.token)
+      }
+      
+    } catch (err: any) {
+      if (err.response?.data?.detail) {
+        setError(err.response.data.detail)
+      } else {
+        setError('Código inválido ou expirado')
+      }
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  const cancel2FALogin = () => {
+    setShow2FALogin(false)
+    setCode2FALogin('')
+    setUser(null)
+    setError(null)
   }
 
   const logout = async () => {
@@ -1113,40 +1179,114 @@ export default function Admin() {
 
   if (!user) {
     return (
-      <div className="galaxy-login-container">
-        <div className="galaxy-login-card">
-          <div className="galaxy-logo" style={{ justifyContent: 'center', marginBottom: '1.5rem' }}>
-            <div className="galaxy-logo-icon">🌌</div>
-            <span className="galaxy-logo-text"><span>Galaxy</span></span>
+      <>
+        <div className="galaxy-login-container">
+          <div className="galaxy-login-card">
+            <div className="galaxy-logo" style={{ justifyContent: 'center', marginBottom: '1.5rem' }}>
+              <div className="galaxy-logo-icon">🌌</div>
+              <span className="galaxy-logo-text"><span>Galaxy</span></span>
+            </div>
+            <p className="subtitle">Painel de Administração</p>
+            <Form onSubmit={login}>
+              <Form.Group className="mb-3">
+                <Form.Label className="galaxy-form-label">Email</Form.Label>
+                <Form.Control 
+                  value={email} 
+                  onChange={e => setEmail(e.target.value)} 
+                  placeholder="seu@email.com"
+                  required 
+                  disabled={loading || sending2FALogin}
+                />
+              </Form.Group>
+              <Form.Group className="mb-3">
+                <Form.Label className="galaxy-form-label">Senha</Form.Label>
+                <Form.Control 
+                  type="password" 
+                  value={senha} 
+                  onChange={e => setSenha(e.target.value)} 
+                  placeholder="••••••••"
+                  required 
+                  disabled={loading || sending2FALogin}
+                />
+              </Form.Group>
+              <button 
+                type="submit" 
+                className="galaxy-login-btn"
+                disabled={loading || sending2FALogin}
+              >
+                {loading || sending2FALogin ? (
+                  <>
+                    <Spinner size="sm" animation="border" className="me-2" />
+                    {sending2FALogin ? 'Enviando código...' : 'Entrando...'}
+                  </>
+                ) : (
+                  'Entrar'
+                )}
+              </button>
+              {error && <Alert variant="danger" className="mt-3">{error}</Alert>}
+            </Form>
           </div>
-          <p className="subtitle">Painel de Administração</p>
-          <Form onSubmit={login}>
-            <Form.Group className="mb-3">
-              <Form.Label className="galaxy-form-label">Email</Form.Label>
-              <Form.Control 
-                value={email} 
-                onChange={e => setEmail(e.target.value)} 
-                placeholder="seu@email.com"
-                required 
-              />
-            </Form.Group>
-            <Form.Group className="mb-3">
-              <Form.Label className="galaxy-form-label">Senha</Form.Label>
-              <Form.Control 
-                type="password" 
-                value={senha} 
-                onChange={e => setSenha(e.target.value)} 
-                placeholder="••••••••"
-                required 
-              />
-            </Form.Group>
-            <button type="submit" className="galaxy-login-btn">
-              Entrar
-            </button>
-            {error && <Alert variant="danger" className="mt-3">{error}</Alert>}
-          </Form>
         </div>
-      </div>
+
+        {/* Modal 2FA Login */}
+        <Modal show={show2FALogin} onHide={cancel2FALogin} centered>
+          <Modal.Header closeButton>
+            <Modal.Title>🔐 Autenticação de Dois Fatores</Modal.Title>
+          </Modal.Header>
+          <Modal.Body>
+            <Alert variant="info">
+              <strong>✉️ Código enviado!</strong>
+              <br />
+              Verifique seu email e insira o código de 6 dígitos abaixo.
+              <br />
+              <small className="text-muted">O código expira em 5 minutos.</small>
+            </Alert>
+            
+            <Form.Group className="mb-3">
+              <Form.Label>Código de Verificação</Form.Label>
+              <Form.Control
+                type="text"
+                value={code2FALogin}
+                onChange={e => setCode2FALogin(e.target.value.replace(/\D/g, '').slice(0, 6))}
+                placeholder="000000"
+                maxLength={6}
+                style={{
+                  fontSize: '24px',
+                  textAlign: 'center',
+                  letterSpacing: '8px',
+                  fontWeight: 'bold'
+                }}
+                autoFocus
+                disabled={loading}
+              />
+              <Form.Text className="text-muted">
+                Digite apenas números (6 dígitos)
+              </Form.Text>
+            </Form.Group>
+
+            {error && <Alert variant="danger">{error}</Alert>}
+          </Modal.Body>
+          <Modal.Footer>
+            <Button variant="outline-secondary" onClick={cancel2FALogin} disabled={loading}>
+              Cancelar
+            </Button>
+            <Button 
+              variant="primary" 
+              onClick={verify2FALogin} 
+              disabled={loading || code2FALogin.length !== 6}
+            >
+              {loading ? (
+                <>
+                  <Spinner size="sm" animation="border" className="me-2" />
+                  Verificando...
+                </>
+              ) : (
+                'Verificar Código'
+              )}
+            </Button>
+          </Modal.Footer>
+        </Modal>
+      </>
     )
   }
 
