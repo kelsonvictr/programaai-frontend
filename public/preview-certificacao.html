@@ -114,7 +114,6 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            min-height: 120px;
         }
 
         .certification-badge:hover {
@@ -124,9 +123,40 @@
                 0 0 0 2px rgba(16, 185, 129, 0.5) inset;
         }
 
-        .certification-badge img {
-            max-width: 100%;
-            height: auto;
+        .certification-seal {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 1rem;
+            text-align: center;
+        }
+
+        .certification-seal-icon {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            filter: drop-shadow(0 4px 8px rgba(16, 185, 129, 0.3));
+        }
+
+        .certification-seal-text {
+            display: flex;
+            flex-direction: column;
+            gap: 0.25rem;
+        }
+
+        .certification-seal-title {
+            font-size: 1.5rem;
+            font-weight: 800;
+            color: #059669;
+            letter-spacing: -0.02em;
+        }
+
+        .certification-seal-subtitle {
+            font-size: 0.65rem;
+            font-weight: 700;
+            color: #6b7280;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
         }
 
         .certification-content {
@@ -187,7 +217,7 @@
 
         .certification-features {
             display: grid;
-            grid-template-columns: repeat(3, 1fr);
+            grid-template-columns: repeat(2, 1fr);
             gap: 1.5rem;
             margin-top: 0.5rem;
         }
@@ -207,6 +237,57 @@
             background: rgba(16, 185, 129, 0.15);
             border-color: rgba(16, 185, 129, 0.4);
             transform: translateY(-3px);
+        }
+
+        .certification-feature-highlight {
+            grid-column: 1 / -1;
+            background: linear-gradient(135deg, rgba(10, 102, 194, 0.15) 0%, rgba(16, 185, 129, 0.12) 100%);
+            border: 2px solid rgba(10, 102, 194, 0.4);
+            padding: 1.5rem;
+            box-shadow: 
+                0 8px 24px rgba(10, 102, 194, 0.15),
+                0 0 0 1px rgba(10, 102, 194, 0.1) inset;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .certification-feature-highlight::before {
+            content: '🔥 DESTAQUE';
+            position: absolute;
+            top: 0.5rem;
+            right: 0.75rem;
+            font-size: 0.65rem;
+            font-weight: 800;
+            letter-spacing: 0.05em;
+            color: #0a66c2;
+            background: rgba(255, 255, 255, 0.9);
+            padding: 0.25rem 0.5rem;
+            border-radius: 4px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .certification-feature-highlight:hover {
+            background: linear-gradient(135deg, rgba(10, 102, 194, 0.2) 0%, rgba(16, 185, 129, 0.15) 100%);
+            border-color: rgba(10, 102, 194, 0.6);
+            transform: translateY(-5px);
+            box-shadow: 
+                0 12px 32px rgba(10, 102, 194, 0.2),
+                0 0 0 1px rgba(10, 102, 194, 0.2) inset;
+        }
+
+        .certification-feature-highlight .certification-feature-icon {
+            font-size: 2.5rem;
+            color: #0a66c2;
+        }
+
+        .certification-feature-highlight .certification-feature-text strong {
+            font-size: 1.1rem;
+            color: #0a66c2;
+        }
+
+        .certification-feature-highlight .certification-feature-text span {
+            color: #cbd5e1;
+            font-size: 0.9rem;
         }
 
         .certification-feature-icon {
@@ -276,7 +357,7 @@
 
             .certification-badge-wrapper {
                 padding: 1rem;
-                max-width: 320px;
+                max-width: 280px;
                 margin: 0 auto;
             }
 
@@ -287,6 +368,10 @@
             .certification-features {
                 grid-template-columns: 1fr;
                 gap: 1rem;
+            }
+
+            .certification-feature-highlight {
+                grid-column: 1;
             }
 
             .certification-description {
@@ -307,10 +392,24 @@
 
             .certification-badge-wrapper {
                 padding: 0.5rem;
+                max-width: 240px;
             }
 
             .certification-badge {
-                padding: 1rem;
+                padding: 1.5rem 1rem;
+            }
+
+            .certification-seal-icon svg {
+                width: 50px;
+                height: 50px;
+            }
+
+            .certification-seal-title {
+                font-size: 1.2rem;
+            }
+
+            .certification-seal-subtitle {
+                font-size: 0.6rem;
             }
 
             .certification-title {
@@ -324,6 +423,19 @@
 
             .certification-feature {
                 padding: 0.75rem;
+            }
+
+            .certification-feature-highlight {
+                padding: 1rem;
+            }
+
+            .certification-feature-highlight::before {
+                font-size: 0.6rem;
+                padding: 0.2rem 0.4rem;
+            }
+
+            .certification-feature-highlight .certification-feature-icon {
+                font-size: 2rem;
             }
 
             .certification-guarantee {
@@ -345,8 +457,17 @@
                 <div class="certification-badge-wrapper">
                     <div class="certification-pulse-ring"></div>
                     <div class="certification-badge">
-                        <div id="selo-ec">
-                            <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='290' height='90' viewBox='0 0 290 90'%3E%3Crect width='290' height='90' fill='%23fff'/%3E%3Ccircle cx='45' cy='45' r='25' fill='%2310b981'/%3E%3Cpath d='M 35 45 L 42 52 L 55 35' stroke='white' stroke-width='4' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3Ctext x='80' y='40' font-family='Arial, sans-serif' font-size='24' font-weight='bold' fill='%23333'%3Ee-certificado.com%3C/text%3E%3Ctext x='80' y='60' font-family='Arial, sans-serif' font-size='12' fill='%23666'%3EUTILIZAMOS EMISSÃO DE CERTIFICADOS ONLINE%3C/text%3E%3C/svg%3E" alt="Selo e-Certificado">
+                        <div class="certification-seal">
+                            <div class="certification-seal-icon">
+                                <svg width="60" height="60" viewBox="0 0 60 60" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <circle cx="30" cy="30" r="28" fill="#10b981" stroke="#059669" stroke-width="2"/>
+                                    <path d="M20 30 L27 37 L42 22" stroke="white" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+                                </svg>
+                            </div>
+                            <div class="certification-seal-text">
+                                <span class="certification-seal-title">e-certificado</span>
+                                <span class="certification-seal-subtitle">CERTIFICADOS ONLINE</span>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -361,6 +482,17 @@
                         currículo, LinkedIn e em processos seletivos com um documento oficial que atesta sua qualificação.
                     </p>
                     <div class="certification-features">
+                        <div class="certification-feature certification-feature-highlight">
+                            <div class="certification-feature-icon">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="currentColor">
+                                    <path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z"/>
+                                </svg>
+                            </div>
+                            <div class="certification-feature-text">
+                                <strong>Compartilhe no LinkedIn</strong>
+                                <span>Adicione às suas certificações com 1 clique</span>
+                            </div>
+                        </div>
                         <div class="certification-feature">
                             <div class="certification-feature-icon">🎓</div>
                             <div class="certification-feature-text">
@@ -391,7 +523,5 @@
             </div>
         </section>
     </div>
-
-    <script src="https://e-certificado.com/js/selo_ec290x90_w.js"></script>
 </body>
 </html>

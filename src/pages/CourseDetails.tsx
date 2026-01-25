@@ -413,8 +413,18 @@ const CourseDetails: React.FC = () => {
             <div className="certification-badge-wrapper">
               <div className="certification-pulse-ring"></div>
               <div className="certification-badge">
-                <div id="selo-ec"></div>
-                <script src="https://e-certificado.com/js/selo_ec290x90_w.js"></script>
+                <div className="certification-seal">
+                  <div className="certification-seal-icon">
+                    <svg width="60" height="60" viewBox="0 0 60 60" fill="none" xmlns="http://www.w3.org/2000/svg">
+                      <circle cx="30" cy="30" r="28" fill="#10b981" stroke="#059669" strokeWidth="2"/>
+                      <path d="M20 30 L27 37 L42 22" stroke="white" strokeWidth="4" strokeLinecap="round" strokeLinejoin="round"/>
+                    </svg>
+                  </div>
+                  <div className="certification-seal-text">
+                    <span className="certification-seal-title">e-certificado</span>
+                    <span className="certification-seal-subtitle">CERTIFICADOS ONLINE</span>
+                  </div>
+                </div>
               </div>
             </div>
             <div className="certification-content">
@@ -428,6 +438,15 @@ const CourseDetails: React.FC = () => {
                 currículo, LinkedIn e em processos seletivos com um documento oficial que atesta sua qualificação.
               </p>
               <div className="certification-features">
+                <div className="certification-feature certification-feature-highlight">
+                  <div className="certification-feature-icon">
+                    <FaLinkedin />
+                  </div>
+                  <div className="certification-feature-text">
+                    <strong>Compartilhe no LinkedIn</strong>
+                    <span>Adicione às suas certificações com 1 clique</span>
+                  </div>
+                </div>
                 <div className="certification-feature">
                   <div className="certification-feature-icon">🎓</div>
                   <div className="certification-feature-text">

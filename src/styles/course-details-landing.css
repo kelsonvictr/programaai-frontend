@@ -1286,6 +1286,9 @@
     0 10px 40px rgba(0, 0, 0, 0.2),
     0 0 0 1px rgba(16, 185, 129, 0.3) inset;
   transition: transform 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .certification-badge:hover {
@@ -1293,6 +1296,42 @@
   box-shadow: 
     0 15px 50px rgba(0, 0, 0, 0.25),
     0 0 0 2px rgba(16, 185, 129, 0.5) inset;
+}
+
+.certification-seal {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+  text-align: center;
+}
+
+.certification-seal-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  filter: drop-shadow(0 4px 8px rgba(16, 185, 129, 0.3));
+}
+
+.certification-seal-text {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.certification-seal-title {
+  font-size: 1.5rem;
+  font-weight: 800;
+  color: #059669;
+  letter-spacing: -0.02em;
+}
+
+.certification-seal-subtitle {
+  font-size: 0.65rem;
+  font-weight: 700;
+  color: #6b7280;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
 }
 
 .certification-content {
@@ -1353,7 +1392,7 @@
 
 .certification-features {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: repeat(2, 1fr);
   gap: 1.5rem;
   margin-top: 0.5rem;
 }
@@ -1373,6 +1412,61 @@
   background: rgba(16, 185, 129, 0.15);
   border-color: rgba(16, 185, 129, 0.4);
   transform: translateY(-3px);
+}
+
+/* Destaque especial para o LinkedIn */
+.certification-feature-highlight {
+  grid-column: 1 / -1;
+  background: linear-gradient(135deg, rgba(10, 102, 194, 0.15) 0%, rgba(16, 185, 129, 0.12) 100%);
+  border: 2px solid rgba(10, 102, 194, 0.4);
+  padding: 1.5rem;
+  box-shadow: 
+    0 8px 24px rgba(10, 102, 194, 0.15),
+    0 0 0 1px rgba(10, 102, 194, 0.1) inset;
+  position: relative;
+  overflow: hidden;
+}
+
+.certification-feature-highlight::before {
+  content: '🔥 DESTAQUE';
+  position: absolute;
+  top: 0.5rem;
+  right: 0.75rem;
+  font-size: 0.65rem;
+  font-weight: 800;
+  letter-spacing: 0.05em;
+  color: #0a66c2;
+  background: rgba(255, 255, 255, 0.9);
+  padding: 0.25rem 0.5rem;
+  border-radius: 4px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.certification-feature-highlight:hover {
+  background: linear-gradient(135deg, rgba(10, 102, 194, 0.2) 0%, rgba(16, 185, 129, 0.15) 100%);
+  border-color: rgba(10, 102, 194, 0.6);
+  transform: translateY(-5px);
+  box-shadow: 
+    0 12px 32px rgba(10, 102, 194, 0.2),
+    0 0 0 1px rgba(10, 102, 194, 0.2) inset;
+}
+
+.certification-feature-highlight .certification-feature-icon {
+  font-size: 2.5rem;
+  color: #0a66c2;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.certification-feature-highlight .certification-feature-text strong {
+  font-size: 1.1rem;
+  color: #0a66c2;
+}
+
+.certification-feature-highlight .certification-feature-text span {
+  color: #cbd5e1;
+  font-size: 0.9rem;
 }
 
 .certification-feature-icon {
@@ -1430,7 +1524,7 @@
 
   .certification-badge-wrapper {
     padding: 1rem;
-    max-width: 320px;
+    max-width: 280px;
     margin: 0 auto;
   }
 
@@ -1441,6 +1535,10 @@
   .certification-features {
     grid-template-columns: 1fr;
     gap: 1rem;
+  }
+
+  .certification-feature-highlight {
+    grid-column: 1;
   }
 
   .certification-description {
@@ -1461,10 +1559,24 @@
 
   .certification-badge-wrapper {
     padding: 0.5rem;
+    max-width: 240px;
   }
 
   .certification-badge {
-    padding: 1rem;
+    padding: 1.5rem 1rem;
+  }
+
+  .certification-seal-icon svg {
+    width: 50px;
+    height: 50px;
+  }
+
+  .certification-seal-title {
+    font-size: 1.2rem;
+  }
+
+  .certification-seal-subtitle {
+    font-size: 0.6rem;
   }
 
   .certification-title {
@@ -1478,6 +1590,23 @@
 
   .certification-feature {
     padding: 0.75rem;
+  }
+
+  .certification-feature-highlight {
+    padding: 1rem;
+  }
+
+  .certification-feature-highlight::before {
+    font-size: 0.6rem;
+    padding: 0.2rem 0.4rem;
+  }
+
+  .certification-feature-highlight .certification-feature-icon {
+    font-size: 2rem;
+  }
+
+  .certification-feature-highlight .certification-feature-text strong {
+    font-size: 1rem;
   }
 
   .certification-guarantee {
