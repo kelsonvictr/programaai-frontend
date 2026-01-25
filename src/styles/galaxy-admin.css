@@ -1467,8 +1467,15 @@
 /* Calendar Main Container */
 .galaxy-calendar {
   display: grid;
-  grid-template-columns: 1fr 380px;
+  grid-template-columns: 1fr 340px;
   gap: 1.5rem;
+  width: 100%;
+}
+
+@media (max-width: 1400px) {
+  .galaxy-calendar {
+    grid-template-columns: 1fr 300px;
+  }
 }
 
 @media (max-width: 1200px) {
@@ -1483,12 +1490,13 @@
   border: 1px solid var(--galaxy-border);
   border-radius: 20px;
   overflow: hidden;
+  min-width: 0;
 }
 
 /* Calendar Header */
 .galaxy-calendar-header {
   background: var(--galaxy-gradient-primary);
-  padding: 1.25rem 1.5rem;
+  padding: 1rem 1.25rem;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -1542,31 +1550,34 @@
   flex-wrap: wrap;
   align-items: center;
   justify-content: space-between;
-  gap: 1rem;
+  gap: 0.75rem;
 }
 
 .galaxy-calendar-toolbar-hint {
   color: var(--galaxy-text-secondary);
-  font-size: 0.9rem;
+  font-size: 0.85rem;
 }
 
 .galaxy-calendar-toolbar-actions {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
-  gap: 1rem;
+  gap: 0.75rem;
 }
 
 .galaxy-calendar-btn {
   background: rgba(59, 130, 246, 0.15);
   border: 1px solid rgba(59, 130, 246, 0.3);
   color: var(--galaxy-accent-blue);
-  padding: 0.5rem 1rem;
+  padding: 0.4rem 0.85rem;
   border-radius: 8px;
-  font-size: 0.85rem;
+  font-size: 0.8rem;
   font-weight: 600;
   cursor: pointer;
   transition: all 0.2s ease;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
 }
 
 .galaxy-calendar-btn:hover {
@@ -1581,23 +1592,25 @@
 /* Calendar Grid */
 .galaxy-calendar-grid {
   padding: 0;
+  overflow: hidden;
 }
 
 .galaxy-calendar-weekdays {
   display: grid;
-  grid-template-columns: repeat(7, 1fr);
+  grid-template-columns: repeat(7, minmax(0, 1fr));
   background: rgba(15, 23, 42, 0.5);
   border-bottom: 1px solid var(--galaxy-border);
 }
 
 .galaxy-calendar-weekday {
-  padding: 0.85rem 0.5rem;
+  padding: 0.75rem 0.25rem;
   text-align: center;
-  font-size: 0.8rem;
+  font-size: 0.75rem;
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.5px;
   color: var(--galaxy-text-secondary);
+  min-width: 0;
 }
 
 .galaxy-calendar-weeks {
@@ -1607,8 +1620,9 @@
 
 .galaxy-calendar-week {
   display: grid;
-  grid-template-columns: repeat(7, 1fr);
+  grid-template-columns: repeat(7, minmax(0, 1fr));
   border-bottom: 1px solid var(--galaxy-border-light);
+  min-width: 0;
 }
 
 .galaxy-calendar-week:last-child {
@@ -1617,8 +1631,10 @@
 
 /* Calendar Day Cell */
 .galaxy-calendar-day {
-  min-height: 85px;
-  padding: 0.35rem;
+  height: 100px;
+  min-height: 100px;
+  max-height: 100px;
+  padding: 0.25rem;
   border-right: 1px solid var(--galaxy-border-light);
   background: transparent;
   cursor: pointer;
@@ -1626,6 +1642,10 @@
   position: relative;
   display: flex;
   flex-direction: column;
+  overflow: hidden;
+  min-width: 0;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 .galaxy-calendar-day:last-child {
@@ -1668,19 +1688,21 @@
   display: flex;
   align-items: flex-start;
   justify-content: space-between;
-  margin-bottom: 0.35rem;
+  margin-bottom: 0.2rem;
+  flex-shrink: 0;
 }
 
 .galaxy-calendar-day-number {
-  font-size: 0.95rem;
+  font-size: 0.85rem;
   font-weight: 600;
   color: var(--galaxy-text-primary);
-  width: 28px;
-  height: 28px;
+  width: 24px;
+  height: 24px;
   display: flex;
   align-items: center;
   justify-content: center;
-  border-radius: 8px;
+  border-radius: 6px;
+  flex-shrink: 0;
 }
 
 .galaxy-calendar-day.today .galaxy-calendar-day-number {
@@ -1689,60 +1711,125 @@
 }
 
 .galaxy-calendar-day-today-badge {
-  font-size: 0.65rem;
+  font-size: 0.55rem;
   font-weight: 700;
   color: var(--galaxy-accent-green);
   text-transform: uppercase;
-  letter-spacing: 0.5px;
+  letter-spacing: 0.3px;
+  background: rgba(16, 185, 129, 0.15);
+  padding: 2px 4px;
+  border-radius: 4px;
 }
 
 /* Holiday Label */
 .galaxy-calendar-holiday {
-  font-size: 0.65rem;
+  font-size: 0.6rem;
   color: var(--galaxy-accent-red);
-  margin-bottom: 0.35rem;
-  line-height: 1.2;
+  margin-bottom: 0.2rem;
+  line-height: 1.1;
   opacity: 0.9;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  flex-shrink: 0;
 }
 
 /* Course Chips in Calendar */
 .galaxy-calendar-day-events {
   display: flex;
   flex-direction: column;
-  gap: 0.25rem;
+  gap: 2px;
   flex: 1;
   overflow: hidden;
+  min-width: 0;
 }
 
 .galaxy-calendar-event-chip {
-  display: inline-flex;
-  align-items: center;
-  gap: 4px;
-  padding: 3px 8px;
-  border-radius: 6px;
-  font-size: 0.68rem;
+  display: block;
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-size: 0.6rem;
   font-weight: 600;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
   max-width: 100%;
-  transition: all 0.2s ease;
+  transition: all 0.15s ease;
+  line-height: 1.3;
 }
 
 .galaxy-calendar-event-chip:hover {
-  transform: scale(1.02);
+  filter: brightness(1.1);
 }
 
 .galaxy-calendar-more-events {
-  font-size: 0.7rem;
+  font-size: 0.6rem;
   color: var(--galaxy-accent-blue);
   font-weight: 600;
   cursor: pointer;
-  padding: 2px 0;
+  padding: 1px 0;
+  flex-shrink: 0;
 }
 
 .galaxy-calendar-more-events:hover {
   text-decoration: underline;
+}
+
+/* Responsividade para calendário */
+@media (max-width: 900px) {
+  .galaxy-calendar-day {
+    height: 85px;
+    min-height: 85px;
+    max-height: 85px;
+    padding: 0.2rem;
+  }
+  
+  .galaxy-calendar-day-number {
+    font-size: 0.75rem;
+    width: 20px;
+    height: 20px;
+  }
+  
+  .galaxy-calendar-day-today-badge {
+    font-size: 0.5rem;
+    padding: 1px 3px;
+  }
+  
+  .galaxy-calendar-holiday {
+    font-size: 0.55rem;
+  }
+  
+  .galaxy-calendar-event-chip {
+    font-size: 0.55rem;
+    padding: 1px 4px;
+  }
+  
+  .galaxy-calendar-weekday {
+    font-size: 0.65rem;
+    padding: 0.5rem 0.15rem;
+  }
+}
+
+@media (max-width: 600px) {
+  .galaxy-calendar-toolbar {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  
+  .galaxy-calendar-toolbar-hint {
+    font-size: 0.8rem;
+  }
+  
+  .galaxy-calendar-day {
+    height: 75px;
+    min-height: 75px;
+    max-height: 75px;
+  }
+  
+  .galaxy-calendar-weekday {
+    font-size: 0.55rem;
+    padding: 0.4rem 0.1rem;
+  }
 }
 
 /* Selected Day Panel */
@@ -1792,6 +1879,7 @@
   display: flex;
   flex-direction: column;
   gap: 1.25rem;
+  min-width: 0;
 }
 
 /* Upcoming Classes Card */
@@ -1800,11 +1888,12 @@
   border: 1px solid var(--galaxy-border);
   border-radius: 16px;
   padding: 1.25rem;
+  min-width: 0;
 }
 
 .galaxy-calendar-section-title {
   color: var(--galaxy-text-primary);
-  font-size: 1.1rem;
+  font-size: 1rem;
   font-weight: 700;
   margin-bottom: 1rem;
   display: flex;
@@ -1815,21 +1904,22 @@
 .galaxy-calendar-upcoming-list {
   display: flex;
   flex-direction: column;
-  gap: 0.75rem;
-  max-height: 400px;
+  gap: 0.6rem;
+  max-height: 350px;
   overflow-y: auto;
 }
 
 .galaxy-calendar-upcoming-item {
   background: rgba(15, 23, 42, 0.5);
   border: 1px solid var(--galaxy-border-light);
-  border-radius: 12px;
-  padding: 0.85rem;
+  border-radius: 10px;
+  padding: 0.65rem 0.75rem;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 0.75rem;
+  gap: 0.5rem;
   transition: all 0.2s ease;
+  min-width: 0;
 }
 
 .galaxy-calendar-upcoming-item:hover {
@@ -1840,14 +1930,15 @@
 .galaxy-calendar-upcoming-info {
   display: flex;
   flex-direction: column;
-  gap: 0.35rem;
+  gap: 0.25rem;
   flex: 1;
   min-width: 0;
+  overflow: hidden;
 }
 
 .galaxy-calendar-upcoming-date {
   color: var(--galaxy-text-secondary);
-  font-size: 0.8rem;
+  font-size: 0.75rem;
   font-weight: 500;
 }
 
@@ -1855,13 +1946,14 @@
   background: rgba(59, 130, 246, 0.15);
   border: 1px solid rgba(59, 130, 246, 0.3);
   color: var(--galaxy-accent-blue);
-  padding: 0.4rem 0.75rem;
-  border-radius: 8px;
-  font-size: 0.75rem;
+  padding: 0.35rem 0.6rem;
+  border-radius: 6px;
+  font-size: 0.7rem;
   font-weight: 600;
   white-space: nowrap;
   cursor: pointer;
   transition: all 0.2s ease;
+  flex-shrink: 0;
 }
 
 .galaxy-calendar-upcoming-btn:hover {

@@ -400,19 +400,40 @@ export default function GalaxyCalendar(props: GalaxyCalendarProps) {
     return selectedDayEventos.some(ev => ev.cursoId === selectedCursoId)
   }, [selectedDateKey, selectedCursoId, selectedDayEventos])
 
-  const renderCursoChip = (curso: CalendarioCurso, compact = false) => (
-    <span
-      className="galaxy-calendar-event-chip"
-      title={curso.nome}
-      style={{
-        backgroundColor: curso.cor || '#3b82f6',
-        padding: compact ? '2px 6px' : '4px 10px',
-        fontSize: compact ? '0.68rem' : '0.78rem'
-      }}
-    >
-      {curso.nome}
-    </span>
-  )
+  // Função para truncar nome do curso de forma inteligente
+  const truncateCourseName = (nome: string, maxLen: number = 12): string => {
+    // Remove sufixos como "(Turma 01)", "(Turma 02)" etc para economizar espaço
+    let cleaned = nome.replace(/\s*\(Turma\s*\d+\)\s*$/i, '').trim()
+    
+    if (cleaned.length <= maxLen) return cleaned
+    // Tenta encontrar um ponto de corte em espaços ou hífens
+    const trimmed = cleaned.substring(0, maxLen)
+    const lastSpace = trimmed.lastIndexOf(' ')
+    const lastHyphen = trimmed.lastIndexOf('-')
+    const cutPoint = Math.max(lastSpace, lastHyphen)
+    if (cutPoint > maxLen * 0.5) {
+      return cleaned.substring(0, cutPoint).trim() + '…'
+    }
+    return trimmed.trim() + '…'
+  }
+
+  const renderCursoChip = (curso: CalendarioCurso, compact = false) => {
+    const displayName = compact ? truncateCourseName(curso.nome, 14) : curso.nome
+    return (
+      <span
+        className="galaxy-calendar-event-chip"
+        title={curso.nome}
+        style={{
+          backgroundColor: curso.cor || '#3b82f6',
+          color: '#fff',
+          padding: compact ? '2px 5px' : '4px 10px',
+          fontSize: compact ? '0.6rem' : '0.78rem'
+        }}
+      >
+        {displayName}
+      </span>
+    )
+  }
 
   return (
     <div className="galaxy-calendar">
@@ -489,7 +510,9 @@ export default function GalaxyCalendar(props: GalaxyCalendarProps) {
                   const isToday = dateKey === todayKey
                   const isSelected = selectedDateKey === dateKey
                   const cursosDia = listaEventos.map(ev => cursosById[ev.cursoId]).filter(Boolean) as CalendarioCurso[]
-                  const chips = cursosDia.slice(0, 2)
+                  // Mostrar menos chips se tiver feriado para economizar espaço
+                  const maxChips = holidayName ? 1 : 2
+                  const chips = cursosDia.slice(0, maxChips)
                   const remaining = cursosDia.length - chips.length
 
                   let cellClass = 'galaxy-calendar-day'
@@ -504,17 +527,20 @@ export default function GalaxyCalendar(props: GalaxyCalendarProps) {
                       type="button"
                       className={cellClass}
                       onClick={() => handleDiaClick(day)}
+                      title={holidayName || undefined}
                     >
                       <div className="galaxy-calendar-day-header">
                         <span className="galaxy-calendar-day-number">{day}</span>
                         {isToday && <span className="galaxy-calendar-day-today-badge">Hoje</span>}
                       </div>
                       {holidayName && (
-                        <div className="galaxy-calendar-holiday">{holidayName}</div>
+                        <div className="galaxy-calendar-holiday" title={holidayName}>{holidayName}</div>
                       )}
                       <div className="galaxy-calendar-day-events">
                         {chips.map(curso => (
-                          <div key={`${dateKey}-${curso.id}`}>{renderCursoChip(curso, true)}</div>
+                          <div key={`${dateKey}-${curso.id}`} style={{ minWidth: 0, overflow: 'hidden' }}>
+                            {renderCursoChip(curso, true)}
+                          </div>
                         ))}
                         {remaining > 0 && (
                           <OverlayTrigger
@@ -522,11 +548,11 @@ export default function GalaxyCalendar(props: GalaxyCalendarProps) {
                             placement="auto"
                             overlay={
                               <Popover id={`popover-${dateKey}`}>
-                                <Popover.Header as="h3">Aulas do dia</Popover.Header>
+                                <Popover.Header as="h3">Aulas do dia ({cursosDia.length})</Popover.Header>
                                 <Popover.Body>
                                   <div className="d-flex flex-column gap-1">
                                     {cursosDia.map(curso => (
-                                      <div key={`${dateKey}-${curso.id}`}>{renderCursoChip(curso, true)}</div>
+                                      <div key={`pop-${dateKey}-${curso.id}`}>{renderCursoChip(curso, false)}</div>
                                     ))}
                                   </div>
                                 </Popover.Body>
@@ -534,7 +560,7 @@ export default function GalaxyCalendar(props: GalaxyCalendarProps) {
                             }
                           >
                             <span className="galaxy-calendar-more-events" onClick={e => e.stopPropagation()}>
-                              +{remaining} mais
+                              +{remaining}
                             </span>
                           </OverlayTrigger>
                         )}
