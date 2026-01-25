@@ -1,7 +1,5 @@
-import React from "react"
+import React, { useMemo } from "react"
 import { Modal, Table, Button } from "react-bootstrap"
-import type { Parcelamento } from "../mocks/parcelamentos"
-import { parcelamentos19999 } from "../mocks/parcelamentos"
 
 interface ParcelamentoModalProps {
   show: boolean
@@ -14,14 +12,25 @@ const ParcelamentoModal: React.FC<ParcelamentoModalProps> = ({
   onHide,
   valor
 }) => {
-  let parcelas: Parcelamento[] = []
+  // Calcula as parcelas dinamicamente
+  const parcelas = useMemo(() => {
+    if (!valor || valor <= 0) return []
 
-  if (valor === 199.99) {
-    parcelas = parcelamentos19999
-  } else {
-    parcelas = []
-    // Você poderá adicionar outros valores futuramente com base no valor
-  }
+    // Valor com 8% de acréscimo para parcelamento
+    const valorComAcrescimo = valor * 1.08
+
+    // Gera opções de 1x até 12x
+    const opcoes = []
+    for (let i = 1; i <= 12; i++) {
+      const valorParcela = valorComAcrescimo / i
+      opcoes.push({
+        vezes: i,
+        valorParcela: `R$ ${valorParcela.toFixed(2).replace(".", ",")}`,
+        total: `R$ ${valorComAcrescimo.toFixed(2).replace(".", ",")}`
+      })
+    }
+    return opcoes
+  }, [valor])
 
   return (
     <Modal show={show} onHide={onHide} centered size="lg">
@@ -33,6 +42,16 @@ const ParcelamentoModal: React.FC<ParcelamentoModalProps> = ({
           <p className="text-muted">Ainda não há simulações disponíveis para este valor.</p>
         ) : (
           <>
+            <div className="mb-3 p-3 bg-light rounded">
+              <p className="mb-2">
+                <strong>Valor à vista (PIX):</strong>{" "}
+                <span className="text-success fw-bold">R$ {valor.toFixed(2).replace(".", ",")}</span>
+              </p>
+              <p className="mb-0 text-muted small">
+                💳 Parcelamento no cartão: em até 12x
+              </p>
+            </div>
+
             <Table striped bordered hover responsive>
               <thead>
                 <tr>
@@ -45,7 +64,7 @@ const ParcelamentoModal: React.FC<ParcelamentoModalProps> = ({
                 {parcelas.map((p, idx) => (
                   <tr key={idx}>
                     <td>{p.vezes}x</td>
-                    <td>{p.valorParcela}</td>
+                    <td className="fw-bold">{p.valorParcela}</td>
                     <td>{p.total}</td>
                   </tr>
                 ))}
