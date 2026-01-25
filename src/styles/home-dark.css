@@ -200,22 +200,30 @@
 .hero-btn-secondary {
   display: inline-flex;
   align-items: center;
-  gap: 0.5rem;
-  padding: 1rem 2rem;
-  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+  gap: 0.75rem;
+  padding: 1.1rem 2.5rem;
+  background: linear-gradient(135deg, #25D366 0%, #128C7E 100%);
   color: #fff !important;
-  font-weight: 600;
-  font-size: 1rem;
-  border-radius: 12px;
+  font-weight: 700;
+  font-size: 1.05rem;
+  border-radius: 14px;
   text-decoration: none;
   transition: all 0.3s ease;
   border: none !important;
+  box-shadow: 0 8px 24px rgba(37, 211, 102, 0.3);
+  letter-spacing: 0.02em;
 }
 
 .hero-btn-secondary:hover {
-  transform: translateY(-3px);
-  box-shadow: 0 15px 40px rgba(16, 185, 129, 0.35);
+  transform: translateY(-4px) scale(1.02);
+  box-shadow: 0 16px 48px rgba(37, 211, 102, 0.5);
+  background: linear-gradient(135deg, #2EE276 0%, #149C8E 100%);
   color: #fff !important;
+}
+
+.hero-btn-secondary svg {
+  font-size: 1.3rem;
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.2));
 }
 
 .hero-location {
@@ -509,22 +517,30 @@
 .cta-btn-primary {
   display: inline-flex;
   align-items: center;
-  gap: 0.5rem;
-  padding: 1rem 2rem;
-  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+  gap: 0.75rem;
+  padding: 1.1rem 2.5rem;
+  background: linear-gradient(135deg, #25D366 0%, #128C7E 100%);
   color: #fff !important;
-  font-weight: 600;
-  font-size: 1rem;
+  font-weight: 700;
+  font-size: 1.05rem;
   border: none !important;
-  border-radius: 12px;
+  border-radius: 14px;
   text-decoration: none;
   transition: all 0.3s ease;
+  box-shadow: 0 8px 24px rgba(37, 211, 102, 0.3);
+  letter-spacing: 0.02em;
 }
 
 .cta-btn-primary:hover {
-  transform: translateY(-3px);
-  box-shadow: 0 15px 40px rgba(16, 185, 129, 0.4);
+  transform: translateY(-4px) scale(1.02);
+  box-shadow: 0 16px 48px rgba(37, 211, 102, 0.5);
+  background: linear-gradient(135deg, #2EE276 0%, #149C8E 100%);
   color: #fff !important;
+}
+
+.cta-btn-primary svg {
+  font-size: 1.3rem;
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.2));
 }
 
 .cta-btn-secondary {
