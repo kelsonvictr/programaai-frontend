@@ -1289,6 +1289,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
+  min-height: 180px;
 }
 
 .certification-badge:hover {
@@ -1298,40 +1299,12 @@
     0 0 0 2px rgba(16, 185, 129, 0.5) inset;
 }
 
-.certification-seal {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 1rem;
-  text-align: center;
-}
-
-.certification-seal-icon {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  filter: drop-shadow(0 4px 8px rgba(16, 185, 129, 0.3));
-}
-
-.certification-seal-text {
-  display: flex;
-  flex-direction: column;
-  gap: 0.25rem;
-}
-
-.certification-seal-title {
-  font-size: 1.5rem;
-  font-weight: 800;
-  color: #059669;
-  letter-spacing: -0.02em;
-}
-
-.certification-seal-subtitle {
-  font-size: 0.65rem;
-  font-weight: 700;
-  color: #6b7280;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
+.certification-seal-image {
+  max-width: 100%;
+  width: 280px;
+  height: auto;
+  display: block;
+  filter: drop-shadow(0 4px 12px rgba(16, 185, 129, 0.2));
 }
 
 .certification-content {
@@ -1564,19 +1537,11 @@
 
   .certification-badge {
     padding: 1.5rem 1rem;
+    min-height: 140px;
   }
 
-  .certification-seal-icon svg {
-    width: 50px;
-    height: 50px;
-  }
-
-  .certification-seal-title {
-    font-size: 1.2rem;
-  }
-
-  .certification-seal-subtitle {
-    font-size: 0.6rem;
+  .certification-seal-image {
+    width: 220px;
   }
 
   .certification-title {

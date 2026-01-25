@@ -413,18 +413,11 @@ const CourseDetails: React.FC = () => {
             <div className="certification-badge-wrapper">
               <div className="certification-pulse-ring"></div>
               <div className="certification-badge">
-                <div className="certification-seal">
-                  <div className="certification-seal-icon">
-                    <svg width="60" height="60" viewBox="0 0 60 60" fill="none" xmlns="http://www.w3.org/2000/svg">
-                      <circle cx="30" cy="30" r="28" fill="#10b981" stroke="#059669" strokeWidth="2"/>
-                      <path d="M20 30 L27 37 L42 22" stroke="white" strokeWidth="4" strokeLinecap="round" strokeLinejoin="round"/>
-                    </svg>
-                  </div>
-                  <div className="certification-seal-text">
-                    <span className="certification-seal-title">e-certificado</span>
-                    <span className="certification-seal-subtitle">CERTIFICADOS ONLINE</span>
-                  </div>
-                </div>
+                <img 
+                  src="/7238700.png" 
+                  alt="Selo e-Certificado - Certificados Online" 
+                  className="certification-seal-image"
+                />
               </div>
             </div>
             <div className="certification-content">
