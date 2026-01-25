@@ -1279,12 +1279,9 @@
 .certification-badge {
   position: relative;
   z-index: 2;
-  background: rgba(255, 255, 255, 0.98);
+  background: transparent;
   padding: 2rem;
   border-radius: 16px;
-  box-shadow: 
-    0 10px 40px rgba(0, 0, 0, 0.2),
-    0 0 0 1px rgba(16, 185, 129, 0.3) inset;
   transition: transform 0.3s ease;
   display: flex;
   align-items: center;
@@ -1293,10 +1290,7 @@
 }
 
 .certification-badge:hover {
-  transform: translateY(-5px) scale(1.02);
-  box-shadow: 
-    0 15px 50px rgba(0, 0, 0, 0.25),
-    0 0 0 2px rgba(16, 185, 129, 0.5) inset;
+  transform: translateY(-5px) scale(1.05);
 }
 
 .certification-seal-image {
@@ -1304,7 +1298,12 @@
   width: 280px;
   height: auto;
   display: block;
-  filter: drop-shadow(0 4px 12px rgba(16, 185, 129, 0.2));
+  filter: drop-shadow(0 8px 16px rgba(16, 185, 129, 0.25));
+  transition: filter 0.3s ease;
+}
+
+.certification-badge:hover .certification-seal-image {
+  filter: drop-shadow(0 12px 24px rgba(16, 185, 129, 0.35));
 }
 
 .certification-content {
