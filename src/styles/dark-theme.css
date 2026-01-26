@@ -65,6 +65,50 @@ body {
   border-radius: 16px !important;
 }
 
+/* Cards com bg-light (PIX/Cartão na página de pagamento) */
+.card.bg-light {
+  background: var(--pai-bg-tertiary) !important;
+  border: 1px solid var(--pai-border-light) !important;
+}
+
+.card.bg-light .card-body {
+  color: var(--pai-text-secondary) !important;
+}
+
+.card.bg-light .card-body strong {
+  color: var(--pai-text-primary) !important;
+}
+
+.card.bg-light .card-body .text-muted {
+  color: var(--pai-text-subtle) !important;
+}
+
+.card.bg-light .card-body .fw-bold {
+  color: var(--pai-text-primary) !important;
+}
+
+/* Cards com bg-white (Mensalidades na página de pagamento) */
+.card.bg-white {
+  background: var(--pai-bg-secondary) !important;
+  border: 1px solid var(--pai-border-light) !important;
+}
+
+.card.bg-white .card-body {
+  color: var(--pai-text-secondary) !important;
+}
+
+.card.bg-white .card-body strong {
+  color: var(--pai-text-primary) !important;
+}
+
+.card.bg-white .card-body .text-muted {
+  color: var(--pai-text-subtle) !important;
+}
+
+.card.bg-white .card-body .fw-bold {
+  color: var(--pai-text-primary) !important;
+}
+
 .card-body {
   color: var(--pai-text-secondary);
 }
@@ -372,6 +416,27 @@ p {
 .modal-body small {
   color: var(--pai-text-subtle) !important;
   font-size: 0.85rem;
+}
+
+/* Caixa informativa dentro de modals (bg-light) */
+.modal-body .bg-light,
+.modal-body .bg-light.rounded {
+  background: var(--pai-bg-tertiary) !important;
+  border: 1px solid var(--pai-border-light) !important;
+}
+
+.modal-body .bg-light p,
+.modal-body .bg-light span,
+.modal-body .bg-light strong {
+  color: var(--pai-text-secondary) !important;
+}
+
+.modal-body .bg-light .text-success {
+  color: var(--pai-accent-success) !important;
+}
+
+.modal-body .bg-light .text-muted {
+  color: var(--pai-text-subtle) !important;
 }
 
 /* Select dropdown options */
