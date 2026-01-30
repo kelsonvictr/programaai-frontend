@@ -274,6 +274,12 @@ export default function Admin() {
   const [pedidoSortAsc, setPedidoSortAsc] = useState(false)
   const [agendamentoSortAsc, setAgendamentoSortAsc] = useState(false)
 
+  // Prompt Financeiro
+  const [showPromptFinanceiro, setShowPromptFinanceiro] = useState(false)
+  const [promptFinanceiroCurso, setPromptFinanceiroCurso] = useState<string>('')
+  const [promptFinanceiroText, setPromptFinanceiroText] = useState<string>('')
+  const [copiedPrompt, setCopiedPrompt] = useState(false)
+
   const cursoEntries = useMemo(
     () => Object.entries(cursos).sort(([a], [b]) => a.localeCompare(b, 'pt-BR')),
     [cursos]
@@ -1056,6 +1062,78 @@ export default function Admin() {
     })
   }
 
+  // Gerar prompt financeiro para enviar ao ChatGPT
+  const gerarPromptFinanceiro = (nomeCurso: string, group: CursoGroup) => {
+    const percentualProf = 51
+    const percentualProgramaAI = 49
+    
+    const liquidoProf = group.totalValorLiquido * (percentualProf / 100)
+    const liquidoProgramaAI = group.totalValorLiquido * (percentualProgramaAI / 100)
+    
+    // Verificar se há pagamentos agendados
+    const temPagamentosAgendados = group.inscricoes.some(i => 
+      i.observacoes && i.observacoes.toLowerCase().includes('agendado')
+    )
+    
+    let prompt = `**Relatório Financeiro - ${nomeCurso}**\n\n`
+    prompt += `Gostaria que você gerasse um relatório financeiro detalhado com base nos seguintes dados:\n\n`
+    prompt += `**Informações do Curso:**\n`
+    prompt += `- Nome do curso: ${nomeCurso}\n`
+    prompt += `- Quantidade de inscritos: ${group.totalInscritos}\n`
+    prompt += `- Total Líquido Final: ${money(group.totalValorLiquido)}\n\n`
+    
+    prompt += `**Detalhamento por Aluno:**\n\n`
+    
+    group.inscricoes.forEach((inscricao, index) => {
+      const valorLiquido = getEffectiveValorLiquido(nomeCurso, inscricao)
+      const valorCurso = inscricao.valorCurso || inscricao.valorOriginal || 0
+      
+      prompt += `${index + 1}. **${inscricao.nomeCompleto}**\n`
+      prompt += `   - Valor do curso: ${money(valorCurso)}\n`
+      prompt += `   - Valor líquido final: ${money(valorLiquido)}\n`
+      
+      if (inscricao.observacoes) {
+        prompt += `   - Observações: ${inscricao.observacoes}\n`
+      }
+      
+      prompt += `\n`
+    })
+    
+    prompt += `\n**Repasse Financeiro:**\n`
+    prompt += `- Porcentagem de repasse combinada com o professor: ${percentualProf}%\n`
+    prompt += `- Valor líquido final do professor (${percentualProf}%): ${money(liquidoProf)}\n`
+    prompt += `- Valor líquido final da Programa AI (${percentualProgramaAI}%): ${money(liquidoProgramaAI)}\n\n`
+    
+    if (temPagamentosAgendados) {
+      prompt += `**Observação Importante:**\n`
+      prompt += `Se nas observações algum aluno estiver com pagamento agendado para data posterior, a Programa AI fará o repasse da porcentagem líquida desse(s) aluno(s) assim que for recebido, como combinado.\n\n`
+    }
+    
+    prompt += `**Próximo Passo:**\n`
+    prompt += `Antes de gerar o relatório final, por favor confirme comigo se todas as informações estão corretas e se há alguma modificação ou ajuste necessário.\n`
+    
+    return prompt
+  }
+
+  const abrirPromptFinanceiro = (nomeCurso: string, group: CursoGroup) => {
+    const prompt = gerarPromptFinanceiro(nomeCurso, group)
+    setPromptFinanceiroCurso(nomeCurso)
+    setPromptFinanceiroText(prompt)
+    setShowPromptFinanceiro(true)
+    setCopiedPrompt(false)
+  }
+
+  const copiarPromptFinanceiro = async () => {
+    try {
+      await navigator.clipboard.writeText(promptFinanceiroText)
+      setCopiedPrompt(true)
+      setTimeout(() => setCopiedPrompt(false), 2000)
+    } catch (err) {
+      console.error('Erro ao copiar prompt:', err)
+      alert('Erro ao copiar prompt para a área de transferência')
+    }
+  }
+
   const handlePaymentModeChange = (inscricao: Inscricao, mode: PaymentMode) => {
     updateInscricao(inscricao.id, current => {
       if (mode === 'monthly') {
@@ -1546,6 +1624,14 @@ export default function Admin() {
                   <Badge bg="success" pill>
                     Líquido: {money(group.totalValorLiquido)}
                   </Badge>
+                  <Button 
+                    size="sm" 
+                    variant="warning"
+                    onClick={() => abrirPromptFinanceiro(curso, group)}
+                    title="Gerar prompt financeiro para enviar ao ChatGPT"
+                  >
+                    💰 Prompt Financeiro
+                  </Button>
                 </div>
               </div>
               <div className="galaxy-cards-grid">
@@ -1651,6 +1737,50 @@ export default function Admin() {
                 disabled={agendamentoBusy || !agendamentoInscricao || !agendamentoDate}
               >
                 {agendamentoBusy ? <Spinner size="sm" animation="border" /> : 'Salvar'}
+              </Button>
+            </Modal.Footer>
+          </Modal>
+
+          {/* Modal Prompt Financeiro */}
+          <Modal 
+            show={showPromptFinanceiro} 
+            onHide={() => setShowPromptFinanceiro(false)} 
+            centered
+            size="lg"
+          >
+            <Modal.Header closeButton>
+              <Modal.Title>💰 Prompt Financeiro - {promptFinanceiroCurso}</Modal.Title>
+            </Modal.Header>
+            <Modal.Body>
+              <Alert variant="info">
+                <strong>📋 Instruções:</strong> Copie o prompt abaixo e cole no ChatGPT para gerar um relatório financeiro detalhado.
+              </Alert>
+              <Form.Group>
+                <Form.Control
+                  as="textarea"
+                  rows={20}
+                  value={promptFinanceiroText}
+                  readOnly
+                  style={{ 
+                    fontFamily: 'monospace', 
+                    fontSize: '0.85rem',
+                    whiteSpace: 'pre-wrap'
+                  }}
+                />
+              </Form.Group>
+            </Modal.Body>
+            <Modal.Footer>
+              <Button 
+                variant="secondary" 
+                onClick={() => setShowPromptFinanceiro(false)}
+              >
+                Fechar
+              </Button>
+              <Button 
+                variant="success" 
+                onClick={() => void copiarPromptFinanceiro()}
+              >
+                {copiedPrompt ? '✓ Copiado!' : '📋 Copiar Prompt'}
               </Button>
             </Modal.Footer>
           </Modal>
