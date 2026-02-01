@@ -153,7 +153,7 @@
 }
 
 .inscricao-sidebar-card {
-  background: white;
+  background: #f8fafc;
   border-radius: 16px;
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
   overflow: hidden;
@@ -370,7 +370,7 @@
   justify-content: center;
   gap: 0.5rem;
   padding: 0.75rem;
-  background: white;
+  background: #f8fafc;
   border-radius: 10px;
   font-size: 0.75rem;
   color: #64748b;
@@ -378,7 +378,7 @@
 }
 
 [data-bs-theme="dark"] .trust-badge {
-  background: #1e293b;
+  background: #0f172a;
   color: #94a3b8;
 }
 
@@ -415,7 +415,7 @@
   align-items: center;
   gap: 0.75rem;
   padding: 0.75rem 1rem;
-  background: white;
+  background: #f8fafc;
   border-radius: 12px;
   border: 2px solid transparent;
   cursor: default;
@@ -522,7 +522,7 @@
 
 /* ==================== Form Card ==================== */
 .inscricao-form-card {
-  background: white;
+  background: #f8fafc;
   border-radius: 20px;
   padding: 2rem;
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
