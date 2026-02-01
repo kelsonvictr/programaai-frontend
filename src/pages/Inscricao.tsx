@@ -123,6 +123,51 @@ const Inscricao: React.FC = () => {
   const [valorFinal, setValorFinal] = useState<number>(0)
   const [checkingCupom, setCheckingCupom] = useState(false)
 
+  // Força o tema dark na página inteira
+  useEffect(() => {
+    const root = document.getElementById('root')
+    const body = document.body
+    const html = document.documentElement
+    const main = document.querySelector('main')
+
+    // Salva estilos originais
+    const originalRootStyle = root?.style.cssText || ''
+    const originalBodyStyle = body.style.cssText
+    const originalHtmlStyle = html.style.cssText
+    const originalMainStyle = main ? (main as HTMLElement).style.cssText : ''
+
+    // Aplica estilos para tema dark
+    if (root) {
+      root.style.maxWidth = 'none'
+      root.style.padding = '0'
+      root.style.background = 'transparent'
+    }
+    
+    const isDark = document.documentElement.getAttribute('data-bs-theme') === 'dark'
+    const bgColor = isDark 
+      ? 'linear-gradient(135deg, #0f172a 0%, #1e293b 100%)' 
+      : 'linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%)'
+
+    body.style.background = bgColor
+    body.style.margin = '0'
+    body.style.padding = '0'
+    html.style.background = bgColor
+    if (main) {
+      const mainElement = main as HTMLElement
+      mainElement.style.background = bgColor
+      mainElement.style.margin = '0'
+      mainElement.style.padding = '0'
+    }
+
+    // Restaura estilos ao desmontar
+    return () => {
+      if (root) root.style.cssText = originalRootStyle
+      body.style.cssText = originalBodyStyle
+      html.style.cssText = originalHtmlStyle
+      if (main) (main as HTMLElement).style.cssText = originalMainStyle
+    }
+  }, [])
+
   useEffect(() => {
     if (!id) {
       navigate("/")

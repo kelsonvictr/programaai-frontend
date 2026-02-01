@@ -1,11 +1,32 @@
 /* Inscricao.css - Modern Ultra Design */
 
-/* ==================== Força o root a não ter padding/background na página de inscrição ==================== */
-/* Remove padding e max-width do root quando está na página de inscrição */
-body:has(.inscricao-page) #root {
+/* ==================== FORÇA BACKGROUNDS - URGENTE ==================== */
+/* Remove qualquer padding/background do root */
+#root {
   max-width: none !important;
   padding: 0 !important;
   background: transparent !important;
+}
+
+body, html, main {
+  background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%) !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  min-height: 100vh !important;
+}
+
+[data-bs-theme="dark"] body,
+[data-bs-theme="dark"] html,
+[data-bs-theme="dark"] main {
+  background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%) !important;
+}
+
+/* Força TODOS os backgrounds claros para dark quando tema dark está ativo */
+[data-bs-theme="dark"] *[style*="background: #f8fafc"],
+[data-bs-theme="dark"] *[style*="background: #e2e8f0"],
+[data-bs-theme="dark"] *[style*="background: #f1f5f9"],
+[data-bs-theme="dark"] *[style*="background: white"] {
+  background: #1e293b !important;
 }
 
 /* ==================== Animations ==================== */
@@ -37,38 +58,16 @@ body:has(.inscricao-page) #root {
 .inscricao-page {
   position: relative;
   min-height: 100vh;
-  background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+  background: transparent !important;
   margin: 0;
   padding: 0;
-}
-
-[data-bs-theme="dark"] .inscricao-page {
-  background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
-}
-
-/* Força o background do body e html quando está na página de inscrição */
-body:has(.inscricao-page),
-html:has(.inscricao-page),
-body:has(.inscricao-page) main {
-  background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%) !important;
-  margin: 0;
-  padding: 0;
-}
-
-[data-bs-theme="dark"] body:has(.inscricao-page),
-[data-bs-theme="dark"] html:has(.inscricao-page),
-[data-bs-theme="dark"] body:has(.inscricao-page) main {
-  background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%) !important;
 }
 
 /* Força o background do Container do Bootstrap */
-.inscricao-page .container {
+.inscricao-page .container,
+.container-fluid {
   background: transparent !important;
-}
-
-/* Força o background de todos elementos dentro da página */
-.inscricao-page * {
-  transition: background-color 0.2s ease, color 0.2s ease;
+  max-width: none !important;
 }
 
 /* ==================== Loading ==================== */
