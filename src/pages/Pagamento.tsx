@@ -222,7 +222,7 @@ const Pagamento: React.FC = () => {
 
       {loadingInfo && <PriceSkeleton />}
       {!loadingInfo && info && (
-        <Card className="shadow-sm mb-4">
+        <Card className="shadow-sm mb-4 bg-body">
           <Card.Body>
             <div className="d-flex flex-wrap align-items-center justify-content-between mb-2">
               <Card.Title className="mb-1">
@@ -296,7 +296,7 @@ const Pagamento: React.FC = () => {
         </Card>
       )}
 
-      <Card className="shadow-sm mb-4">
+      <Card className="shadow-sm mb-4 bg-body">
         <Card.Body>
           <Card.Title className="mb-3">Escolha a forma de pagamento</Card.Title>
 

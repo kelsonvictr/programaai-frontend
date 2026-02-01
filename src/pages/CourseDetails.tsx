@@ -74,6 +74,9 @@ interface Course {
   technologiaIcone?: string
   bgGradient?: string
   descricaoCurta?: string
+  // Campos de mensalidades
+  permiteMensalidades?: boolean
+  qtdMensalidades?: number
 }
 
 const CourseDetails: React.FC = () => {
@@ -794,6 +797,11 @@ const CourseDetails: React.FC = () => {
                 <div className="course-price-breakdown">
                   <span>Pix à vista: R$ {base.toFixed(2).replace(".", ",")}</span>
                   <span>12x de R$ {parcela12.toFixed(2).replace(".", ",")}</span>
+                  {course.permiteMensalidades && course.qtdMensalidades && course.qtdMensalidades > 0 && (
+                    <span className="text-info fw-semibold">
+                      💳 ou {course.qtdMensalidades}x de R$ {(base / course.qtdMensalidades).toFixed(2).replace(".", ",")} (Pix/Boleto mensais)
+                    </span>
+                  )}
                 </div>
               )
             })()}

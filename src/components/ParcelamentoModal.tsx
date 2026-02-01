@@ -71,7 +71,7 @@ const ParcelamentoModal: React.FC<ParcelamentoModalProps> = ({
               </tbody>
             </Table>
             <p className="text-muted small mt-3">
-              💳 <strong>Importante:</strong> Os valores apresentados são uma simulação com base nas taxas atuais do Nubank e podem sofrer alterações a qualquer momento, conforme políticas do banco emissor do cartão.
+              💳 <strong>Importante:</strong> Os valores apresentados são uma simulação e podem sofrer alterações conforme as taxas do emissor do cartão.
             </p>
           </>
         )}
