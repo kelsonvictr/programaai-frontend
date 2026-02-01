@@ -566,6 +566,10 @@
   color: #64748b;
 }
 
+[data-bs-theme="dark"] .step-header p {
+  color: #94a3b8;
+}
+
 /* ==================== Form Grid ==================== */
 .form-grid {
   display: grid;
@@ -603,7 +607,7 @@
 }
 
 [data-bs-theme="dark"] .form-group .form-label {
-  color: #94a3b8;
+  color: #e2e8f0;
 }
 
 .form-group .form-label svg {
@@ -622,8 +626,18 @@
 
 [data-bs-theme="dark"] .form-group .form-control,
 [data-bs-theme="dark"] .form-group .form-select {
-  background: #0f172a;
-  border-color: #334155;
+  background: #334155;
+  border-color: #475569;
+  color: #f1f5f9;
+}
+
+[data-bs-theme="dark"] .form-group .form-control::placeholder {
+  color: #94a3b8;
+  opacity: 1;
+}
+
+[data-bs-theme="dark"] .form-group .form-select option {
+  background: #1e293b;
   color: #f1f5f9;
 }
 
@@ -710,7 +724,7 @@
 }
 
 [data-bs-theme="dark"] .summary-grid {
-  color: #94a3b8;
+  color: #cbd5e1;
 }
 
 .summary-grid .full-width {
@@ -755,9 +769,13 @@
 }
 
 [data-bs-theme="dark"] .cupom-input-wrapper .form-control {
-  background: #0f172a;
-  border-color: #334155;
+  background: #334155;
+  border-color: #475569;
   color: #f1f5f9;
+}
+
+[data-bs-theme="dark"] .cupom-input-wrapper .form-control::placeholder {
+  color: #94a3b8;
 }
 
 .cupom-input-wrapper .btn {
