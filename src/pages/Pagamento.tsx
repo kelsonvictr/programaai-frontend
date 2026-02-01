@@ -9,6 +9,7 @@ import {
 import axios from "axios"
 import { FaQrcode, FaCreditCard } from "react-icons/fa"
 import { BsFileEarmarkText } from "react-icons/bs"
+import "./Pagamento.css"
 
 type LoadingKind = "PIX" | "CARTAO" | "ASSINATURA" | null
 
@@ -64,6 +65,66 @@ const Pagamento: React.FC = () => {
   // modais
   const [showConfirmAssinatura, setShowConfirmAssinatura] = useState(false)
   const [showDoneAssinatura, setShowDoneAssinatura] = useState(false)
+
+  // Força o tema dark na página inteira - SEMPRE DARK
+  useEffect(() => {
+    const root = document.getElementById('root')
+    const body = document.body
+    const html = document.documentElement
+    const main = document.querySelector('main')
+
+    // Salva estilos originais
+    const originalRootStyle = root?.style.cssText || ''
+    const originalBodyStyle = body.style.cssText
+    const originalHtmlStyle = html.style.cssText
+    const originalMainStyle = main ? (main as HTMLElement).style.cssText : ''
+
+    // FORÇA DARK - SEM CONDIÇÕES
+    const bgColor = 'linear-gradient(135deg, #0f172a 0%, #1e293b 100%)'
+    
+    if (root) {
+      root.style.cssText = `
+        max-width: none !important;
+        padding: 0 !important;
+        background: transparent !important;
+      `
+    }
+    
+    body.style.cssText = `
+      background: ${bgColor} !important;
+      margin: 0 !important;
+      padding: 0 !important;
+      min-height: 100vh !important;
+    `
+    
+    html.style.cssText = `
+      background: ${bgColor} !important;
+      margin: 0 !important;
+      padding: 0 !important;
+    `
+    
+    if (main) {
+      (main as HTMLElement).style.cssText = `
+        background: ${bgColor} !important;
+        margin: 0 !important;
+        padding: 0 !important;
+      `
+    }
+
+    // Força todos os containers do Bootstrap
+    const containers = document.querySelectorAll('.container, .container-fluid')
+    containers.forEach(container => {
+      (container as HTMLElement).style.background = 'transparent'
+    })
+
+    // Restaura estilos ao desmontar
+    return () => {
+      if (root) root.style.cssText = originalRootStyle
+      body.style.cssText = originalBodyStyle
+      html.style.cssText = originalHtmlStyle
+      if (main) (main as HTMLElement).style.cssText = originalMainStyle
+    }
+  }, [])
 
   useEffect(() => {
     if (isBadId(inscricaoId)) {
@@ -206,7 +267,16 @@ const Pagamento: React.FC = () => {
   const assinaturaJaSolicitada = !!info?.assinatura?.solicitada
 
   return (
-    <Container className="py-5" style={{ maxWidth: 820 }}>
+    <div 
+      className="pagamento-page"
+      style={{
+        minHeight: '100vh',
+        background: 'linear-gradient(135deg, #0f172a 0%, #1e293b 100%)',
+        margin: 0,
+        padding: 0
+      }}
+    >
+      <Container className="py-5" style={{ maxWidth: 820, background: 'transparent' }}>
       <Alert variant="info" className="mb-4">
         <strong>Sua inscrição foi recebida</strong>, mas <strong>só será confirmada após a confirmação do pagamento</strong>.{" "}
         Após a confirmação, entraremos em contato com mais informações sobre o seu curso. 🚀
@@ -414,6 +484,7 @@ const Pagamento: React.FC = () => {
         </Modal.Footer>
       </Modal>
     </Container>
+    </div>
   )
 }
 

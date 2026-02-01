@@ -1,0 +1,130 @@
+/* Pagamento.css - Força Dark Mode */
+
+/* ==================== FORÇA DARK MODE SEMPRE ==================== */
+#root {
+  max-width: none !important;
+  padding: 0 !important;
+  background: transparent !important;
+}
+
+/* FORÇA BACKGROUND DARK EM TUDO */
+body, 
+html, 
+main {
+  background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%) !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  min-height: 100vh !important;
+}
+
+/* Container sempre transparente */
+.container,
+.container-fluid {
+  background: transparent !important;
+}
+
+.pagamento-page {
+  min-height: 100vh;
+  background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%) !important;
+}
+
+/* Força cards dark */
+.pagamento-page .card {
+  background: #1e293b !important;
+  border-color: #334155 !important;
+  color: #f1f5f9 !important;
+}
+
+.pagamento-page .card-body {
+  background: #1e293b !important;
+  color: #f1f5f9 !important;
+}
+
+.pagamento-page .card-title {
+  color: #f1f5f9 !important;
+}
+
+.pagamento-page .card-text {
+  color: #cbd5e1 !important;
+}
+
+/* Alerts dark */
+.pagamento-page .alert {
+  border-color: #334155 !important;
+}
+
+.pagamento-page .alert-info {
+  background: rgba(59, 130, 246, 0.1) !important;
+  border-color: rgba(59, 130, 246, 0.3) !important;
+  color: #93c5fd !important;
+}
+
+.pagamento-page .alert-danger {
+  background: rgba(239, 68, 68, 0.1) !important;
+  border-color: rgba(239, 68, 68, 0.3) !important;
+  color: #fca5a5 !important;
+}
+
+.pagamento-page .alert-success {
+  background: rgba(16, 185, 129, 0.1) !important;
+  border-color: rgba(16, 185, 129, 0.3) !important;
+  color: #6ee7b7 !important;
+}
+
+/* Text colors */
+.pagamento-page h1,
+.pagamento-page h2,
+.pagamento-page h3,
+.pagamento-page h4,
+.pagamento-page h5,
+.pagamento-page h6 {
+  color: #f1f5f9 !important;
+}
+
+.pagamento-page p {
+  color: #cbd5e1 !important;
+}
+
+.pagamento-page .text-muted {
+  color: #94a3b8 !important;
+}
+
+.pagamento-page small {
+  color: #94a3b8 !important;
+}
+
+/* Modals */
+.pagamento-page .modal-content {
+  background: #1e293b !important;
+  border-color: #334155 !important;
+}
+
+.pagamento-page .modal-header {
+  background: #1e293b !important;
+  border-bottom-color: #334155 !important;
+  color: #f1f5f9 !important;
+}
+
+.pagamento-page .modal-title {
+  color: #f1f5f9 !important;
+}
+
+.pagamento-page .modal-body {
+  background: #1e293b !important;
+  color: #cbd5e1 !important;
+}
+
+.pagamento-page .modal-footer {
+  background: #1e293b !important;
+  border-top-color: #334155 !important;
+}
+
+/* Badges */
+.pagamento-page .badge {
+  opacity: 0.9;
+}
+
+/* Placeholders */
+.pagamento-page .placeholder {
+  background: #334155 !important;
+}
