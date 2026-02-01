@@ -123,7 +123,7 @@ const Inscricao: React.FC = () => {
   const [valorFinal, setValorFinal] = useState<number>(0)
   const [checkingCupom, setCheckingCupom] = useState(false)
 
-  // Força o tema dark na página inteira
+  // Força o tema dark na página inteira - SEMPRE DARK
   useEffect(() => {
     const root = document.getElementById('root')
     const body = document.body
@@ -136,28 +136,43 @@ const Inscricao: React.FC = () => {
     const originalHtmlStyle = html.style.cssText
     const originalMainStyle = main ? (main as HTMLElement).style.cssText : ''
 
-    // Aplica estilos para tema dark
+    // FORÇA DARK - SEM CONDIÇÕES
+    const bgColor = 'linear-gradient(135deg, #0f172a 0%, #1e293b 100%)'
+    
     if (root) {
-      root.style.maxWidth = 'none'
-      root.style.padding = '0'
-      root.style.background = 'transparent'
+      root.style.cssText = `
+        max-width: none !important;
+        padding: 0 !important;
+        background: transparent !important;
+      `
     }
     
-    const isDark = document.documentElement.getAttribute('data-bs-theme') === 'dark'
-    const bgColor = isDark 
-      ? 'linear-gradient(135deg, #0f172a 0%, #1e293b 100%)' 
-      : 'linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%)'
-
-    body.style.background = bgColor
-    body.style.margin = '0'
-    body.style.padding = '0'
-    html.style.background = bgColor
+    body.style.cssText = `
+      background: ${bgColor} !important;
+      margin: 0 !important;
+      padding: 0 !important;
+      min-height: 100vh !important;
+    `
+    
+    html.style.cssText = `
+      background: ${bgColor} !important;
+      margin: 0 !important;
+      padding: 0 !important;
+    `
+    
     if (main) {
-      const mainElement = main as HTMLElement
-      mainElement.style.background = bgColor
-      mainElement.style.margin = '0'
-      mainElement.style.padding = '0'
+      (main as HTMLElement).style.cssText = `
+        background: ${bgColor} !important;
+        margin: 0 !important;
+        padding: 0 !important;
+      `
     }
+
+    // Força todos os containers do Bootstrap
+    const containers = document.querySelectorAll('.container, .container-fluid')
+    containers.forEach(container => {
+      (container as HTMLElement).style.background = 'transparent'
+    })
 
     // Restaura estilos ao desmontar
     return () => {
@@ -448,7 +463,15 @@ const Inscricao: React.FC = () => {
   }
 
   return (
-    <div className="inscricao-page">
+    <div 
+      className="inscricao-page"
+      style={{
+        minHeight: '100vh',
+        background: 'linear-gradient(135deg, #0f172a 0%, #1e293b 100%)',
+        margin: 0,
+        padding: 0
+      }}
+    >
       {/* Hero Section */}
       <div className="inscricao-hero">
         <div className="inscricao-hero-overlay" />
@@ -465,7 +488,7 @@ const Inscricao: React.FC = () => {
         </Container>
       </div>
 
-      <Container className="inscricao-container">
+      <Container className="inscricao-container" style={{ background: 'transparent' }}>
         {/* Sidebar com resumo */}
         <aside className="inscricao-sidebar">
           <div className="inscricao-sidebar-card">

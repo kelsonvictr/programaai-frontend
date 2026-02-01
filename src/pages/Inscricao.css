@@ -1,6 +1,6 @@
 /* Inscricao.css - Modern Ultra Design */
 
-/* ==================== FORÇA BACKGROUNDS - URGENTE ==================== */
+/* ==================== FORÇA DARK MODE SEMPRE - URGENTE ==================== */
 /* Remove qualquer padding/background do root */
 #root {
   max-width: none !important;
@@ -8,25 +8,21 @@
   background: transparent !important;
 }
 
-body, html, main {
-  background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%) !important;
+/* FORÇA BACKGROUND DARK EM TUDO */
+body, 
+html, 
+main {
+  background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%) !important;
   margin: 0 !important;
   padding: 0 !important;
   min-height: 100vh !important;
 }
 
-[data-bs-theme="dark"] body,
-[data-bs-theme="dark"] html,
-[data-bs-theme="dark"] main {
-  background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%) !important;
-}
-
-/* Força TODOS os backgrounds claros para dark quando tema dark está ativo */
-[data-bs-theme="dark"] *[style*="background: #f8fafc"],
-[data-bs-theme="dark"] *[style*="background: #e2e8f0"],
-[data-bs-theme="dark"] *[style*="background: #f1f5f9"],
-[data-bs-theme="dark"] *[style*="background: white"] {
-  background: #1e293b !important;
+/* Container sempre transparente */
+.container,
+.container-fluid {
+  background: transparent !important;
+  max-width: 100% !important;
 }
 
 /* ==================== Animations ==================== */
@@ -188,37 +184,23 @@ body, html, main {
 }
 
 .inscricao-sidebar-card {
-  background: #f8fafc;
+  background: #1e293b !important;
   border-radius: 16px;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
-  overflow: hidden;
-}
-
-[data-bs-theme="dark"] .inscricao-sidebar-card {
-  background: #1e293b;
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+  overflow: hidden;
 }
 
 .inscricao-sidebar-header {
   padding: 1.25rem;
-  background: linear-gradient(135deg, #f1f5f9 0%, #e2e8f0 100%);
-  border-bottom: 1px solid #e2e8f0;
-}
-
-[data-bs-theme="dark"] .inscricao-sidebar-header {
-  background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
-  border-bottom-color: #334155;
+  background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%) !important;
+  border-bottom: 1px solid #334155;
 }
 
 .inscricao-sidebar-header h3 {
   margin: 0;
   font-size: 1rem;
   font-weight: 600;
-  color: #475569;
-}
-
-[data-bs-theme="dark"] .inscricao-sidebar-header h3 {
-  color: #94a3b8;
+  color: #94a3b8 !important;
 }
 
 .inscricao-sidebar-body {
@@ -243,11 +225,7 @@ body, html, main {
   font-size: 1rem;
   font-weight: 600;
   margin-bottom: 0.75rem;
-  color: #1e293b;
-}
-
-[data-bs-theme="dark"] .inscricao-sidebar-body h4 {
-  color: #f1f5f9;
+  color: #f1f5f9 !important;
 }
 
 .inscricao-course-meta {
@@ -260,14 +238,10 @@ body, html, main {
 }
 
 .inscricao-price-section {
-  background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+  background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%) !important;
   border-radius: 12px;
   padding: 1rem;
   margin-bottom: 1rem;
-}
-
-[data-bs-theme="dark"] .inscricao-price-section {
-  background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
 }
 
 .inscricao-price-label {
@@ -281,12 +255,8 @@ body, html, main {
 .inscricao-price-value {
   font-size: 1.5rem;
   font-weight: 700;
-  color: #1e293b;
+  color: #f1f5f9 !important;
   margin-bottom: 0.75rem;
-}
-
-[data-bs-theme="dark"] .inscricao-price-value {
-  color: #f1f5f9;
 }
 
 .inscricao-price-old {
@@ -405,16 +375,11 @@ body, html, main {
   justify-content: center;
   gap: 0.5rem;
   padding: 0.75rem;
-  background: #f8fafc;
+  background: #0f172a !important;
   border-radius: 10px;
   font-size: 0.75rem;
-  color: #64748b;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
-}
-
-[data-bs-theme="dark"] .trust-badge {
-  background: #0f172a;
-  color: #94a3b8;
+  color: #94a3b8 !important;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
 }
 
 .trust-badge svg {
@@ -450,16 +415,12 @@ body, html, main {
   align-items: center;
   gap: 0.75rem;
   padding: 0.75rem 1rem;
-  background: #f8fafc;
+  background: #1e293b !important;
   border-radius: 12px;
   border: 2px solid transparent;
   cursor: default;
   transition: all 0.3s;
   flex: 1;
-}
-
-[data-bs-theme="dark"] .inscricao-step {
-  background: #1e293b;
 }
 
 .inscricao-step.completed {
@@ -486,15 +447,10 @@ body, html, main {
   display: flex;
   align-items: center;
   justify-content: center;
-  background: #f1f5f9;
+  background: #0f172a !important;
   border-radius: 10px;
   font-size: 1rem;
-  color: #64748b;
-}
-
-[data-bs-theme="dark"] .step-icon {
-  background: #0f172a;
-  color: #94a3b8;
+  color: #94a3b8 !important;
 }
 
 .inscricao-step.active .step-icon {
@@ -529,12 +485,8 @@ body, html, main {
 .step-connector {
   width: 24px;
   height: 2px;
-  background: #e2e8f0;
+  background: #334155 !important;
   flex-shrink: 0;
-}
-
-[data-bs-theme="dark"] .step-connector {
-  background: #334155;
 }
 
 /* ==================== Progress Bar ==================== */
@@ -542,11 +494,7 @@ body, html, main {
   height: 6px;
   border-radius: 3px;
   margin-bottom: 1.5rem;
-  background: #e2e8f0;
-}
-
-[data-bs-theme="dark"] .inscricao-progress {
-  background: #334155;
+  background: #334155 !important;
 }
 
 .inscricao-progress .progress-bar {
@@ -557,25 +505,16 @@ body, html, main {
 
 /* ==================== Form Card ==================== */
 .inscricao-form-card {
-  background: #f8fafc;
+  background: #1e293b !important;
   border-radius: 20px;
   padding: 2rem;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
-}
-
-[data-bs-theme="dark"] .inscricao-form-card {
-  background: #1e293b;
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
 }
 
 .step-header {
   margin-bottom: 2rem;
   padding-bottom: 1rem;
-  border-bottom: 1px solid #e2e8f0;
-}
-
-[data-bs-theme="dark"] .step-header {
-  border-bottom-color: #334155;
+  border-bottom: 1px solid #334155;
 }
 
 .step-header h2 {
@@ -584,12 +523,8 @@ body, html, main {
   gap: 0.75rem;
   font-size: 1.5rem;
   font-weight: 700;
-  color: #1e293b;
+  color: #f1f5f9 !important;
   margin-bottom: 0.5rem;
-}
-
-[data-bs-theme="dark"] .step-header h2 {
-  color: #f1f5f9;
 }
 
 .step-header h2 svg {
@@ -598,11 +533,7 @@ body, html, main {
 
 .step-header p {
   margin: 0;
-  color: #64748b;
-}
-
-[data-bs-theme="dark"] .step-header p {
-  color: #94a3b8;
+  color: #94a3b8 !important;
 }
 
 /* ==================== Form Grid ==================== */
@@ -723,13 +654,9 @@ body, html, main {
 }
 
 .summary-section {
-  background: #f8fafc;
+  background: #0f172a !important;
   border-radius: 12px;
   padding: 1.25rem;
-}
-
-[data-bs-theme="dark"] .summary-section {
-  background: #0f172a;
 }
 
 .summary-section h4 {
@@ -738,12 +665,8 @@ body, html, main {
   gap: 0.5rem;
   font-size: 1rem;
   font-weight: 600;
-  color: #1e293b;
+  color: #f1f5f9 !important;
   margin-bottom: 1rem;
-}
-
-[data-bs-theme="dark"] .summary-section h4 {
-  color: #f1f5f9;
 }
 
 .summary-section h4 svg {
