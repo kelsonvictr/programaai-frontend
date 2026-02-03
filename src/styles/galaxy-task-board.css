@@ -1,0 +1,419 @@
+/* ============================================
+   GALAXY TASK BOARD - KANBAN STYLE
+   ============================================ */
+
+.galaxy-task-board {
+  padding: 2rem 0;
+}
+
+/* Header */
+.galaxy-task-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2rem;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.galaxy-task-title {
+  font-size: 2rem;
+  font-weight: 700;
+  color: var(--galaxy-text-primary, #1a1a1a);
+  margin: 0;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.galaxy-task-icon {
+  font-size: 2.5rem;
+  line-height: 1;
+}
+
+.galaxy-task-subtitle {
+  color: var(--galaxy-text-secondary, #64748b);
+  font-size: 0.95rem;
+  margin: 0.25rem 0 0 0;
+}
+
+.galaxy-btn-new-task {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1.5rem;
+  font-weight: 600;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(99, 102, 241, 0.2);
+  transition: all 0.2s ease;
+}
+
+.galaxy-btn-new-task:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(99, 102, 241, 0.3);
+}
+
+/* Filters Bar */
+.galaxy-task-filters-bar {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+  flex-wrap: wrap;
+}
+
+.galaxy-task-search {
+  flex: 1;
+  min-width: 280px;
+  position: relative;
+}
+
+.galaxy-task-search-icon {
+  position: absolute;
+  left: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--galaxy-text-muted, #94a3b8);
+  pointer-events: none;
+}
+
+.galaxy-task-search-input {
+  padding-left: 40px;
+  padding-right: 40px;
+  border-radius: 12px;
+  border: 2px solid var(--galaxy-border, #e2e8f0);
+  transition: all 0.2s ease;
+}
+
+.galaxy-task-search-input:focus {
+  border-color: var(--galaxy-accent-blue, #6366f1);
+  box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.1);
+}
+
+.galaxy-task-search-clear {
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--galaxy-text-muted, #94a3b8);
+  cursor: pointer;
+  transition: color 0.2s ease;
+}
+
+.galaxy-task-search-clear:hover {
+  color: var(--galaxy-text-primary, #1a1a1a);
+}
+
+.galaxy-btn-toggle-filters {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  border-radius: 12px;
+  padding: 0.5rem 1rem;
+}
+
+/* Filters Panel */
+.galaxy-task-filters-panel {
+  border-radius: 16px;
+  border: 2px solid var(--galaxy-border, #e2e8f0);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+/* Kanban Columns */
+.galaxy-task-column {
+  background: var(--galaxy-bg-card, #ffffff);
+  border-radius: 16px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  overflow: hidden;
+  transition: all 0.2s ease;
+  min-height: 600px;
+  display: flex;
+  flex-direction: column;
+}
+
+.galaxy-task-column:hover {
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.12);
+}
+
+.galaxy-task-column-header {
+  padding: 1rem 1.25rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-radius: 16px 16px 0 0;
+}
+
+.galaxy-task-column-title {
+  font-weight: 700;
+  font-size: 1.1rem;
+  color: var(--galaxy-text-primary, #1a1a1a);
+}
+
+.galaxy-task-column-count {
+  font-weight: 700;
+  min-width: 28px;
+  text-align: center;
+  border-radius: 20px;
+  padding: 0.25rem 0.5rem;
+}
+
+.galaxy-task-column-body {
+  flex: 1;
+  padding: 1rem;
+  overflow-y: auto;
+  max-height: calc(100vh - 360px);
+}
+
+.galaxy-task-column-body::-webkit-scrollbar {
+  width: 6px;
+}
+
+.galaxy-task-column-body::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.galaxy-task-column-body::-webkit-scrollbar-thumb {
+  background: var(--galaxy-border, #e2e8f0);
+  border-radius: 3px;
+}
+
+.galaxy-task-column-body::-webkit-scrollbar-thumb:hover {
+  background: var(--galaxy-text-muted, #94a3b8);
+}
+
+/* Quick Add */
+.galaxy-task-quick-add {
+  padding: 0.75rem;
+  background: var(--galaxy-bg-hover, #f8fafc);
+  border-radius: 12px;
+  margin-bottom: 0.75rem;
+  border: 2px dashed var(--galaxy-border, #e2e8f0);
+}
+
+.galaxy-task-add-btn {
+  width: 100%;
+  padding: 0.75rem;
+  border: 2px dashed var(--galaxy-border, #e2e8f0);
+  border-radius: 12px;
+  background: transparent;
+  color: var(--galaxy-text-muted, #94a3b8);
+  font-size: 0.9rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  margin-bottom: 0.75rem;
+}
+
+.galaxy-task-add-btn:hover {
+  background: var(--galaxy-bg-hover, #f8fafc);
+  border-color: var(--galaxy-accent-blue, #6366f1);
+  color: var(--galaxy-accent-blue, #6366f1);
+}
+
+.galaxy-task-empty {
+  text-align: center;
+  padding: 2rem 1rem;
+  color: var(--galaxy-text-muted, #94a3b8);
+  font-style: italic;
+}
+
+/* Task Cards */
+.galaxy-task-card {
+  background: white;
+  border-radius: 12px;
+  padding: 1rem;
+  margin-bottom: 0.75rem;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+  transition: all 0.2s ease;
+  cursor: pointer;
+  border: 1px solid var(--galaxy-border, #e2e8f0);
+}
+
+.galaxy-task-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+}
+
+.galaxy-task-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.75rem;
+}
+
+.galaxy-task-priority-badge {
+  font-size: 0.7rem;
+  font-weight: 700;
+  padding: 0.25rem 0.5rem;
+  border-radius: 6px;
+  letter-spacing: 0.5px;
+}
+
+.galaxy-task-menu-btn {
+  color: var(--galaxy-text-muted, #94a3b8);
+  padding: 0.25rem;
+  text-decoration: none;
+}
+
+.galaxy-task-menu-btn:hover {
+  color: var(--galaxy-text-primary, #1a1a1a);
+}
+
+.galaxy-task-menu-btn::after {
+  display: none;
+}
+
+.galaxy-task-card-title {
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--galaxy-text-primary, #1a1a1a);
+  margin: 0 0 0.5rem 0;
+  line-height: 1.4;
+  cursor: pointer;
+}
+
+.galaxy-task-card-title:hover {
+  color: var(--galaxy-accent-blue, #6366f1);
+}
+
+.galaxy-task-card-description {
+  font-size: 0.875rem;
+  color: var(--galaxy-text-secondary, #64748b);
+  margin: 0 0 0.75rem 0;
+  line-height: 1.5;
+}
+
+.galaxy-task-card-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  margin-bottom: 0.5rem;
+}
+
+.galaxy-task-meta-item {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  font-size: 0.8rem;
+  color: var(--galaxy-text-secondary, #64748b);
+}
+
+.galaxy-task-vencimento {
+  font-weight: 500;
+}
+
+.galaxy-task-alert-icon {
+  font-size: 0.9rem;
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
+
+.galaxy-task-card-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-top: 0.75rem;
+}
+
+.galaxy-task-tag {
+  font-size: 0.75rem;
+  padding: 0.25rem 0.5rem;
+  background: var(--galaxy-bg-hover, #f1f5f9);
+  color: var(--galaxy-accent-blue, #6366f1);
+  border-radius: 6px;
+  font-weight: 500;
+}
+
+.galaxy-task-tag-more {
+  font-size: 0.75rem;
+  padding: 0.25rem 0.5rem;
+  background: var(--galaxy-bg-hover, #f1f5f9);
+  color: var(--galaxy-text-muted, #94a3b8);
+  border-radius: 6px;
+  font-weight: 500;
+}
+
+/* Modal Customization */
+.galaxy-modal-header {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  border-radius: 0.5rem 0.5rem 0 0;
+}
+
+.galaxy-modal-header .btn-close {
+  filter: brightness(0) invert(1);
+}
+
+/* Responsive */
+@media (max-width: 991px) {
+  .galaxy-task-column {
+    margin-bottom: 1.5rem;
+    min-height: 400px;
+  }
+  
+  .galaxy-task-column-body {
+    max-height: 400px;
+  }
+}
+
+@media (max-width: 768px) {
+  .galaxy-task-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  
+  .galaxy-btn-new-task {
+    width: 100%;
+    justify-content: center;
+  }
+  
+  .galaxy-task-filters-bar {
+    flex-direction: column;
+  }
+  
+  .galaxy-task-search {
+    width: 100%;
+  }
+  
+  .galaxy-btn-toggle-filters {
+    width: 100%;
+    justify-content: center;
+  }
+}
+
+/* Dark Theme Support */
+@media (prefers-color-scheme: dark) {
+  .galaxy-task-board {
+    --galaxy-bg-card: #1e293b;
+    --galaxy-bg-hover: #334155;
+    --galaxy-border: #475569;
+    --galaxy-text-primary: #f1f5f9;
+    --galaxy-text-secondary: #cbd5e1;
+    --galaxy-text-muted: #94a3b8;
+  }
+  
+  .galaxy-task-card {
+    background: #1e293b;
+    border-color: #475569;
+  }
+  
+  .galaxy-task-column {
+    background: #0f172a;
+  }
+  
+  .galaxy-task-search-input {
+    background: #1e293b;
+    color: #f1f5f9;
+    border-color: #475569;
+  }
+}

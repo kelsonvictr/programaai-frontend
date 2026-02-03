@@ -15,11 +15,12 @@ import {
   Card,
   Modal
 } from 'react-bootstrap'
-import { ArrowClockwise, BoxArrowRight, People, Laptop, Building, CurrencyDollar, Calendar3, Cup, ListUl, ClockHistory, BookHalf } from 'react-bootstrap-icons'
+import { ArrowClockwise, BoxArrowRight, People, Laptop, Building, CurrencyDollar, Calendar3, Cup, ListUl, ClockHistory, BookHalf, ListTask } from 'react-bootstrap-icons'
 import GalaxyCalendar from '../components/GalaxyCalendar'
 import InscricaoCard from '../components/InscricaoCard'
 import WaitlistCard from '../components/WaitlistCard'
 import GalaxyCourseManager from '../components/GalaxyCourseManager'
+import GalaxyTaskBoard from '../components/GalaxyTaskBoard'
 import '../styles/galaxy-admin.css'
 
 const API_BASE = import.meta.env.VITE_ADMIN_API as string
@@ -238,7 +239,7 @@ export default function Admin() {
 
   const ALL_CURSO_KEY = '__all__'
   const [activeCurso, setActiveCurso] = useState<string>(ALL_CURSO_KEY)
-  const [activeView, setActiveView] = useState<'inscricoes' | 'calendario' | 'lista-espera' | 'bebidas' | 'cursos'>(
+  const [activeView, setActiveView] = useState<'inscricoes' | 'calendario' | 'lista-espera' | 'bebidas' | 'cursos' | 'tarefas'>(
     'inscricoes'
   )
 
@@ -1494,6 +1495,13 @@ export default function Admin() {
             >
               <BookHalf /> <span>Cursos</span>
             </button>
+            <button
+              type="button"
+              className={`galaxy-nav-tab ${activeView === 'tarefas' ? 'active' : ''}`}
+              onClick={() => setActiveView('tarefas')}
+            >
+              <ListTask /> <span>Tarefas</span>
+            </button>
           </div>
 
           <div className="galaxy-header-actions">
@@ -1515,9 +1523,14 @@ export default function Admin() {
                     void fetchBebidasAdmin(token)
                   }
                   return
-                } else {
-                  fetchInscricoes(token)
                 }
+                if (activeView === 'tarefas') {
+                  // Tarefas são atualizadas internamente pelo componente
+                  // Apenas recarregar a página ou trigger um evento
+                  window.location.reload()
+                  return
+                }
+                fetchInscricoes(token)
               }}
               disabled={isRefreshing}
             >
@@ -2237,6 +2250,10 @@ export default function Admin() {
 
       {activeView === 'calendario' && (
         <GalaxyCalendar apiBase={API_BASE} token={token} />
+      )}
+
+      {activeView === 'tarefas' && user && token && (
+        <GalaxyTaskBoard token={token} />
       )}
     </Container>
     </div>
