@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { Container, Row, Col, Card, Button, Spinner, Alert, Form, Modal, Badge } from 'react-bootstrap'
+import { Row, Col, Card, Button, Spinner, Alert, Form, Badge } from 'react-bootstrap'
 import { Plus, Search, Funnel, Calendar3, Tag, PersonCircle, XCircle } from 'react-bootstrap-icons'
 import axios from 'axios'
 import TaskCard from './TaskCard'
@@ -39,13 +39,6 @@ const STATUS_CONFIG = {
   todo: { label: '📋 A Fazer', color: '#6366f1', bgColor: '#eef2ff' },
   doing: { label: '🚀 Fazendo', color: '#10b981', bgColor: '#d1fae5' },
   done: { label: '✅ Concluído', color: '#64748b', bgColor: '#f1f5f9' }
-}
-
-const PRIORITY_CONFIG = {
-  baixa: { label: 'Baixa', color: '#94a3b8', emoji: '🟢' },
-  media: { label: 'Média', color: '#3b82f6', emoji: '🔵' },
-  alta: { label: 'Alta', color: '#f59e0b', emoji: '🟠' },
-  urgente: { label: 'Urgente', color: '#ef4444', emoji: '🔴' }
 }
 
 export default function GalaxyTaskBoard({ token }: GalaxyTaskBoardProps) {
