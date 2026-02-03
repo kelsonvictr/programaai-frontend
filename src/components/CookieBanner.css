@@ -3,7 +3,7 @@
   bottom: 0;
   width: 100%;
   background-color: #0f1c2f;
-  color: #fff;
+  color: #f1f5f9;
   padding: 1rem;
   font-size: 0.9rem;
   display: flex;
@@ -22,7 +22,7 @@
 
 .cookie-banner button {
   background-color: #d4af37;
-  color: #000;
+  color: #0f172a;
   border: none;
   padding: 0.5rem 1rem;
   font-weight: bold;

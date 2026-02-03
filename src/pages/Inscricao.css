@@ -121,7 +121,7 @@ main {
   position: relative;
   z-index: 1;
   text-align: center;
-  color: white;
+  color: #f1f5f9;
 }
 
 .inscricao-badge {
@@ -348,7 +348,7 @@ main {
   width: 100%;
   padding: 0.875rem;
   background: #25d366;
-  color: white;
+  color: #f1f5f9;
   border-radius: 10px;
   font-weight: 600;
   text-decoration: none;
@@ -357,7 +357,7 @@ main {
 
 .inscricao-whatsapp-btn:hover {
   background: #1ebe5b;
-  color: white;
+  color: #f1f5f9;
   transform: translateY(-2px);
   box-shadow: 0 4px 12px rgba(37, 211, 102, 0.3);
 }
@@ -433,7 +433,7 @@ main {
 
 .inscricao-step.active {
   background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
-  color: white;
+  color: #f1f5f9;
   box-shadow: 0 4px 15px rgba(59, 130, 246, 0.3);
 }
 
@@ -455,7 +455,7 @@ main {
 
 .inscricao-step.active .step-icon {
   background: rgba(255, 255, 255, 0.2);
-  color: white;
+  color: #f1f5f9;
 }
 
 .inscricao-step.completed .step-icon {

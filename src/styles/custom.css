@@ -15,7 +15,7 @@ a.nav-link {
   
   /* Links em branco para contraste */
   .navbar .nav-link {
-    color: #ffffff !important;
+    color: #f1f5f9 !important;
   }
   
   .navbar .nav-link:hover,
@@ -47,7 +47,7 @@ a.nav-link {
   
   /* Footer */
   footer {
-    background-color: black;
+    background-color: #0f172a;
     color: var(--color-light);
     padding: 1.5rem 0;
     text-align: center;
