@@ -425,7 +425,7 @@ export default function GalaxyCalendar(props: GalaxyCalendarProps) {
         title={curso.nome}
         style={{
           backgroundColor: curso.cor || '#3b82f6',
-          color: '#fff',
+          color: '#f1f5f9',
           padding: compact ? '2px 5px' : '4px 10px',
           fontSize: compact ? '0.6rem' : '0.78rem'
         }}
@@ -599,7 +599,7 @@ export default function GalaxyCalendar(props: GalaxyCalendarProps) {
             {selectedCurso && (
               <div style={{ marginTop: '1rem', paddingTop: '1rem', borderTop: '1px solid rgba(148, 163, 184, 0.2)' }}>
                 <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '0.75rem' }}>
-                  <span style={{ color: '#94a3b8', fontSize: '0.9rem' }}>
+                  <span style={{ color: 'var(--galaxy-text-secondary)', fontSize: '0.9rem' }}>
                     Alternar aula de <strong style={{ color: selectedCurso.cor }}>{selectedCurso.nome}</strong>
                   </span>
                   <Button
@@ -691,7 +691,7 @@ export default function GalaxyCalendar(props: GalaxyCalendarProps) {
             </form>
           </div>
 
-          {error && <div style={{ color: '#ef4444', fontSize: '0.85rem', marginBottom: '1rem' }}>{error}</div>}
+          {error && <div style={{ color: 'var(--galaxy-accent-red)', fontSize: '0.85rem', marginBottom: '1rem' }}>{error}</div>}
 
           {selectedCurso && (
             <div className="galaxy-calendar-manual-date">

@@ -36,9 +36,9 @@ interface GalaxyTaskBoardProps {
 }
 
 const STATUS_CONFIG = {
-  todo: { label: '📋 A Fazer', color: '#6366f1', bgColor: '#eef2ff' },
-  doing: { label: '🚀 Fazendo', color: '#10b981', bgColor: '#d1fae5' },
-  done: { label: '✅ Concluído', color: '#64748b', bgColor: '#f1f5f9' }
+  todo: { label: '📋 A Fazer', color: '#6366f1', bgColor: 'rgba(99, 102, 241, 0.15)' },
+  doing: { label: '🚀 Fazendo', color: '#10b981', bgColor: 'rgba(16, 185, 129, 0.15)' },
+  done: { label: '✅ Concluído', color: '#64748b', bgColor: 'rgba(100, 116, 139, 0.15)' }
 }
 
 export default function GalaxyTaskBoard({ token }: GalaxyTaskBoardProps) {
@@ -387,9 +387,11 @@ export default function GalaxyTaskBoard({ token }: GalaxyTaskBoardProps) {
                     {config.label}
                   </div>
                   <Badge 
-                    bg="light" 
-                    text="dark"
                     className="galaxy-task-column-count"
+                    style={{
+                      background: 'var(--galaxy-bg-tertiary)',
+                      color: 'var(--galaxy-text-primary)'
+                    }}
                   >
                     {columnTasks.length}
                   </Badge>
