@@ -69,7 +69,9 @@ export default function TaskCard({ task, onEdit, onDelete, onMove }: TaskCardPro
       className="galaxy-task-card"
       style={{ 
         borderLeft: `4px solid ${priorityStyle.border}`,
-        background: task.status === 'done' ? '#f8fafc' : 'white'
+        background: task.status === 'done' 
+          ? 'var(--galaxy-bg-tertiary)' 
+          : 'var(--galaxy-bg-secondary)'
       }}
     >
       {/* Header */}
