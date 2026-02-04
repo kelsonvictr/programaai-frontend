@@ -795,14 +795,14 @@
 
 /* Task Cards */
 .galaxy-task-card {
-  background: white;
+  background: var(--galaxy-bg-secondary);
   border-radius: 12px;
   padding: 1rem;
   margin-bottom: 0.75rem;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
   transition: all 0.2s ease;
   cursor: pointer;
-  border: 1px solid var(--galaxy-border, #e2e8f0);
+  border: 1px solid var(--galaxy-border);
 }
 
 .galaxy-task-card:hover {
