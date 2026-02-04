@@ -593,7 +593,7 @@
 .galaxy-task-title {
   font-size: 2rem;
   font-weight: 700;
-  color: var(--galaxy-text-primary, #1a1a1a);
+  color: var(--galaxy-text-primary);
   margin: 0;
   display: flex;
   align-items: center;
@@ -606,7 +606,7 @@
 }
 
 .galaxy-task-subtitle {
-  color: var(--galaxy-text-secondary, #64748b);
+  color: var(--galaxy-text-secondary);
   font-size: 0.95rem;
   margin: 0.25rem 0 0 0;
 }
@@ -646,7 +646,7 @@
   left: 12px;
   top: 50%;
   transform: translateY(-50%);
-  color: var(--galaxy-text-muted, #94a3b8);
+  color: var(--galaxy-text-muted);
   pointer-events: none;
 }
 
@@ -654,13 +654,13 @@
   padding-left: 40px;
   padding-right: 40px;
   border-radius: 12px;
-  border: 2px solid var(--galaxy-border, #e2e8f0);
+  border: 2px solid var(--galaxy-border);
   transition: all 0.2s ease;
 }
 
 .galaxy-task-search-input:focus {
-  border-color: var(--galaxy-accent-blue, #6366f1);
-  box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.1);
+  border-color: var(--galaxy-accent-blue);
+  box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.1);
 }
 
 .galaxy-task-search-clear {
@@ -668,13 +668,13 @@
   right: 12px;
   top: 50%;
   transform: translateY(-50%);
-  color: var(--galaxy-text-muted, #94a3b8);
+  color: var(--galaxy-text-muted);
   cursor: pointer;
   transition: color 0.2s ease;
 }
 
 .galaxy-task-search-clear:hover {
-  color: var(--galaxy-text-primary, #1a1a1a);
+  color: var(--galaxy-text-primary);
 }
 
 .galaxy-btn-toggle-filters {
@@ -688,15 +688,15 @@
 /* Filters Panel */
 .galaxy-task-filters-panel {
   border-radius: 16px;
-  border: 2px solid var(--galaxy-border, #e2e8f0);
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  border: 2px solid var(--galaxy-border);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
 }
 
 /* Kanban Columns */
 .galaxy-task-column {
-  background: var(--galaxy-bg-card, #ffffff);
+  background: var(--galaxy-bg-card);
   border-radius: 16px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
   overflow: hidden;
   transition: all 0.2s ease;
   min-height: 600px;
@@ -705,7 +705,7 @@
 }
 
 .galaxy-task-column:hover {
-  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.12);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.4);
 }
 
 .galaxy-task-column-header {
@@ -719,7 +719,7 @@
 .galaxy-task-column-title {
   font-weight: 700;
   font-size: 1.1rem;
-  color: var(--galaxy-text-primary, #1a1a1a);
+  color: var(--galaxy-text-primary);
 }
 
 .galaxy-task-column-count {
@@ -746,30 +746,30 @@
 }
 
 .galaxy-task-column-body::-webkit-scrollbar-thumb {
-  background: var(--galaxy-border, #e2e8f0);
+  background: var(--galaxy-border);
   border-radius: 3px;
 }
 
 .galaxy-task-column-body::-webkit-scrollbar-thumb:hover {
-  background: var(--galaxy-text-muted, #94a3b8);
+  background: var(--galaxy-text-muted);
 }
 
 /* Quick Add */
 .galaxy-task-quick-add {
   padding: 0.75rem;
-  background: var(--galaxy-bg-hover, #f8fafc);
+  background: var(--galaxy-bg-secondary);
   border-radius: 12px;
   margin-bottom: 0.75rem;
-  border: 2px dashed var(--galaxy-border, #e2e8f0);
+  border: 2px dashed var(--galaxy-border);
 }
 
 .galaxy-task-add-btn {
   width: 100%;
   padding: 0.75rem;
-  border: 2px dashed var(--galaxy-border, #e2e8f0);
+  border: 2px dashed var(--galaxy-border);
   border-radius: 12px;
   background: transparent;
-  color: var(--galaxy-text-muted, #94a3b8);
+  color: var(--galaxy-text-muted);
   font-size: 0.9rem;
   display: flex;
   align-items: center;
@@ -781,15 +781,15 @@
 }
 
 .galaxy-task-add-btn:hover {
-  background: var(--galaxy-bg-hover, #f8fafc);
-  border-color: var(--galaxy-accent-blue, #6366f1);
-  color: var(--galaxy-accent-blue, #6366f1);
+  background: var(--galaxy-bg-secondary);
+  border-color: var(--galaxy-accent-blue);
+  color: var(--galaxy-accent-blue);
 }
 
 .galaxy-task-empty {
   text-align: center;
   padding: 2rem 1rem;
-  color: var(--galaxy-text-muted, #94a3b8);
+  color: var(--galaxy-text-muted);
   font-style: italic;
 }
 
@@ -826,13 +826,13 @@
 }
 
 .galaxy-task-menu-btn {
-  color: var(--galaxy-text-muted, #94a3b8);
+  color: var(--galaxy-text-muted);
   padding: 0.25rem;
   text-decoration: none;
 }
 
 .galaxy-task-menu-btn:hover {
-  color: var(--galaxy-text-primary, #1a1a1a);
+  color: var(--galaxy-text-primary);
 }
 
 .galaxy-task-menu-btn::after {
@@ -842,19 +842,19 @@
 .galaxy-task-card-title {
   font-size: 1rem;
   font-weight: 600;
-  color: var(--galaxy-text-primary, #1a1a1a);
+  color: var(--galaxy-text-primary);
   margin: 0 0 0.5rem 0;
   line-height: 1.4;
   cursor: pointer;
 }
 
 .galaxy-task-card-title:hover {
-  color: var(--galaxy-accent-blue, #6366f1);
+  color: var(--galaxy-accent-blue);
 }
 
 .galaxy-task-card-description {
   font-size: 0.875rem;
-  color: var(--galaxy-text-secondary, #64748b);
+  color: var(--galaxy-text-secondary);
   margin: 0 0 0.75rem 0;
   line-height: 1.5;
 }
@@ -871,7 +871,7 @@
   align-items: center;
   gap: 0.35rem;
   font-size: 0.8rem;
-  color: var(--galaxy-text-secondary, #64748b);
+  color: var(--galaxy-text-secondary);
 }
 
 .galaxy-task-vencimento {
@@ -902,8 +902,8 @@
 .galaxy-task-tag {
   font-size: 0.75rem;
   padding: 0.25rem 0.5rem;
-  background: var(--galaxy-bg-hover, #f1f5f9);
-  color: var(--galaxy-accent-blue, #6366f1);
+  background: rgba(59, 130, 246, 0.15);
+  color: var(--galaxy-accent-blue);
   border-radius: 6px;
   font-weight: 500;
 }
@@ -911,8 +911,8 @@
 .galaxy-task-tag-more {
   font-size: 0.75rem;
   padding: 0.25rem 0.5rem;
-  background: var(--galaxy-bg-hover, #f1f5f9);
-  color: var(--galaxy-text-muted, #94a3b8);
+  background: var(--galaxy-bg-tertiary);
+  color: var(--galaxy-text-muted);
   border-radius: 6px;
   font-weight: 500;
 }
