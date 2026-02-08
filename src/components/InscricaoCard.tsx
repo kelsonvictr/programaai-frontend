@@ -36,6 +36,11 @@ type Inscricao = {
   paymentMode?: PaymentMode | null
   monthlyPayments?: MonthlyPaymentSlot[] | null
   valorPrevisto?: number | null
+  
+  // Clicksign
+  clicksignDocumentKey?: string | null
+  clicksignStatus?: string | null
+  clicksignSentAt?: string | null
 }
 
 type EditableField =
@@ -68,6 +73,7 @@ interface InscricaoCardProps {
   handleValorPrevistoChange: (i: Inscricao, value: string) => void
   handleMonthlySave: (i: Inscricao) => Promise<void>
   gerarContrato: (id: string) => void
+  enviarClicksign: (id: string) => void
   copyPaymentLink: (id: string) => void
   openAgendamentoModal: (i: Inscricao) => void
   deletar: (id: string) => void
@@ -99,6 +105,7 @@ const InscricaoCard: React.FC<InscricaoCardProps> = ({
   handleValorPrevistoChange,
   handleMonthlySave,
   gerarContrato,
+  enviarClicksign,
   copyPaymentLink,
   openAgendamentoModal,
   deletar,
@@ -112,6 +119,7 @@ const InscricaoCard: React.FC<InscricaoCardProps> = ({
   const vlKey = keyBusy(i.id, 'valorLiquidoFinal')
   const obsKey = keyBusy(i.id, 'observacoes')
   const contratoKey = keyBusy(i.id, 'contrato')
+  const clicksignKey = keyBusy(i.id, 'clicksign')
   const paymentModeBusyKey = keyBusy(i.id, 'paymentMode')
   const monthlyBusy = [
     keyBusy(i.id, 'monthlyPayments'),
@@ -162,6 +170,21 @@ const InscricaoCard: React.FC<InscricaoCardProps> = ({
             <span className="galaxy-card-badge remoto">💻 Remoto</span>
           ) : (
             <span className="galaxy-card-badge presencial">🏢 Presencial</span>
+          )}
+          
+          {/* Badge Clicksign */}
+          {i.clicksignStatus && (
+            <span 
+              className="galaxy-card-badge"
+              style={{
+                background: i.clicksignStatus === 'signed' ? 'rgba(16, 185, 129, 0.2)' : 'rgba(250, 204, 21, 0.2)',
+                borderColor: i.clicksignStatus === 'signed' ? 'rgba(16, 185, 129, 0.3)' : 'rgba(250, 204, 21, 0.3)',
+                color: i.clicksignStatus === 'signed' ? 'rgb(16, 185, 129)' : 'rgb(250, 204, 21)'
+              }}
+              title={i.clicksignSentAt ? `Enviado em: ${new Date(i.clicksignSentAt).toLocaleString('pt-BR')}` : undefined}
+            >
+              ✍️ {i.clicksignStatus === 'signed' ? 'Assinado' : 'Pendente'}
+            </span>
           )}
         </div>
       </div>
@@ -466,6 +489,16 @@ const InscricaoCard: React.FC<InscricaoCardProps> = ({
           title="Gerar contrato PDF"
         >
           {busy[contratoKey] ? <Spinner size="sm" animation="border" /> : <><FileEarmarkPdf /> Contrato</>}
+        </button>
+
+        <button
+          className="galaxy-card-btn galaxy-card-btn-success"
+          disabled={!!busy[clicksignKey]}
+          onClick={() => enviarClicksign(i.id)}
+          title="Enviar para assinatura via Clicksign"
+          style={{ background: 'rgba(16, 185, 129, 0.2)', borderColor: 'rgba(16, 185, 129, 0.3)' }}
+        >
+          {busy[clicksignKey] ? <Spinner size="sm" animation="border" /> : <>✍️ Clicksign</>}
         </button>
 
         <button

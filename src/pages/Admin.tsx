@@ -29,6 +29,7 @@ const WAITLIST_ENDPOINT = `${API_BASE}/galaxy/lista-espera`
 const TOGGLE_ENDPOINT = `${API_BASE}/galaxy/inscricoes/toggle`
 const UPDATE_ENDPOINT = `${API_BASE}/galaxy/inscricoes/update`
 const CONTRATO_ENDPOINT = (id: string) => `${API_BASE}/galaxy/inscricoes/${id}/contrato`
+const CLICKSIGN_ENDPOINT = (id: string) => `${API_BASE}/galaxy/inscricoes/${id}/clicksign`
 const AGENDAMENTO_ENDPOINT = `${API_BASE}/galaxy/agendamento-pagamento`
 const AGENDAMENTO_CANCEL_ENDPOINT = `${API_BASE}/galaxy/agendamento-pagamento/cancelar`
 const AGENDAMENTO_SEND_ENDPOINT = `${API_BASE}/galaxy/agendamento-pagamento/enviar-lembrete`
@@ -76,6 +77,11 @@ type Inscricao = {
   paymentMode?: PaymentMode | null
   monthlyPayments?: MonthlyPaymentSlot[] | null
   valorPrevisto?: number | null
+  
+  // Clicksign
+  clicksignDocumentKey?: string | null
+  clicksignStatus?: string | null
+  clicksignSentAt?: string | null
 }
 
 type WaitlistEntry = {
@@ -805,6 +811,42 @@ export default function Admin() {
     } catch (err) {
       console.error(err)
       alert('Falha ao gerar contrato.')
+    } finally {
+      setBusy(s => {
+        const { [bkey]: removed, ...rest } = s
+        void removed
+        return rest
+      })
+    }
+  }
+
+  const enviarClicksign = async (id: string) => {
+    if (!token) return
+    const bkey = keyBusy(id, 'clicksign')
+
+    setBusy(s => ({ ...s, [bkey]: true }))
+    setError(null)
+
+    try {
+      const { data } = await axios.post(
+        CLICKSIGN_ENDPOINT(id),
+        {},
+        { headers: { Authorization: `Bearer ${token}` } }
+      )
+
+      if (data?.ok) {
+        alert(`✅ Contrato enviado para assinatura!\n\nStatus: ${data.status}\n${data.message || ''}`)
+        // Recarrega os dados para mostrar status atualizado
+        if (token) {
+          await fetchInscricoes(token)
+        }
+      } else {
+        alert('Não foi possível enviar o contrato para Clicksign.')
+      }
+    } catch (err: any) {
+      console.error(err)
+      const errorMsg = err.response?.data?.detail || 'Falha ao enviar contrato para Clicksign.'
+      alert(`❌ ${errorMsg}`)
     } finally {
       setBusy(s => {
         const { [bkey]: removed, ...rest } = s
@@ -1673,6 +1715,7 @@ export default function Admin() {
                     handleValorPrevistoChange={handleValorPrevistoChange}
                     handleMonthlySave={handleMonthlySave}
                     gerarContrato={gerarContrato}
+                    enviarClicksign={enviarClicksign}
                     copyPaymentLink={copyPaymentLink}
                     openAgendamentoModal={openAgendamentoModal}
                     formatDateTime={formatDateTime}
