@@ -98,6 +98,15 @@ const InscricaoCard: React.FC<InscricaoCardProps> = ({
   const idade = calcularIdade(i.dataNascimento)
   const isMenorDeIdade = idade !== null && idade < 18
   
+  // Debug para verificar cálculo de idade
+  console.log('InscricaoCard - Debug:', {
+    id: i.id,
+    nomeCompleto: i.nomeCompleto,
+    dataNascimento: i.dataNascimento,
+    idade,
+    isMenorDeIdade
+  })
+  
   const pagoKey = keyBusy(i.id, 'pago')
   const grupoKey = keyBusy(i.id, 'grupoWhatsapp')
   const remotoKey = keyBusy(i.id, 'remoto')
@@ -281,6 +290,24 @@ const InscricaoCard: React.FC<InscricaoCardProps> = ({
                 placeholder="email@responsavel.com"
                 onChange={e => setLocalField(i.id, 'responsavelEmail', e.target.value || null)}
                 onBlur={e => updateField(i.id, 'responsavelEmail', e.target.value || null)}
+                style={{
+                  background: 'rgba(15, 23, 42, 0.8)',
+                  border: '1px solid rgba(148, 163, 184, 0.2)',
+                  color: 'var(--galaxy-text-primary)',
+                  fontSize: '0.85rem'
+                }}
+              />
+            </div>
+
+            <div className="galaxy-card-field">
+              <div className="galaxy-card-field-label" style={{ fontSize: '0.75rem' }}>📱 Telefone/WhatsApp</div>
+              <Form.Control
+                size="sm"
+                type="tel"
+                value={i.responsavelTelefone || ''}
+                placeholder="(00) 00000-0000"
+                onChange={e => setLocalField(i.id, 'responsavelTelefone', e.target.value || null)}
+                onBlur={e => updateField(i.id, 'responsavelTelefone', e.target.value || null)}
                 style={{
                   background: 'rgba(15, 23, 42, 0.8)',
                   border: '1px solid rgba(148, 163, 184, 0.2)',
