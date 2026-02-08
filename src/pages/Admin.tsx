@@ -21,6 +21,7 @@ import InscricaoCard from '../components/InscricaoCard'
 import WaitlistCard from '../components/WaitlistCard'
 import GalaxyCourseManager from '../components/GalaxyCourseManager'
 import GalaxyTaskBoard from '../components/GalaxyTaskBoard'
+import type { Inscricao, EditableField, MonthlyPaymentSlot, MonthlyPaymentStatus, PaymentMode } from '../types/inscricao'
 import '../styles/galaxy-admin.css'
 
 const API_BASE = import.meta.env.VITE_ADMIN_API as string
@@ -41,48 +42,6 @@ const BEBIDAS_AGENDAMENTO_CONFIRMAR_ENDPOINT = `${API_BASE}/galaxy/bebidas/agend
 const BEBIDAS_AGENDAMENTO_EXCLUIR_ENDPOINT = `${API_BASE}/galaxy/bebidas/agendamento/excluir`
 const MONTHLY_SLOTS = 6
 const FULLSTACK_KEYWORD = 'fullstack'
-
-type PaymentMode = 'one-time' | 'monthly'
-type MonthlyPaymentStatus = 'ok' | 'late'
-
-type MonthlyPaymentSlot = {
-  index: number
-  amount?: number | null
-  status?: MonthlyPaymentStatus | null
-}
-
-type Inscricao = {
-  id: string
-  nomeCompleto: string
-  email: string
-  curso: string
-  dataInscricao: string
-  whatsapp?: string
-  ondeEstuda?: string
-  asaasPaymentLinkUrl?: string
-  asaasPaymentStatus?: string | null
-  asaasPaymentUpdatedAt?: string | null
-  asaasPaymentBillingType?: string | null
-  asaasPaymentValue?: number | null
-  valorOriginal?: number
-  valorCurso?: number
-  cupom?: string | null
-
-  pago?: boolean | null
-  grupoWhatsapp?: boolean | null
-  remoto?: boolean | null
-
-  valorLiquidoFinal?: number | null
-  observacoes?: string | null
-  paymentMode?: PaymentMode | null
-  monthlyPayments?: MonthlyPaymentSlot[] | null
-  valorPrevisto?: number | null
-  
-  // Clicksign
-  clicksignDocumentKey?: string | null
-  clicksignStatus?: string | null
-  clicksignSentAt?: string | null
-}
 
 type WaitlistEntry = {
   id: string
@@ -176,13 +135,6 @@ type BebidasAdminResp = {
   agendamentos?: BebidaAgendamento[]
   agendamentosPendentes?: BebidaAgendamento[]
 }
-
-type EditableField =
-  | 'valorLiquidoFinal'
-  | 'observacoes'
-  | 'paymentMode'
-  | 'monthlyPayments'
-  | 'valorPrevisto'
 
 const ASAAS_STATUS_LABELS: Record<string, string> = {
   PENDING: 'Aguardando',

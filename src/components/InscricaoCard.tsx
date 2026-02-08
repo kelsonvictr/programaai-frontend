@@ -1,65 +1,7 @@
 import React from 'react'
 import { Badge, Button, Form, InputGroup, Spinner } from 'react-bootstrap'
 import { Check2, FileEarmarkPdf, Whatsapp } from 'react-bootstrap-icons'
-
-type MonthlyPaymentStatus = 'ok' | 'late'
-
-type MonthlyPaymentSlot = {
-  index: number
-  amount?: number | null
-  status?: MonthlyPaymentStatus | null
-}
-
-type PaymentMode = 'one-time' | 'monthly'
-
-type Inscricao = {
-  id: string
-  nomeCompleto: string
-  email: string
-  curso: string
-  dataInscricao: string
-  whatsapp?: string
-  ondeEstuda?: string
-  asaasPaymentLinkUrl?: string
-  asaasPaymentStatus?: string | null
-  asaasPaymentUpdatedAt?: string | null
-  asaasPaymentBillingType?: string | null
-  asaasPaymentValue?: number | null
-  valorOriginal?: number
-  valorCurso?: number
-  cupom?: string | null
-  pago?: boolean | null
-  grupoWhatsapp?: boolean | null
-  remoto?: boolean | null
-  valorLiquidoFinal?: number | null
-  observacoes?: string | null
-  paymentMode?: PaymentMode | null
-  monthlyPayments?: MonthlyPaymentSlot[] | null
-  valorPrevisto?: number | null
-  dataNascimento?: string | null
-  
-  // Dados do responsável (menor de idade)
-  responsavelNome?: string | null
-  responsavelCpf?: string | null
-  responsavelEmail?: string | null
-  responsavelTelefone?: string | null
-  
-  // Clicksign
-  clicksignDocumentKey?: string | null
-  clicksignStatus?: string | null
-  clicksignSentAt?: string | null
-}
-
-type EditableField =
-  | 'valorLiquidoFinal'
-  | 'observacoes'
-  | 'paymentMode'
-  | 'monthlyPayments'
-  | 'valorPrevisto'
-  | 'responsavelNome'
-  | 'responsavelCpf'
-  | 'responsavelEmail'
-  | 'responsavelTelefone'
+import type { Inscricao, EditableField, MonthlyPaymentSlot, MonthlyPaymentStatus, PaymentMode } from '../types/inscricao'
 
 interface InscricaoCardProps {
   inscricao: Inscricao
