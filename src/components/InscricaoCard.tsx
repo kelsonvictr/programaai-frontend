@@ -181,18 +181,18 @@ const InscricaoCard: React.FC<InscricaoCardProps> = ({
             </span>
           )}
           
-          {/* Badge Menor de Idade */}
-          {isMenorDeIdade && (
+          {/* Badge de Idade - sempre aparece se tiver data de nascimento */}
+          {idade !== null && (
             <span 
               className="galaxy-card-badge"
               style={{
-                background: 'rgba(239, 68, 68, 0.2)',
-                borderColor: 'rgba(239, 68, 68, 0.3)',
-                color: 'rgb(239, 68, 68)'
+                background: isMenorDeIdade ? 'rgba(239, 68, 68, 0.2)' : 'rgba(148, 163, 184, 0.2)',
+                borderColor: isMenorDeIdade ? 'rgba(239, 68, 68, 0.3)' : 'rgba(148, 163, 184, 0.3)',
+                color: isMenorDeIdade ? 'rgb(239, 68, 68)' : 'var(--galaxy-text-secondary)'
               }}
-              title={`Menor de idade (${idade} anos)`}
+              title={isMenorDeIdade ? `Menor de idade (${idade} anos)` : `Idade: ${idade} anos`}
             >
-              👤 Menor ({idade} anos)
+              {isMenorDeIdade ? '👤 Menor' : '👤'} {idade} {idade === 1 ? 'ano' : 'anos'}
             </span>
           )}
         </div>
@@ -204,6 +204,21 @@ const InscricaoCard: React.FC<InscricaoCardProps> = ({
         <div className="galaxy-card-field">
           <div className="galaxy-card-field-label">📧 Email</div>
           <div className="galaxy-card-field-value email">{i.email}</div>
+        </div>
+
+        {/* Data de Nascimento - Somente Leitura */}
+        <div className="galaxy-card-field">
+          <div className="galaxy-card-field-label">
+            📅 Data de Nascimento
+            {idade !== null && (
+              <span style={{ marginLeft: '8px', color: 'var(--galaxy-text-secondary)', fontSize: '0.85em' }}>
+                ({idade} {idade === 1 ? 'ano' : 'anos'})
+              </span>
+            )}
+          </div>
+          <div className="galaxy-card-field-value">
+            {i.dataNascimento || '-'}
+          </div>
         </div>
 
         {/* WhatsApp */}
