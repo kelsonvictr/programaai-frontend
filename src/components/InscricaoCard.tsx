@@ -36,6 +36,13 @@ type Inscricao = {
   paymentMode?: PaymentMode | null
   monthlyPayments?: MonthlyPaymentSlot[] | null
   valorPrevisto?: number | null
+  dataNascimento?: string | null
+  
+  // Dados do responsável (menor de idade)
+  responsavelNome?: string | null
+  responsavelCpf?: string | null
+  responsavelEmail?: string | null
+  responsavelTelefone?: string | null
   
   // Clicksign
   clicksignDocumentKey?: string | null
@@ -49,6 +56,10 @@ type EditableField =
   | 'paymentMode'
   | 'monthlyPayments'
   | 'valorPrevisto'
+  | 'responsavelNome'
+  | 'responsavelCpf'
+  | 'responsavelEmail'
+  | 'responsavelTelefone'
 
 interface InscricaoCardProps {
   inscricao: Inscricao
@@ -113,6 +124,38 @@ const InscricaoCard: React.FC<InscricaoCardProps> = ({
   ASAAS_STATUS_LABELS,
   ASAAS_STATUS_VARIANTS
 }) => {
+  // Função para calcular idade
+  const calcularIdade = (dataNascimento?: string | null): number | null => {
+    if (!dataNascimento) return null
+    
+    let data: Date
+    
+    // Tenta parsear YYYY-MM-DD ou DD/MM/YYYY
+    if (dataNascimento.includes('-')) {
+      const [ano, mes, dia] = dataNascimento.split('-').map(Number)
+      data = new Date(ano, mes - 1, dia)
+    } else if (dataNascimento.includes('/')) {
+      const [dia, mes, ano] = dataNascimento.split('/').map(Number)
+      data = new Date(ano, mes - 1, dia)
+    } else {
+      return null
+    }
+    
+    const hoje = new Date()
+    let idade = hoje.getFullYear() - data.getFullYear()
+    const mesAtual = hoje.getMonth()
+    const mesNasc = data.getMonth()
+    
+    if (mesAtual < mesNasc || (mesAtual === mesNasc && hoje.getDate() < data.getDate())) {
+      idade--
+    }
+    
+    return idade
+  }
+  
+  const idade = calcularIdade(i.dataNascimento)
+  const isMenorDeIdade = idade !== null && idade < 18
+  
   const pagoKey = keyBusy(i.id, 'pago')
   const grupoKey = keyBusy(i.id, 'grupoWhatsapp')
   const remotoKey = keyBusy(i.id, 'remoto')
@@ -186,6 +229,21 @@ const InscricaoCard: React.FC<InscricaoCardProps> = ({
               ✍️ {i.clicksignStatus === 'signed' ? 'Assinado' : 'Pendente'}
             </span>
           )}
+          
+          {/* Badge Menor de Idade */}
+          {isMenorDeIdade && (
+            <span 
+              className="galaxy-card-badge"
+              style={{
+                background: 'rgba(239, 68, 68, 0.2)',
+                borderColor: 'rgba(239, 68, 68, 0.3)',
+                color: 'rgb(239, 68, 68)'
+              }}
+              title={`Menor de idade (${idade} anos)`}
+            >
+              👤 Menor ({idade} anos)
+            </span>
+          )}
         </div>
       </div>
 
@@ -214,6 +272,83 @@ const InscricaoCard: React.FC<InscricaoCardProps> = ({
             )}
           </div>
         </div>
+
+        {/* Seção do Responsável - Menor de Idade */}
+        {isMenorDeIdade && (
+          <div style={{
+            background: 'rgba(239, 68, 68, 0.1)',
+            border: '1px solid rgba(239, 68, 68, 0.2)',
+            borderRadius: '8px',
+            padding: '12px',
+            marginBottom: '12px'
+          }}>
+            <div style={{
+              color: 'rgb(239, 68, 68)',
+              fontWeight: 600,
+              fontSize: '0.85rem',
+              marginBottom: '10px',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '6px'
+            }}>
+              👤 Dados do Responsável Legal
+            </div>
+            
+            <div className="galaxy-card-field" style={{ marginBottom: '8px' }}>
+              <div className="galaxy-card-field-label" style={{ fontSize: '0.75rem' }}>Nome</div>
+              <Form.Control
+                size="sm"
+                type="text"
+                value={i.responsavelNome || ''}
+                placeholder="Nome do responsável"
+                onChange={e => setLocalField(i.id, 'responsavelNome', e.target.value || null)}
+                onBlur={e => updateField(i.id, 'responsavelNome', e.target.value || null)}
+                style={{
+                  background: 'rgba(15, 23, 42, 0.8)',
+                  border: '1px solid rgba(148, 163, 184, 0.2)',
+                  color: 'var(--galaxy-text-primary)',
+                  fontSize: '0.85rem'
+                }}
+              />
+            </div>
+
+            <div className="galaxy-card-field" style={{ marginBottom: '8px' }}>
+              <div className="galaxy-card-field-label" style={{ fontSize: '0.75rem' }}>CPF</div>
+              <Form.Control
+                size="sm"
+                type="text"
+                value={i.responsavelCpf || ''}
+                placeholder="000.000.000-00"
+                onChange={e => setLocalField(i.id, 'responsavelCpf', e.target.value || null)}
+                onBlur={e => updateField(i.id, 'responsavelCpf', e.target.value || null)}
+                style={{
+                  background: 'rgba(15, 23, 42, 0.8)',
+                  border: '1px solid rgba(148, 163, 184, 0.2)',
+                  color: 'var(--galaxy-text-primary)',
+                  fontSize: '0.85rem'
+                }}
+              />
+            </div>
+
+            <div className="galaxy-card-field">
+              <div className="galaxy-card-field-label" style={{ fontSize: '0.75rem' }}>Email</div>
+              <Form.Control
+                size="sm"
+                type="email"
+                value={i.responsavelEmail || ''}
+                placeholder="email@responsavel.com"
+                onChange={e => setLocalField(i.id, 'responsavelEmail', e.target.value || null)}
+                onBlur={e => updateField(i.id, 'responsavelEmail', e.target.value || null)}
+                style={{
+                  background: 'rgba(15, 23, 42, 0.8)',
+                  border: '1px solid rgba(148, 163, 184, 0.2)',
+                  color: 'var(--galaxy-text-primary)',
+                  fontSize: '0.85rem'
+                }}
+              />
+            </div>
+          </div>
+        )}
 
         {/* Valor do Curso */}
         <div className="galaxy-card-field">

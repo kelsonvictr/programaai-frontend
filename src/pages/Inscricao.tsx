@@ -41,6 +41,11 @@ interface FormState {
   estudanteDetalhe: string
   aceitaTermos: boolean
   website: string
+  // Campos do responsável (menor de idade)
+  responsavelNome?: string
+  responsavelCpf?: string
+  responsavelEmail?: string
+  responsavelTelefone?: string
 }
 
 interface Course {
@@ -114,6 +119,7 @@ const Inscricao: React.FC = () => {
   const [showTermos, setShowTermos] = useState(false)
   const [showParcelamento, setShowParcelamento] = useState(false)
   const [loadingCep, setLoadingCep] = useState(false)
+  const [isMenorDeIdade, setIsMenorDeIdade] = useState(false)
   const [course, setCourse] = useState<Course | null>(null)
   const [loading, setLoading] = useState(true)
 
@@ -227,6 +233,27 @@ const Inscricao: React.FC = () => {
   const maskCep = (v: string) =>
     v.replace(/\D/g, "").slice(0, 8).replace(/^(\d{5})(\d)/, "$1-$2")
 
+  // Função para calcular idade
+  const calcularIdade = (dataNascimento: string): number | null => {
+    if (!dataNascimento || dataNascimento.length !== 10) return null
+    
+    const [dia, mes, ano] = dataNascimento.split('/').map(Number)
+    if (!dia || !mes || !ano) return null
+    
+    const hoje = new Date()
+    const nascimento = new Date(ano, mes - 1, dia)
+    
+    let idade = hoje.getFullYear() - nascimento.getFullYear()
+    const mesAtual = hoje.getMonth()
+    const mesNasc = nascimento.getMonth()
+    
+    if (mesAtual < mesNasc || (mesAtual === mesNasc && hoje.getDate() < nascimento.getDate())) {
+      idade--
+    }
+    
+    return idade
+  }
+
   const handleChange: React.ChangeEventHandler<FormControlElement> = e => {
     const { name, type, value } = e.target
     const checked = (e.target as HTMLInputElement).checked
@@ -253,8 +280,22 @@ const Inscricao: React.FC = () => {
   const handleCpfChange = (e: React.ChangeEvent<HTMLInputElement>) =>
     setForm(f => ({ ...f, cpf: maskCpf(e.target.value) }))
   
-  const handleDateChange = (e: React.ChangeEvent<HTMLInputElement>) =>
-    setForm(f => ({ ...f, dataNascimento: maskDate(e.target.value) }))
+  const handleDateChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const maskedDate = maskDate(e.target.value)
+    setForm(f => ({ ...f, dataNascimento: maskedDate }))
+    
+    // Verifica se é menor de idade
+    const idade = calcularIdade(maskedDate)
+    if (idade !== null) {
+      setIsMenorDeIdade(idade < 18)
+    }
+  }
+  
+  const handleResponsavelCpfChange = (e: React.ChangeEvent<HTMLInputElement>) =>
+    setForm(f => ({ ...f, responsavelCpf: maskCpf(e.target.value) }))
+  
+  const handleResponsavelTelefoneChange = (e: React.ChangeEvent<HTMLInputElement>) =>
+    setForm(f => ({ ...f, responsavelTelefone: maskCel(e.target.value) }))
   
   const handleCelChange = (e: React.ChangeEvent<HTMLInputElement>) =>
     setForm(f => ({ ...f, celular: maskCel(e.target.value) }))
@@ -298,6 +339,17 @@ const Inscricao: React.FC = () => {
       if (form.email !== form.emailConfirm) errs.push("E-mails não conferem")
       if (!form.sexo) errs.push("Selecione seu sexo")
       if (!form.estadoCivil) errs.push("Selecione seu estado civil")
+      
+      // Validação de responsável se for menor de idade
+      if (isMenorDeIdade) {
+        if (!form.responsavelNome?.trim()) errs.push("Nome do responsável é obrigatório")
+        if (!form.responsavelCpf || !/^\d{3}\.\d{3}\.\d{3}\-\d{2}$/.test(form.responsavelCpf)) 
+          errs.push("CPF do responsável inválido")
+        if (!form.responsavelEmail || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.responsavelEmail)) 
+          errs.push("E-mail do responsável inválido")
+        if (!form.responsavelTelefone || !/^\+\d{2}\s\(\d{2}\)\s\d{5}\-\d{4}$/.test(form.responsavelTelefone))
+          errs.push("Telefone do responsável inválido")
+      }
     }
     
     if (step === 2) {
@@ -353,7 +405,7 @@ const Inscricao: React.FC = () => {
     
     setIsSubmitting(true)
     try {
-      const resp = await axios.post(`${import.meta.env.VITE_API_URL}/inscricao`, {
+      const payload: Record<string, unknown> = {
         nomeCompleto: form.nome,
         cpf: form.cpf,
         rg: form.rg,
@@ -379,7 +431,17 @@ const Inscricao: React.FC = () => {
         aceitouTermos: form.aceitaTermos,
         versaoTermo: "v1.0",
         cupom: cupom || undefined
-      })
+      }
+      
+      // Adiciona dados do responsável se for menor de idade
+      if (isMenorDeIdade) {
+        payload.responsavelNome = form.responsavelNome
+        payload.responsavelCpf = form.responsavelCpf
+        payload.responsavelEmail = form.responsavelEmail
+        payload.responsavelTelefone = form.responsavelTelefone
+      }
+      
+      const resp = await axios.post(`${import.meta.env.VITE_API_URL}/inscricao`, payload)
       
       const isFullstack = course!.title.includes("Curso Presencial Programação Fullstack")
       navigate(`/pagamento/${resp.data.inscricao_id}${isFullstack ? "?isFullstack=true" : ""}`)
@@ -718,6 +780,82 @@ const Inscricao: React.FC = () => {
                         <option>União estável</option>
                       </Form.Select>
                     </Form.Group>
+                    
+                    {/* Campos do Responsável - Menor de Idade */}
+                    {isMenorDeIdade && (
+                      <div className="form-group full-width animate-fade-in" style={{ 
+                        background: 'rgba(255, 193, 7, 0.1)', 
+                        border: '2px solid rgba(255, 193, 7, 0.3)',
+                        borderRadius: '12px',
+                        padding: '20px',
+                        marginTop: '20px'
+                      }}>
+                        <div style={{ 
+                          display: 'flex', 
+                          alignItems: 'center', 
+                          gap: '10px', 
+                          marginBottom: '15px',
+                          color: '#f59e0b'
+                        }}>
+                          <FaUser size={20} />
+                          <h4 style={{ margin: 0, fontSize: '1.1rem' }}>Dados do Responsável Legal</h4>
+                        </div>
+                        <Alert variant="warning" style={{ fontSize: '0.9rem', marginBottom: '15px' }}>
+                          ⚠️ Como você é menor de 18 anos, precisamos dos dados de um responsável legal para assinar o contrato junto com você.
+                        </Alert>
+                        
+                        <Form.Group className="mb-3">
+                          <Form.Label>Nome Completo do Responsável</Form.Label>
+                          <Form.Control
+                            name="responsavelNome"
+                            value={form.responsavelNome || ''}
+                            onChange={handleChange}
+                            placeholder="Nome completo do pai, mãe ou responsável"
+                            className={getFieldClass('responsavelNome')}
+                          />
+                        </Form.Group>
+
+                        <Form.Group className="mb-3">
+                          <Form.Label>CPF do Responsável</Form.Label>
+                          <Form.Control
+                            name="responsavelCpf"
+                            value={form.responsavelCpf || ''}
+                            onChange={handleResponsavelCpfChange}
+                            placeholder="000.000.000-00"
+                            className={getFieldClass('responsavelCpf')}
+                          />
+                        </Form.Group>
+
+                        <Form.Group className="mb-3">
+                          <Form.Label>E-mail do Responsável</Form.Label>
+                          <Form.Control
+                            type="email"
+                            name="responsavelEmail"
+                            value={form.responsavelEmail || ''}
+                            onChange={handleChange}
+                            placeholder="email@responsavel.com"
+                            className={getFieldClass('responsavelEmail')}
+                          />
+                          <Form.Text className="text-muted">
+                            O responsável receberá o contrato para assinatura neste e-mail.
+                          </Form.Text>
+                        </Form.Group>
+
+                        <Form.Group className="mb-3">
+                          <Form.Label>Telefone/WhatsApp do Responsável</Form.Label>
+                          <Form.Control
+                            name="responsavelTelefone"
+                            value={form.responsavelTelefone || ''}
+                            onChange={handleResponsavelTelefoneChange}
+                            placeholder="+55 (00) 00000-0000"
+                            className={getFieldClass('responsavelTelefone')}
+                          />
+                          <Form.Text className="text-muted">
+                            Para contato direto com o responsável.
+                          </Form.Text>
+                        </Form.Group>
+                      </div>
+                    )}
                   </div>
                 </div>
               )}
