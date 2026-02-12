@@ -21,8 +21,12 @@ import InscricaoCard from '../components/InscricaoCard'
 import WaitlistCard from '../components/WaitlistCard'
 import GalaxyCourseManager from '../components/GalaxyCourseManager'
 import GalaxyTaskBoard from '../components/GalaxyTaskBoard'
+import ToastContainer from '../components/ToastContainer'
+import { useToast } from '../hooks/useToast'
+import { useFieldFeedback } from '../hooks/useFieldFeedback'
 import type { Inscricao, EditableField, MonthlyPaymentSlot, MonthlyPaymentStatus, PaymentMode } from '../types/inscricao'
 import '../styles/galaxy-admin.css'
+import '../styles/galaxy-toast.css'
 
 const API_BASE = import.meta.env.VITE_ADMIN_API as string
 const ENDPOINT = `${API_BASE}/galaxy/inscricoes-por-curso`
@@ -184,6 +188,10 @@ export default function Admin() {
   const [error, setError] = useState<string | null>(null)
   const [token, setToken] = useState<string>('')
   const [lastUpdated, setLastUpdated] = useState<Date | null>(null)
+
+  // Toast notifications e feedback visual
+  const { toasts, removeToast, success: showSuccessToast, error: showErrorToast } = useToast()
+  const { setFieldStatus, getFieldClassName } = useFieldFeedback()
 
   // 2FA Login
   const [show2FALogin, setShow2FALogin] = useState(false)
@@ -1243,8 +1251,11 @@ export default function Admin() {
   ) => {
     if (!token) return
     const bkey = keyBusy(id, field)
+    const fieldKey = `${id}-${field}`
     const prev = getLocalFieldValue(id, field)
 
+    // Indica que está salvando
+    setFieldStatus(fieldKey, 'saving')
     setLocalField(id, field, value) // otimista
     if (field === 'valorLiquidoFinal') recomputeAggregates()
     setBusy(s => ({ ...s, [bkey]: true }))
@@ -1256,8 +1267,28 @@ export default function Admin() {
         { id, field, value },
         { headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' } }
       )
+      
+      // Feedback de sucesso
+      setFieldStatus(fieldKey, 'saved')
+      
+      // Mostra toast apenas para campos importantes
+      const importantFields = ['responsavelNome', 'responsavelCpf', 'responsavelEmail', 'responsavelTelefone']
+      if (importantFields.includes(field)) {
+        const fieldLabels: Record<string, string> = {
+          responsavelNome: 'Nome do responsável',
+          responsavelCpf: 'CPF do responsável',
+          responsavelEmail: 'Email do responsável',
+          responsavelTelefone: 'Telefone do responsável'
+        }
+        showSuccessToast('Campo atualizado', `${fieldLabels[field]} salvo com sucesso`)
+      }
     } catch (err: unknown) {
       console.error(err)
+      
+      // Feedback de erro
+      setFieldStatus(fieldKey, 'error')
+      showErrorToast('Erro ao salvar', `Não foi possível atualizar o campo`)
+      
       setError(`Falha ao atualizar ${field}`)
       setLocalField(id, field, prev) // rollback
       if (field === 'valorLiquidoFinal') recomputeAggregates()
@@ -1441,6 +1472,9 @@ export default function Admin() {
 
   return (
     <div className="galaxy-admin-page">
+      {/* Toast Container */}
+      <ToastContainer toasts={toasts} removeToast={removeToast} />
+      
       <Container fluid className="py-4">
         <div className="galaxy-header">
           <div className="galaxy-logo">
@@ -1672,6 +1706,7 @@ export default function Admin() {
                     openAgendamentoModal={openAgendamentoModal}
                     formatDateTime={formatDateTime}
                     deletar={deletar}
+                    getFieldClassName={getFieldClassName}
                     ASAAS_STATUS_LABELS={ASAAS_STATUS_LABELS}
                     ASAAS_STATUS_VARIANTS={ASAAS_STATUS_VARIANTS}
                   />

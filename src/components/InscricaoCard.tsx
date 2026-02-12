@@ -31,6 +31,7 @@ interface InscricaoCardProps {
   openAgendamentoModal: (i: Inscricao) => void
   deletar: (id: string) => void
   recomputeAggregates: () => void
+  getFieldClassName?: (fieldKey: string) => string
   ASAAS_STATUS_LABELS: Record<string, string>
   ASAAS_STATUS_VARIANTS: Record<string, string>
 }
@@ -63,6 +64,7 @@ const InscricaoCard: React.FC<InscricaoCardProps> = ({
   openAgendamentoModal,
   deletar,
   recomputeAggregates,
+  getFieldClassName,
   ASAAS_STATUS_LABELS,
   ASAAS_STATUS_VARIANTS
 }) => {
@@ -269,6 +271,7 @@ const InscricaoCard: React.FC<InscricaoCardProps> = ({
                 placeholder="Nome do responsável"
                 onChange={e => setLocalField(i.id, 'responsavelNome', e.target.value || null)}
                 onBlur={e => updateField(i.id, 'responsavelNome', e.target.value || null)}
+                className={getFieldClassName ? getFieldClassName(`${i.id}-responsavelNome`) : ''}
                 style={{
                   background: 'rgba(15, 23, 42, 0.8)',
                   border: '1px solid rgba(148, 163, 184, 0.2)',
@@ -287,6 +290,7 @@ const InscricaoCard: React.FC<InscricaoCardProps> = ({
                 placeholder="000.000.000-00"
                 onChange={e => setLocalField(i.id, 'responsavelCpf', e.target.value || null)}
                 onBlur={e => updateField(i.id, 'responsavelCpf', e.target.value || null)}
+                className={getFieldClassName ? getFieldClassName(`${i.id}-responsavelCpf`) : ''}
                 style={{
                   background: 'rgba(15, 23, 42, 0.8)',
                   border: '1px solid rgba(148, 163, 184, 0.2)',
@@ -305,6 +309,7 @@ const InscricaoCard: React.FC<InscricaoCardProps> = ({
                 placeholder="email@responsavel.com"
                 onChange={e => setLocalField(i.id, 'responsavelEmail', e.target.value || null)}
                 onBlur={e => updateField(i.id, 'responsavelEmail', e.target.value || null)}
+                className={getFieldClassName ? getFieldClassName(`${i.id}-responsavelEmail`) : ''}
                 style={{
                   background: 'rgba(15, 23, 42, 0.8)',
                   border: '1px solid rgba(148, 163, 184, 0.2)',
@@ -323,6 +328,7 @@ const InscricaoCard: React.FC<InscricaoCardProps> = ({
                 placeholder="(00) 00000-0000"
                 onChange={e => setLocalField(i.id, 'responsavelTelefone', e.target.value || null)}
                 onBlur={e => updateField(i.id, 'responsavelTelefone', e.target.value || null)}
+                className={getFieldClassName ? getFieldClassName(`${i.id}-responsavelTelefone`) : ''}
                 style={{
                   background: 'rgba(15, 23, 42, 0.8)',
                   border: '1px solid rgba(148, 163, 184, 0.2)',
@@ -550,7 +556,7 @@ const InscricaoCard: React.FC<InscricaoCardProps> = ({
         <div className="galaxy-card-obs-field">
           <div className="galaxy-card-field-label">📝 Observações</div>
           <textarea
-            className="galaxy-card-obs-input"
+            className={`galaxy-card-obs-input ${getFieldClassName ? getFieldClassName(`${i.id}-observacoes`) : ''}`}
             value={obs}
             placeholder="Anotações internas…"
             disabled={!!busy[obsKey]}
