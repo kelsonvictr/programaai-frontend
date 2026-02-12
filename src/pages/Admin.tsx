@@ -15,9 +15,10 @@ import {
   Card,
   Modal
 } from 'react-bootstrap'
-import { ArrowClockwise, BoxArrowRight, People, Laptop, Building, CurrencyDollar, Calendar3, Cup, ListUl, ClockHistory, BookHalf, ListTask } from 'react-bootstrap-icons'
+import { ArrowClockwise, BoxArrowRight, People, Laptop, Building, CurrencyDollar, Calendar3, Cup, ListUl, ClockHistory, BookHalf, ListTask, Grid3x3GapFill, Table as TableIcon } from 'react-bootstrap-icons'
 import GalaxyCalendar from '../components/GalaxyCalendar'
 import InscricaoCard from '../components/InscricaoCard'
+import InscricaoTable from '../components/InscricaoTable'
 import WaitlistCard from '../components/WaitlistCard'
 import GalaxyCourseManager from '../components/GalaxyCourseManager'
 import GalaxyTaskBoard from '../components/GalaxyTaskBoard'
@@ -27,6 +28,7 @@ import { useFieldFeedback } from '../hooks/useFieldFeedback'
 import type { Inscricao, EditableField, MonthlyPaymentSlot, MonthlyPaymentStatus, PaymentMode } from '../types/inscricao'
 import '../styles/galaxy-admin.css'
 import '../styles/galaxy-toast.css'
+import '../styles/galaxy-table.css'
 
 const API_BASE = import.meta.env.VITE_ADMIN_API as string
 const ENDPOINT = `${API_BASE}/galaxy/inscricoes-por-curso`
@@ -208,6 +210,9 @@ export default function Admin() {
   const [activeView, setActiveView] = useState<'inscricoes' | 'calendario' | 'lista-espera' | 'bebidas' | 'cursos' | 'tarefas'>(
     'inscricoes'
   )
+  
+  // View mode: cards ou table
+  const [viewMode, setViewMode] = useState<'cards' | 'table'>('cards')
 
   const [waitlistCursos, setWaitlistCursos] = useState<Record<string, WaitlistCursoGroup>>({})
   const [activeWaitlistCurso, setActiveWaitlistCurso] = useState<string>(ALL_CURSO_KEY)
@@ -1637,6 +1642,30 @@ export default function Admin() {
                   )
                 })}
               </div>
+              
+              {/* View Mode Toggle */}
+              <div className="galaxy-view-toggle-container">
+                <div className="galaxy-view-toggle">
+                  <button
+                    type="button"
+                    className={`galaxy-view-toggle-btn ${viewMode === 'cards' ? 'active' : ''}`}
+                    onClick={() => setViewMode('cards')}
+                    title="Visualização em Cards"
+                  >
+                    <Grid3x3GapFill size={18} />
+                    <span>Cards</span>
+                  </button>
+                  <button
+                    type="button"
+                    className={`galaxy-view-toggle-btn ${viewMode === 'table' ? 'active' : ''}`}
+                    onClick={() => setViewMode('table')}
+                    title="Visualização em Tabela"
+                  >
+                    <TableIcon size={18} />
+                    <span>Tabela</span>
+                  </button>
+                </div>
+              </div>
             </div>
           )}
 
@@ -1675,43 +1704,70 @@ export default function Admin() {
                   </Button>
                 </div>
               </div>
-              <div className="galaxy-cards-grid">
-                {group.inscricoes.map(i => (
-                  <InscricaoCard
-                    key={i.id}
-                    inscricao={i}
-                    curso={curso}
-                    busy={busy}
-                    copiedPaymentId={copiedPaymentId}
-                    money={money}
-                    keyBusy={keyBusy}
-                    buildWhatsappUrl={buildWhatsappUrl}
-                    isFullstackCourse={isFullstackCourse}
-                    getPaymentMode={getPaymentMode}
-                    ensureMonthlyPayments={ensureMonthlyPayments}
-                    sumMonthlyPayments={sumMonthlyPayments}
-                    getLocalFieldValue={getLocalFieldValue}
-                    setLocalField={setLocalField}
-                    recomputeAggregates={recomputeAggregates}
-                    toggleField={toggleField}
-                    updateField={updateField}
-                    handlePaymentModeChange={handlePaymentModeChange}
-                    handleMonthlyStatusChange={handleMonthlyStatusChange}
-                    handleMonthlyAmountChange={handleMonthlyAmountChange}
-                    handleValorPrevistoChange={handleValorPrevistoChange}
-                    handleMonthlySave={handleMonthlySave}
-                    gerarContrato={gerarContrato}
-                    enviarClicksign={enviarClicksign}
-                    copyPaymentLink={copyPaymentLink}
-                    openAgendamentoModal={openAgendamentoModal}
-                    formatDateTime={formatDateTime}
-                    deletar={deletar}
-                    getFieldClassName={getFieldClassName}
-                    ASAAS_STATUS_LABELS={ASAAS_STATUS_LABELS}
-                    ASAAS_STATUS_VARIANTS={ASAAS_STATUS_VARIANTS}
-                  />
-                ))}
-              </div>
+              
+              {/* Renderização condicional: Cards ou Tabela */}
+              {viewMode === 'cards' ? (
+                <div className="galaxy-cards-grid">
+                  {group.inscricoes.map(i => (
+                    <InscricaoCard
+                      key={i.id}
+                      inscricao={i}
+                      curso={curso}
+                      busy={busy}
+                      copiedPaymentId={copiedPaymentId}
+                      money={money}
+                      keyBusy={keyBusy}
+                      buildWhatsappUrl={buildWhatsappUrl}
+                      isFullstackCourse={isFullstackCourse}
+                      getPaymentMode={getPaymentMode}
+                      ensureMonthlyPayments={ensureMonthlyPayments}
+                      sumMonthlyPayments={sumMonthlyPayments}
+                      getLocalFieldValue={getLocalFieldValue}
+                      setLocalField={setLocalField}
+                      recomputeAggregates={recomputeAggregates}
+                      toggleField={toggleField}
+                      updateField={updateField}
+                      handlePaymentModeChange={handlePaymentModeChange}
+                      handleMonthlyStatusChange={handleMonthlyStatusChange}
+                      handleMonthlyAmountChange={handleMonthlyAmountChange}
+                      handleValorPrevistoChange={handleValorPrevistoChange}
+                      handleMonthlySave={handleMonthlySave}
+                      gerarContrato={gerarContrato}
+                      enviarClicksign={enviarClicksign}
+                      copyPaymentLink={copyPaymentLink}
+                      openAgendamentoModal={openAgendamentoModal}
+                      formatDateTime={formatDateTime}
+                      deletar={deletar}
+                      getFieldClassName={getFieldClassName}
+                      ASAAS_STATUS_LABELS={ASAAS_STATUS_LABELS}
+                      ASAAS_STATUS_VARIANTS={ASAAS_STATUS_VARIANTS}
+                    />
+                  ))}
+                </div>
+              ) : (
+                <InscricaoTable
+                  inscricoes={group.inscricoes}
+                  curso={curso}
+                  busy={busy}
+                  copiedPaymentId={copiedPaymentId}
+                  money={money}
+                  buildWhatsappUrl={buildWhatsappUrl}
+                  isFullstackCourse={isFullstackCourse}
+                  getPaymentMode={getPaymentMode}
+                  formatDateTime={formatDateTime}
+                  keyBusy={keyBusy}
+                  toggleField={toggleField}
+                  updateField={updateField}
+                  gerarContrato={gerarContrato}
+                  enviarClicksign={enviarClicksign}
+                  copyPaymentLink={copyPaymentLink}
+                  openAgendamentoModal={openAgendamentoModal}
+                  deletar={deletar}
+                  getFieldClassName={getFieldClassName}
+                  ASAAS_STATUS_LABELS={ASAAS_STATUS_LABELS}
+                  ASAAS_STATUS_VARIANTS={ASAAS_STATUS_VARIANTS}
+                />
+              )}
           </div>
           ))}
 

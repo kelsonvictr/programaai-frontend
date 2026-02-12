@@ -1,0 +1,405 @@
+/* ============================================
+   GALAXY INSCRICOES TABLE
+   Tabela moderna e responsiva para inscrições
+   ============================================ */
+
+.galaxy-table-responsive {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  margin: 0;
+  border-radius: 12px;
+  background: var(--galaxy-bg-card);
+  border: 1px solid var(--galaxy-border);
+}
+
+.galaxy-inscricoes-table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  font-size: 0.9rem;
+  color: var(--galaxy-text-primary);
+}
+
+/* Header */
+.galaxy-inscricoes-table thead {
+  background: linear-gradient(135deg, rgba(30, 41, 59, 0.9), rgba(15, 23, 42, 0.9));
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+
+.galaxy-inscricoes-table thead th {
+  padding: 1rem 0.75rem;
+  font-weight: 600;
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--galaxy-text-secondary);
+  border-bottom: 2px solid var(--galaxy-border);
+  white-space: nowrap;
+}
+
+/* Columns Width */
+.galaxy-inscricoes-table .col-expand {
+  width: 50px;
+  text-align: center;
+}
+
+.galaxy-inscricoes-table .col-nome {
+  min-width: 200px;
+}
+
+.galaxy-inscricoes-table .col-email {
+  min-width: 200px;
+}
+
+.galaxy-inscricoes-table .col-telefone {
+  min-width: 150px;
+}
+
+.galaxy-inscricoes-table .col-valor {
+  width: 120px;
+}
+
+.galaxy-inscricoes-table .col-status {
+  width: 140px;
+}
+
+.galaxy-inscricoes-table .col-modalidade {
+  width: 160px;
+}
+
+.galaxy-inscricoes-table .col-data {
+  width: 140px;
+}
+
+.galaxy-inscricoes-table .col-acoes {
+  width: 80px;
+}
+
+/* Body */
+.galaxy-inscricoes-table tbody {
+  background: var(--galaxy-bg-card);
+}
+
+/* Rows */
+.galaxy-table-row {
+  transition: all 0.2s ease;
+  border-bottom: 1px solid rgba(148, 163, 184, 0.1);
+}
+
+.galaxy-table-row:hover {
+  background: rgba(59, 130, 246, 0.05);
+}
+
+.galaxy-table-row.expanded {
+  background: rgba(59, 130, 246, 0.08);
+  border-bottom: none;
+}
+
+.galaxy-table-row td {
+  padding: 1rem 0.75rem;
+  vertical-align: middle;
+}
+
+/* Expand Button */
+.galaxy-expand-btn {
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  border: 1px solid var(--galaxy-border);
+  background: var(--galaxy-bg-tertiary);
+  color: var(--galaxy-text-primary);
+  font-size: 1.2rem;
+  font-weight: 600;
+  line-height: 1;
+  cursor: pointer;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.galaxy-expand-btn:hover {
+  background: var(--galaxy-accent-blue);
+  border-color: var(--galaxy-accent-blue);
+  color: white;
+  transform: scale(1.1);
+}
+
+.galaxy-expand-btn:active {
+  transform: scale(0.95);
+}
+
+/* Cell Content */
+.table-cell-content {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.table-email {
+  color: var(--galaxy-accent-cyan);
+  font-size: 0.85rem;
+}
+
+.table-value {
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: var(--galaxy-accent-green);
+}
+
+/* Icon Links */
+.galaxy-icon-link {
+  color: var(--galaxy-accent-green);
+  transition: all 0.2s;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 6px;
+  text-decoration: none;
+}
+
+.galaxy-icon-link:hover {
+  background: rgba(16, 185, 129, 0.2);
+  color: var(--galaxy-accent-green);
+  transform: scale(1.1);
+}
+
+/* Table Switches */
+.galaxy-table-switch {
+  font-size: 0.8rem;
+  margin: 0;
+}
+
+.galaxy-table-switch .form-check-input {
+  cursor: pointer;
+  width: 2.5rem;
+  height: 1.25rem;
+}
+
+.galaxy-table-switch .form-check-label {
+  cursor: pointer;
+  color: var(--galaxy-text-secondary);
+  margin-left: 0.5rem;
+  user-select: none;
+}
+
+.galaxy-table-switch .form-check-input:checked ~ .form-check-label {
+  color: var(--galaxy-text-primary);
+  font-weight: 500;
+}
+
+/* Actions Dropdown */
+.galaxy-actions-toggle {
+  background: transparent !important;
+  border: none !important;
+  color: var(--galaxy-text-secondary) !important;
+  padding: 0.25rem 0.5rem !important;
+  box-shadow: none !important;
+  transition: all 0.2s;
+}
+
+.galaxy-actions-toggle:hover,
+.galaxy-actions-toggle:focus,
+.galaxy-actions-toggle:active {
+  background: rgba(148, 163, 184, 0.2) !important;
+  color: var(--galaxy-text-primary) !important;
+  border-radius: 6px;
+}
+
+.galaxy-actions-toggle::after {
+  display: none !important;
+}
+
+.galaxy-dropdown-menu {
+  background: var(--galaxy-bg-secondary);
+  border: 1px solid var(--galaxy-border);
+  border-radius: 8px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+  padding: 0.5rem 0;
+  min-width: 200px;
+}
+
+.galaxy-dropdown-menu .dropdown-item {
+  color: var(--galaxy-text-primary);
+  padding: 0.5rem 1rem;
+  font-size: 0.875rem;
+  transition: all 0.2s;
+}
+
+.galaxy-dropdown-menu .dropdown-item:hover {
+  background: rgba(59, 130, 246, 0.1);
+  color: var(--galaxy-accent-blue);
+}
+
+.galaxy-dropdown-menu .dropdown-item.text-success {
+  color: var(--galaxy-accent-green) !important;
+}
+
+.galaxy-dropdown-menu .dropdown-item.text-danger {
+  color: #ef4444 !important;
+}
+
+.galaxy-dropdown-menu .dropdown-item.text-danger:hover {
+  background: rgba(239, 68, 68, 0.1);
+}
+
+.galaxy-dropdown-menu .dropdown-divider {
+  border-color: rgba(148, 163, 184, 0.2);
+  margin: 0.5rem 0;
+}
+
+/* Expanded Row */
+.galaxy-table-expanded-row {
+  background: linear-gradient(135deg, rgba(30, 41, 59, 0.5), rgba(15, 23, 42, 0.6));
+  border-bottom: 1px solid rgba(148, 163, 184, 0.1);
+}
+
+.galaxy-table-expanded-row td {
+  padding: 1.5rem;
+}
+
+.galaxy-expanded-content {
+  animation: expandFade 0.3s ease-out;
+}
+
+@keyframes expandFade {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.galaxy-expanded-title {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--galaxy-text-primary);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: 0.75rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 1px solid rgba(148, 163, 184, 0.2);
+}
+
+.galaxy-expanded-field {
+  margin-bottom: 0.75rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.galaxy-expanded-field label {
+  font-size: 0.75rem;
+  font-weight: 500;
+  color: var(--galaxy-text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin: 0;
+}
+
+.galaxy-expanded-field span {
+  font-size: 0.875rem;
+  color: var(--galaxy-text-primary);
+}
+
+.galaxy-expanded-field input,
+.galaxy-expanded-field textarea {
+  background: rgba(15, 23, 42, 0.8);
+  border: 1px solid rgba(148, 163, 184, 0.2);
+  color: var(--galaxy-text-primary);
+  font-size: 0.875rem;
+  transition: all 0.2s;
+}
+
+.galaxy-expanded-field input:focus,
+.galaxy-expanded-field textarea:focus {
+  background: rgba(15, 23, 42, 0.9);
+  border-color: var(--galaxy-accent-blue);
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15);
+  color: var(--galaxy-text-primary);
+}
+
+/* Empty State */
+.galaxy-table-empty {
+  padding: 3rem 2rem;
+  text-align: center;
+  color: var(--galaxy-text-muted);
+}
+
+.galaxy-table-empty-icon {
+  font-size: 3rem;
+  margin-bottom: 1rem;
+  opacity: 0.5;
+}
+
+.galaxy-table-empty-text {
+  font-size: 1rem;
+  font-weight: 500;
+}
+
+/* Responsive */
+@media (max-width: 1400px) {
+  .galaxy-inscricoes-table {
+    font-size: 0.85rem;
+  }
+  
+  .galaxy-inscricoes-table thead th {
+    padding: 0.875rem 0.625rem;
+    font-size: 0.75rem;
+  }
+  
+  .galaxy-table-row td {
+    padding: 0.875rem 0.625rem;
+  }
+}
+
+@media (max-width: 1200px) {
+  .galaxy-inscricoes-table .col-email,
+  .galaxy-inscricoes-table .col-telefone {
+    min-width: 150px;
+  }
+  
+  .galaxy-table-switch .form-check-label {
+    display: none;
+  }
+}
+
+@media (max-width: 992px) {
+  .galaxy-inscricoes-table {
+    font-size: 0.8rem;
+  }
+  
+  .galaxy-inscricoes-table .col-nome {
+    min-width: 150px;
+  }
+}
+
+@media (max-width: 768px) {
+  .galaxy-table-responsive {
+    border-radius: 8px;
+  }
+  
+  .galaxy-inscricoes-table thead th {
+    padding: 0.75rem 0.5rem;
+    font-size: 0.7rem;
+  }
+  
+  .galaxy-table-row td {
+    padding: 0.75rem 0.5rem;
+  }
+  
+  .galaxy-expanded-content .row {
+    gap: 1rem !important;
+  }
+  
+  .galaxy-expanded-content .col-md-4 {
+    width: 100%;
+  }
+}

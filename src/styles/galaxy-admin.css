@@ -3068,3 +3068,78 @@
   box-shadow: 0 2px 8px rgba(6, 182, 212, 0.3);
 }
 
+/* ============================================
+   VIEW MODE TOGGLE (Cards vs Table)
+   ============================================ */
+
+.galaxy-view-toggle-container {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  margin-bottom: 1.5rem;
+  padding: 0 0.5rem;
+}
+
+.galaxy-view-toggle {
+  display: inline-flex;
+  background: var(--galaxy-bg-secondary);
+  border: 1px solid var(--galaxy-border);
+  border-radius: 12px;
+  padding: 0.25rem;
+  gap: 0.25rem;
+  box-shadow: var(--galaxy-shadow-sm);
+}
+
+.galaxy-view-toggle-btn {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.625rem 1rem;
+  border: none;
+  background: transparent;
+  color: var(--galaxy-text-secondary);
+  font-size: 0.875rem;
+  font-weight: 500;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+}
+
+.galaxy-view-toggle-btn:hover {
+  background: rgba(59, 130, 246, 0.1);
+  color: var(--galaxy-text-primary);
+}
+
+.galaxy-view-toggle-btn.active {
+  background: linear-gradient(135deg, var(--galaxy-accent-blue), var(--galaxy-accent-purple));
+  color: white;
+  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+}
+
+.galaxy-view-toggle-btn.active:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 6px 16px rgba(59, 130, 246, 0.4);
+}
+
+.galaxy-view-toggle-btn svg {
+  flex-shrink: 0;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .galaxy-view-toggle-container {
+    justify-content: center;
+    margin-bottom: 1rem;
+  }
+  
+  .galaxy-view-toggle-btn span {
+    display: none;
+  }
+  
+  .galaxy-view-toggle-btn {
+    padding: 0.625rem;
+  }
+}
+
+
