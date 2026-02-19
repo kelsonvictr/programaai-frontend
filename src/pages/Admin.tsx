@@ -252,6 +252,12 @@ export default function Admin() {
   const [promptFinanceiroText, setPromptFinanceiroText] = useState<string>('')
   const [copiedPrompt, setCopiedPrompt] = useState(false)
 
+  // Lista Alunos/Email
+  const [showListaAlunos, setShowListaAlunos] = useState(false)
+  const [listaAlunosCurso, setListaAlunosCurso] = useState<string>('')
+  const [listaAlunosText, setListaAlunosText] = useState<string>('')
+  const [copiedListaAlunos, setCopiedListaAlunos] = useState(false)
+
   const cursoEntries = useMemo(
     () => Object.entries(cursos).sort(([a], [b]) => a.localeCompare(b, 'pt-BR')),
     [cursos]
@@ -1131,6 +1137,30 @@ export default function Admin() {
     setCopiedPrompt(false)
   }
 
+  const abrirListaAlunos = (nomeCurso: string, group: CursoGroup) => {
+    const linhas = group.inscricoes
+      .map(i => {
+        const nome = (i.nomeCompleto || '').toUpperCase()
+        const email = (i.email || '').toLowerCase()
+        return `${nome}, ${email}`
+      })
+      .join('\n')
+    setListaAlunosCurso(nomeCurso)
+    setListaAlunosText(linhas)
+    setShowListaAlunos(true)
+    setCopiedListaAlunos(false)
+  }
+
+  const copiarListaAlunos = async () => {
+    try {
+      await navigator.clipboard.writeText(listaAlunosText)
+      setCopiedListaAlunos(true)
+      setTimeout(() => setCopiedListaAlunos(false), 2000)
+    } catch (err) {
+      console.error('Erro ao copiar lista:', err)
+    }
+  }
+
   const copiarPromptFinanceiro = async () => {
     try {
       await navigator.clipboard.writeText(promptFinanceiroText)
@@ -1702,6 +1732,14 @@ export default function Admin() {
                   >
                     💰 Prompt Financeiro
                   </Button>
+                  <Button
+                    size="sm"
+                    variant="info"
+                    onClick={() => abrirListaAlunos(curso, group)}
+                    title="Lista de alunos com email para copiar"
+                  >
+                    📋 Lista Alunos/Email
+                  </Button>
                 </div>
               </div>
               
@@ -1880,6 +1918,50 @@ export default function Admin() {
                 onClick={() => void copiarPromptFinanceiro()}
               >
                 {copiedPrompt ? '✓ Copiado!' : '📋 Copiar Prompt'}
+              </Button>
+            </Modal.Footer>
+          </Modal>
+
+          {/* Modal Lista Alunos/Email */}
+          <Modal
+            show={showListaAlunos}
+            onHide={() => setShowListaAlunos(false)}
+            centered
+            size="lg"
+          >
+            <Modal.Header closeButton>
+              <Modal.Title>📋 Lista Alunos/Email - {listaAlunosCurso}</Modal.Title>
+            </Modal.Header>
+            <Modal.Body>
+              <Alert variant="info">
+                <strong>📋 Instruções:</strong> Lista de alunos no formato <code>NOME, email</code> — um por linha.
+              </Alert>
+              <Form.Group>
+                <Form.Control
+                  as="textarea"
+                  rows={20}
+                  value={listaAlunosText}
+                  readOnly
+                  style={{
+                    fontFamily: 'monospace',
+                    fontSize: '0.85rem',
+                    whiteSpace: 'pre-wrap'
+                  }}
+                />
+              </Form.Group>
+            </Modal.Body>
+            <Modal.Footer>
+              <Button
+                variant="secondary"
+                onClick={() => setShowListaAlunos(false)}
+              >
+                Fechar
+              </Button>
+              <Button
+                variant="success"
+                onClick={() => void copiarListaAlunos()}
+              >
+                {copiedListaAlunos ? '✓ Copiado!' : '📋 Copiar Lista'}
               </Button>
             </Modal.Footer>
           </Modal>
